@@ -1,7 +1,12 @@
-class Main(object):
-    """Represents the main class then the app is started"""
+import logging
 
+
+class Main(object):
+    """Represents the main class when the app is started"""
+
+    # Environment variables
     HEALTH_CHECK_VARIABLE = 'HEALTH_CHECK'
+    LOGGING_LEVEL_VARIABLE = 'LOGGING_LEVEL'
 
     FAKE_SENSOR_VARIABLE = 'FAKE_SENSOR'
     BME_280_SENSOR_VARIABLE = 'BME_280_SENSOR'
@@ -13,6 +18,10 @@ class Main(object):
     DATABASE_VARIABLE = 'DATABASE'
     USER_VARIABLE = 'USER'
     PASSWORD_VARIABLE = 'PASSWORD'
+
+    # LOGGING CONSTANTS
+    LOGGING_LEVELS = {'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG'}
+    LOG_FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
 
     def __init__(self, variables):
         self.variables = variables
@@ -26,11 +35,20 @@ class Main(object):
         if self.HEALTH_CHECK_VARIABLE in self.variables:
             self._check_bool_value(self.HEALTH_CHECK_VARIABLE)
 
+        if self.LOGGING_LEVEL_VARIABLE in self.variables:
+            self._check_in_expected_values(self.LOGGING_LEVEL_VARIABLE, self.LOGGING_LEVELS)
+
     def _check_bool_value(self, variable_name):
         value = self.variables[variable_name]
 
         if value != 'true' and value != 'false':
-            raise ValueError(value)
+            raise ValueError(f'"{value}" is not a valid boolean value')
+
+    def _check_in_expected_values(self, variable_name, expected_values):
+        value = self.variables[variable_name]
+
+        if value not in expected_values:
+            raise ValueError(f'"{value}" is not in the expected values "{expected_values}"')
 
     def validate_sensors_variables(self):
         if self.FAKE_SENSOR_VARIABLE in self.variables:
@@ -65,4 +83,7 @@ class Main(object):
         value = self.variables[variable_name]
 
         if not value:
-            raise ValueError(value)
+            raise ValueError(f'"{value}" is not a valid boolean value')
+
+    def configure_logging(self):
+        logging.basicConfig(level=self.variables[self.LOGGING_LEVEL_VARIABLE], format=Main.LOG_FORMAT)
