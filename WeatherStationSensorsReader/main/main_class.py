@@ -36,13 +36,13 @@ class Main(object):
 
     def validate_generic_variables(self):
         if self.HEALTH_CHECK_VARIABLE in self.variables:
-            self._check_bool_value(self.HEALTH_CHECK_VARIABLE)
+            self._check_bool_value(variable_name=self.HEALTH_CHECK_VARIABLE)
 
         if self.LOGGING_LEVEL_VARIABLE in self.variables:
-            self._check_in_expected_values(self.LOGGING_LEVEL_VARIABLE, self.LOGGING_LEVELS)
+            self._check_in_expected_values(variable_name=self.LOGGING_LEVEL_VARIABLE, expected_values=self.LOGGING_LEVELS)
 
         if self.MINUTES_BETWEEN_READS_VARIABLE in self.variables:
-            self._check_integer_value(self.MINUTES_BETWEEN_READS_VARIABLE)
+            self._check_integer_value(variable_name=self.MINUTES_BETWEEN_READS_VARIABLE)
 
     def _check_bool_value(self, variable_name):
         value = self.variables[variable_name]
@@ -68,32 +68,32 @@ class Main(object):
 
     def validate_sensors_variables(self):
         if self.FAKE_SENSOR_VARIABLE in self.variables:
-            self._check_bool_value(self.FAKE_SENSOR_VARIABLE)
+            self._check_bool_value(variable_name=self.FAKE_SENSOR_VARIABLE)
 
         if self.BME_280_SENSOR_VARIABLE in self.variables:
-            self._check_bool_value(self.BME_280_SENSOR_VARIABLE)
+            self._check_bool_value(variable_name=self.BME_280_SENSOR_VARIABLE)
 
         if self.GROUND_SENSOR_VARIABLE in self.variables:
-            self._check_bool_value(self.GROUND_SENSOR_VARIABLE)
+            self._check_bool_value(variable_name=self.GROUND_SENSOR_VARIABLE)
 
         if self.RAINFALL_SENSOR_VARIABLE in self.variables:
-            self._check_bool_value(self.RAINFALL_SENSOR_VARIABLE)
+            self._check_bool_value(variable_name=self.RAINFALL_SENSOR_VARIABLE)
 
         if self.WIND_SENSOR_VARIABLE in self.variables:
-            self._check_bool_value(self.WIND_SENSOR_VARIABLE)
+            self._check_bool_value(variable_name=self.WIND_SENSOR_VARIABLE)
 
     def validate_database_variables(self):
         if self.SERVER_VARIABLE in self.variables:
-            self._check_not_null_value(self.SERVER_VARIABLE)
+            self._check_not_null_value(variable_name=self.SERVER_VARIABLE)
 
         if self.DATABASE_VARIABLE in self.variables:
-            self._check_not_null_value(self.DATABASE_VARIABLE)
+            self._check_not_null_value(variable_name=self.DATABASE_VARIABLE)
 
         if self.USER_VARIABLE in self.variables:
-            self._check_not_null_value(self.USER_VARIABLE)
+            self._check_not_null_value(variable_name=self.USER_VARIABLE)
 
         if self.PASSWORD_VARIABLE in self.variables:
-            self._check_not_null_value(self.PASSWORD_VARIABLE)
+            self._check_not_null_value(variable_name=self.PASSWORD_VARIABLE)
 
     def _check_not_null_value(self, variable_name):
         value = self.variables[variable_name]
@@ -112,10 +112,17 @@ class Main(object):
                                               database=self.variables[self.DATABASE_VARIABLE],
                                               user=self.variables[self.USER_VARIABLE],
                                               password=self.variables[self.PASSWORD_VARIABLE]))
+            # When the fake controller is enabled, it will be the only one working
+            return controllers
+        # TODO Add more controllers!
 
     def get_minutes_between_reads(self):
         return self.variables[self.MINUTES_BETWEEN_READS_VARIABLE]
 
-    def execute_controllers(self, controllers):
+    @staticmethod
+    def execute_controllers(controllers):
         for controller in controllers:
-            controller.execute()
+            try:
+                controller.execute()
+            except Exception as e:
+                logging.error(f'Error while executing controller "{controller.__class__.__name__}". ', e)

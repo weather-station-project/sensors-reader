@@ -21,11 +21,11 @@ if __name__ == '__main__':
         controllers_enabled = main.get_controllers_enabled()
 
         if not controllers_enabled:
-            raise Exception('There is no controller configured on the init. Please. read the documentation available on Github.')
+            raise Exception('There is no controller configured on the init. Please, read the documentation available on Github.')
 
         minutes_between_reads = main.get_minutes_between_reads() * 60
-        while not sleep(minutes_between_reads):
-            main.execute_controllers(controllers_enabled)
+        while not sleep(seconds=minutes_between_reads):
+            main.execute_controllers(controllers=controllers_enabled)
     except Exception as e:
         logging.critical(e)
         sys.exit(1)
