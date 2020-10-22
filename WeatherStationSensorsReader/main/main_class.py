@@ -23,8 +23,15 @@ class Main(object):
     PASSWORD_VARIABLE = 'PASSWORD'
 
     # LOGGING CONSTANTS
-    LOGGING_LEVELS = {'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG'}
+    LOGGING_LEVELS = {'CRITICAL': logging.CRITICAL,
+                      'ERROR': logging.ERROR,
+                      'WARNING': logging.WARNING,
+                      'INFO': logging.INFO,
+                      'DEBUG': logging.DEBUG}
     LOG_FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
+
+    # DEFAULT VALUES
+    DEFAULT_MINUTES_BETWEEN_READS = 5
 
     def __init__(self, variables):
         self.variables = variables
@@ -39,7 +46,7 @@ class Main(object):
             self._check_bool_value(variable_name=self.HEALTH_CHECK_VARIABLE)
 
         if self.LOGGING_LEVEL_VARIABLE in self.variables:
-            self._check_in_expected_values(variable_name=self.LOGGING_LEVEL_VARIABLE, expected_values=self.LOGGING_LEVELS)
+            self._check_in_expected_values(variable_name=self.LOGGING_LEVEL_VARIABLE, expected_values=self.LOGGING_LEVELS.keys())
 
         if self.MINUTES_BETWEEN_READS_VARIABLE in self.variables:
             self._check_integer_value(variable_name=self.MINUTES_BETWEEN_READS_VARIABLE)
@@ -102,7 +109,14 @@ class Main(object):
             raise ValueError(f'"{value}" is not a valid boolean value.')
 
     def configure_logging(self):
-        logging.basicConfig(level=self.variables[self.LOGGING_LEVEL_VARIABLE], format=Main.LOG_FORMAT)
+        if self.LOGGING_LEVEL_VARIABLE not in self.variables:
+            return
+
+        for handler in logging.root.handlers[:]:
+            logging.root.removeHandler(handler)
+
+        level_value = self.variables[self.LOGGING_LEVEL_VARIABLE]
+        logging.basicConfig(level=self.LOGGING_LEVELS[level_value], format=self.LOG_FORMAT)
 
     def get_controllers_enabled(self):
         controllers = []
@@ -117,7 +131,10 @@ class Main(object):
         # TODO Add more controllers!
 
     def get_minutes_between_reads(self):
-        return self.variables[self.MINUTES_BETWEEN_READS_VARIABLE]
+        if self.MINUTES_BETWEEN_READS_VARIABLE in self.variables:
+            return self.variables[self.MINUTES_BETWEEN_READS_VARIABLE]
+
+        return self.DEFAULT_MINUTES_BETWEEN_READS
 
     @staticmethod
     def execute_controllers(controllers):

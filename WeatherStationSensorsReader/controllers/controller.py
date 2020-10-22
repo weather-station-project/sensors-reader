@@ -8,8 +8,8 @@ class Controller(object):
         self.dao = dao
         self.sensor = sensor
 
-        logging.debug(msg=f'Started controller "{self.__class__.__name__}" with'
-                      f'Sensor: "{self.sensor.__class__.__name__}" and DAO: {self.dao.__class__.__name__}.')
+        logging.debug(msg=f'Started controller "{self.__class__.__name__}" with '
+                      f'Sensor "{self.sensor.__class__.__name__}" and DAO "{self.dao.__class__.__name__}".')
 
     def execute(self):
         read_result = self.sensor.read()
