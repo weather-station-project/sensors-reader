@@ -4,12 +4,12 @@ import logging
 class Controller(object):
     """Base class for controllers"""
 
-    def __init__(self, dao, sensor):
-        self.dao = dao
+    def __init__(self, sensor, dao):
         self.sensor = sensor
+        self.dao = dao
 
         logging.debug(msg=f'Started controller "{self.__class__.__name__}" with '
-                      f'Sensor "{self.sensor.__class__.__name__}" and DAO "{self.dao.__class__.__name__}".')
+                          f'Sensor "{self.sensor.__class__.__name__}" and DAO "{self.dao.__class__.__name__}".')
 
     def execute(self):
         read_result = self.sensor.read()

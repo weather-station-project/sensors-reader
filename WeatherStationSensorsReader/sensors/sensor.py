@@ -15,7 +15,8 @@ class Sensor(object):
 
         for n in range(1, self.NUMBER_OF_READS):
             try:
-                value = self._read_value()
+                # TODO Validate with a matrix of values because some sensors will return several of them
+                value = self._read_values()
                 logging.debug(msg=f'Obtained "{value}" from the sensor "{sensor_name}". Attempt {n}.')
 
                 reads.append(value)
@@ -29,5 +30,5 @@ class Sensor(object):
 
         return avg
 
-    def _read_value(self):
+    def _read_values(self):
         raise NotImplementedError('A sub-class must be implemented.')
