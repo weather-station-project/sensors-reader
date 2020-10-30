@@ -12,8 +12,8 @@ class TestController(unittest.TestCase):
         self.mock_sensor = Mock(spec=Sensor)
         self.mock_dao = Mock(spec=Dao)
 
-    @mock.patch('controllers.controller.logging')
-    def test_constructor_calls_logging_debug(self, mock_logging):
+    @mock.patch('controllers.controller.logging', autospec=True)
+    def test_when_constructor_called_logging_debug_should_be_called(self, mock_logging):
         controller = Controller(sensor=self.mock_sensor, dao=self.mock_dao)
 
         expected_message = f'Started controller "{controller.__class__.__name__}" ' \
@@ -21,8 +21,8 @@ class TestController(unittest.TestCase):
                            f'and DAO "{self.mock_dao.__class__.__name__}".'
         mock_logging.debug.assert_called_once_with(msg=expected_message)
 
-    @mock.patch('controllers.controller.logging')
-    def test_execute_expected_calls_are_made(self, mock_logging):
+    @mock.patch('controllers.controller.logging', autospec=True)
+    def test_when_normal_execution_expected_methods_should_be_called(self, mock_logging):
         # arrange
         test_read_result = 'test_read_result'
         self.mock_sensor.read = MagicMock(return_value=test_read_result)
