@@ -59,14 +59,9 @@ class TestDao(unittest.TestCase):
                                                       password=self.test_password)
         mock_logging.debug.assert_not_called()
 
-    @mock.patch('dao.dao.psycopg2.connect')
+    @mock.patch('psycopg2.connect')
     @mock.patch('dao.dao.logging', autospec=True)
     def test_when_no_error_values_should_be_inserted(self, mock_logging, mock_connect):
-        # arrange
-        mock_con_cm = mock_connect.return_value  # result of psycopg2.connect(**connection_stuff)
-        mock_con = mock_con_cm.__enter__.return_value  # object assigned to con in with ... as con
-        mock_cursor = mock_con.cursor.__enter__.return_value  # result of con.cursor(cursor_factory=DictCursor)
-
         # act
         self.dao.insert(values=self.test_values)
 
@@ -78,9 +73,9 @@ class TestDao(unittest.TestCase):
                                              database=self.test_database,
                                              user=self.test_user,
                                              password=self.test_password)
-        mock_con.cursor.assert_called_once()
-        mock_cursor.execute.assert_called_once_with(query=self.test_query, vars=self.test_parameter_values)
-        mock_logging.debug.assert_not_called()
+        mock_connect().__enter__().cursor.assert_called_once()
+        mock_connect().__enter__().cursor().__enter__().execute.assert_called_once_with(query=self.test_query, vars=self.test_parameter_values)
+        mock_logging.debug.assert_called_once_with(msg=f'Executed query "{self.test_query}" with values {self.test_parameter_values}.')
 
 
 if __name__ == '__main__':
