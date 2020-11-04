@@ -49,7 +49,7 @@ class Main(object):
             self._check_in_expected_values(variable_name=self.LOGGING_LEVEL_VARIABLE, expected_values=self.LOGGING_LEVELS.keys())
 
         if self.MINUTES_BETWEEN_READS_VARIABLE in self.variables:
-            self._check_integer_value(variable_name=self.MINUTES_BETWEEN_READS_VARIABLE)
+            self._check_positive_integer_value(variable_name=self.MINUTES_BETWEEN_READS_VARIABLE)
 
     def _check_bool_value(self, variable_name):
         value = self.variables[variable_name]
@@ -63,7 +63,7 @@ class Main(object):
         if value not in expected_values:
             raise ValueError(f'"{value}" is not in the expected values "{expected_values}".')
 
-    def _check_integer_value(self, variable_name):
+    def _check_positive_integer_value(self, variable_name):
         value = self.variables[variable_name]
 
         try:
