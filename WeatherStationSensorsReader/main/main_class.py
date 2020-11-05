@@ -113,7 +113,7 @@ class Main(object):
             return
 
         for handler in logging.root.handlers[:]:
-            logging.root.removeHandler(handler)
+            logging.root.removeHandler(hdlr=handler)
 
         level_value = self.variables[self.LOGGING_LEVEL_VARIABLE]
         logging.basicConfig(level=self.LOGGING_LEVELS[level_value], format=self.LOG_FORMAT)
@@ -130,9 +130,11 @@ class Main(object):
             return controllers
         # TODO Add more controllers!
 
+        return controllers
+
     def get_minutes_between_reads(self):
         if self.MINUTES_BETWEEN_READS_VARIABLE in self.variables:
-            return self.variables[self.MINUTES_BETWEEN_READS_VARIABLE]
+            return int(self.variables[self.MINUTES_BETWEEN_READS_VARIABLE])
 
         return self.DEFAULT_MINUTES_BETWEEN_READS
 
