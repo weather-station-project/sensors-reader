@@ -12,7 +12,7 @@ class Controller(object):
                           f'Sensor "{self.sensor.__class__.__name__}" and DAO "{self.dao.__class__.__name__}".')
 
     def execute(self):
-        read_result = self.sensor.read()
+        read_result = self.sensor.get_read_averages()
         logging.info(msg=f'Obtained "{read_result}" from the sensor "{self.sensor.__class__.__name__}".')
 
         self.dao.insert(values=read_result)

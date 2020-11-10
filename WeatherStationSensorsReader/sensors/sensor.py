@@ -6,29 +6,28 @@ from time import sleep
 class Sensor(object):
     """Base class for sensors"""
 
-    NUMBER_OF_READS = 10
-    SECONDS_BETWEEN_READS = 2
+    NUMBER_OF_READS = 5
+    SECONDS_BETWEEN_READS = 5
 
-    def read(self):
+    def get_read_averages(self):
         reads = []
         sensor_name = self.__class__.__name__
 
         for n in range(1, self.NUMBER_OF_READS):
             try:
-                # TODO Validate with a matrix of values because some sensors will return several of them
-                value = self._read_values()
-                logging.debug(msg=f'Obtained "{value}" from the sensor "{sensor_name}". Attempt {n}.')
+                values = self._read_values()
+                logging.debug(msg=f'Obtained "{values}" from the sensor "{sensor_name}". Attempt {n}.')
 
-                reads.append(value)
-
-                sleep(self.SECONDS_BETWEEN_READS)
+                reads.append(values)
             except Exception as e:
                 logging.error(f'Error while reading from sensor "{sensor_name}". Attempt {n}. ', e)
 
-        avg = mean(data=reads)
-        logging.debug(msg=f'Average "{avg}" from the sensor "{sensor_name}".')
+            sleep(self.SECONDS_BETWEEN_READS)
 
-        return avg
+        averages = [mean(data=row) for row in reads]
+        logging.debug(msg=f'Average "{averages}" from the sensor "{sensor_name}".')
+
+        return averages
 
     def _read_values(self):
         raise NotImplementedError('A sub-class must be implemented.')

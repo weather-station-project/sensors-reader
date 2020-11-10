@@ -8,7 +8,7 @@ from controllers.fake_controller import FakeController
 from main.main_class import Main
 
 
-class MyTestCase(unittest.TestCase):
+class TestMainClass(unittest.TestCase):
     def test_when_constructor_called_variables_should_be_assigned(self):
         test_variables = {'a': '1', 'b': '2'}
 
