@@ -13,8 +13,9 @@ class TestSensor(unittest.TestCase):
         test_values = [[10, 70, 10],
                        [15, 2, 3, 0],
                        [80, 35, 5],
-                       [10, 1, 1]]
-        test_expected_averages = [30, 5, 40, 4]
+                       [10, 1, 1],
+                       [1, 1, 1]]
+        test_expected_averages = [30, 5, 40, 4, 1]
         sensor = Sensor()
         sensor._read_values = MagicMock(side_effect=test_values)
 
@@ -25,8 +26,8 @@ class TestSensor(unittest.TestCase):
         for i in range(len(test_expected_averages)):
             self.assertEqual(test_expected_averages[i], result[i])
 
-        for n in range(1, sensor.NUMBER_OF_READS):
-            mock_logging.debug.assert_any_call(msg=f'Obtained "{test_values[n - 1]}" from the sensor "{sensor.__class__.__name__}". Attempt {n}.')
+        for n in range(0, sensor.NUMBER_OF_READS):
+            mock_logging.debug.assert_any_call(msg=f'Obtained "{test_values[n]}" from the sensor "{sensor.__class__.__name__}". Attempt {n + 1}.')
             mock_sleep.assert_any_call(sensor.SECONDS_BETWEEN_READS)
 
         mock_logging.error.assert_not_called()
@@ -45,8 +46,8 @@ class TestSensor(unittest.TestCase):
         # assert
         self.assertEqual(len(result), 0)
 
-        for n in range(1, sensor.NUMBER_OF_READS):
-            mock_logging.error.assert_any_call(f'Error while reading from sensor "{sensor.__class__.__name__}". Attempt {n}. ',
+        for n in range(0, sensor.NUMBER_OF_READS):
+            mock_logging.error.assert_any_call(f'Error while reading from sensor "{sensor.__class__.__name__}". Attempt {n + 1}. ',
                                                sensor._read_values.side_effect)
             mock_sleep.assert_any_call(sensor.SECONDS_BETWEEN_READS)
 
