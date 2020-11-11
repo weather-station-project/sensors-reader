@@ -11,7 +11,7 @@ def configure_default_logging():
 
 
 def get_true():
-    # Stupid method for unit tests purposes
+    # Stupid method for unit tests purposes to avoid infinite loop
     return True
 
 

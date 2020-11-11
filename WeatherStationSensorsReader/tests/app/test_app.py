@@ -1,5 +1,4 @@
 import logging
-import os
 import unittest
 from unittest import mock
 from unittest.mock import MagicMock
@@ -30,7 +29,11 @@ class TestApp(unittest.TestCase):
     def test_when_calling_main_expected_methods_should_be_called(self, mock_logging, mock_main, mock_sleep):
         # arrange
         test_controllers = ['test']
+        test_time = 1
         app.configure_default_logging = MagicMock()
+        mock_main.return_value.get_controllers_enabled.return_value = test_controllers
+        mock_main.return_value.get_minutes_between_reads.return_value = test_time
+        mock_main.return_value.execute_controllers.return_value = None
         app.get_true = MagicMock(side_effect=[True, False])
 
         # act
@@ -38,12 +41,39 @@ class TestApp(unittest.TestCase):
 
         # assert
         app.configure_default_logging.assert_called_once()
-        # mock_main.validate_environment_variables.assert_called_once()
-        # mock_main.configure_logging.assert_called_once()
-        # mock_main.get_controllers_enabled.assert_called_once()
+        mock_main.return_value.validate_environment_variables.assert_called_once()
+        mock_main.return_value.configure_logging.assert_called_once()
+        mock_main.return_value.get_controllers_enabled.assert_called_once()
+        mock_main.return_value.get_minutes_between_reads.assert_called_once()
         app.get_true.assert_any_call()
-        mock_logging.debug.assert_called_once_with(msg=f'Sleeping "0" seconds.')
+        mock_main.return_value.execute_controllers.assert_called_once_with(controllers=test_controllers)
+        mock_logging.debug.assert_called_once_with(msg=f'Sleeping "{test_time * 60}" seconds.')
+        mock_sleep.assert_any_call(test_time * 60)
+        mock_logging.critical.assert_not_called()
 
+    @mock.patch('app.app.sleep', autospec=True)
+    @mock.patch('app.app.Main', autospec=True)
+    @mock.patch('app.app.logging', autospec=True)
+    def test_when_calling_main_given_no_controllers_enabled_error_should_be_logged(self, mock_logging, mock_main, mock_sleep):
+        # arrange
+        app.configure_default_logging = MagicMock()
+        mock_main.return_value.get_controllers_enabled.return_value = []
+        app.get_true = MagicMock(side_effect=[True, False])
+
+        # act
+        self.assertEqual(main(), 1)
+
+        # assert
+        app.configure_default_logging.assert_called_once()
+        mock_main.return_value.validate_environment_variables.assert_called_once()
+        mock_main.return_value.configure_logging.assert_called_once()
+        mock_main.return_value.get_controllers_enabled.assert_called_once()
+        mock_main.return_value.get_minutes_between_reads.assert_not_called()
+        app.get_true.assert_not_called()
+        mock_main.return_value.execute_controllers.assert_not_called()
+        mock_logging.debug.assert_not_called()
+        mock_sleep.assert_not_called()
+        mock_logging.critical.assert_called_once()
 
 
 if __name__ == '__main__':
