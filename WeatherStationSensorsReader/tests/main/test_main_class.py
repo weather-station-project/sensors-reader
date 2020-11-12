@@ -342,6 +342,18 @@ class TestMainClass(unittest.TestCase):
         mock_logging.error.assert_called_once_with(f'Error while executing controller "{mock_controller.__class__.__name__}". ',
                                                    mock_controller.execute.side_effect)
 
+    def test_when_executing_health_check_given_controllers_it_should_be_executed(self):
+        # arrange
+        main_class = Main(variables={})
+        mock_controller = Mock(spec=Controller)
+        test_controllers = [mock_controller]
+
+        # act
+        self.assertIsNone(main_class.execute_controllers_health_check(test_controllers))
+
+        # assert
+        mock_controller.execute.health_check()
+
 
 if __name__ == '__main__':
     unittest.main()

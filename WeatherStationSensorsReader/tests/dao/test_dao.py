@@ -14,11 +14,13 @@ class TestDao(unittest.TestCase):
     test_query = 'test_query'
     test_values = 'test_values'
     test_parameter_values = 'test_parameter_values'
+    test_health_check_query = 'test_health_check_query'
 
     def setUp(self):
         self.dao = Dao(server=self.test_server, database=self.test_database, user=self.test_user, password=self.test_password)
         self.dao._get_query = MagicMock(return_value=self.test_query)
         self.dao._get_parameters = MagicMock(return_value=self.test_parameter_values)
+        self.dao._get_health_check_query = MagicMock(return_value=self.test_health_check_query)
 
     def test_when_constructor_called_properties_should_be_assigned_correctly(self):
         self.assertEqual(self.dao.server, self.test_server)
@@ -63,7 +65,7 @@ class TestDao(unittest.TestCase):
     @mock.patch('dao.dao.logging', autospec=True)
     def test_when_no_error_values_should_be_inserted(self, mock_logging, mock_connect):
         # act
-        self.dao.insert(values=self.test_values)
+        self.assertIsNone(self.dao.insert(values=self.test_values))
 
         # assert
         mock_logging.warning.assert_not_called()
@@ -76,6 +78,20 @@ class TestDao(unittest.TestCase):
         mock_connect().__enter__().cursor.assert_called_once()
         mock_connect().__enter__().cursor().__enter__().execute.assert_called_once_with(query=self.test_query, vars=self.test_parameter_values)
         mock_logging.debug.assert_called_once_with(msg=f'Executed query "{self.test_query}" with values {self.test_parameter_values}.')
+
+    @mock.patch('psycopg2.connect')
+    def test_when_checking_health_query_should_be_executed(self, mock_connect):
+        # act
+        self.assertIsNone(self.dao.health_check())
+
+        # assert
+        self.dao._get_health_check_query.assert_called_once()
+        mock_connect.assert_called_once_with(host=self.test_server,
+                                             database=self.test_database,
+                                             user=self.test_user,
+                                             password=self.test_password)
+        mock_connect().__enter__().cursor.assert_called_once()
+        mock_connect().__enter__().cursor().__enter__().execute.assert_called_once_with(query=self.test_health_check_query)
 
 
 if __name__ == '__main__':

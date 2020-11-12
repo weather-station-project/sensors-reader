@@ -29,13 +29,22 @@ class TestController(unittest.TestCase):
 
         # act
         controller = Controller(sensor=self.mock_sensor, dao=self.mock_dao)
-        controller.execute()
+        self.assertIsNone(controller.execute())
 
         # assert
         self.mock_sensor.get_read_averages.assert_called_once()
         mock_logging.info.assert_any_call(msg=f'Obtained "{test_read_result}" from the sensor "{self.mock_sensor.__class__.__name__}".')
         self.mock_dao.insert.assert_called_once_with(values=test_read_result)
         mock_logging.info.assert_called_with(msg=f'{test_read_result} inserted correctly.')
+
+    def test_when_checking_health_expected_methods_should_be_called(self, ):
+        # act
+        controller = Controller(sensor=self.mock_sensor, dao=self.mock_dao)
+        self.assertIsNone(controller.health_check())
+
+        # assert
+        self.mock_sensor.read_values.assert_called_once()
+        self.mock_dao.health_check.assert_called_once()
 
 
 if __name__ == '__main__':

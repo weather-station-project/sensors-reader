@@ -5,13 +5,13 @@ import sys
 from main.main_class import Main
 
 
-def configure_critical_level_logging():
+def configure_logging_critical_level():
     logging.basicConfig(level=logging.CRITICAL, format=Main.LOG_FORMAT)
 
 
 def main():
     try:
-        configure_critical_level_logging()
+        configure_logging_critical_level()
 
         main_class = Main(variables=os.environ)
         main_class.validate_environment_variables()
