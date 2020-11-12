@@ -42,3 +42,18 @@ class Dao(object):
 
     def _get_parameters(self, values):
         raise NotImplementedError('A sub-class must be implemented.')
+
+    def health_check(self):
+        if not self.server:
+            return
+
+        sql_query = self._get_health_check_query()
+        with psycopg2.connect(host=self.server,
+                              database=self.database,
+                              user=self.user,
+                              password=self.password) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query=sql_query)
+
+    def _get_health_check_query(self):
+        raise NotImplementedError('A sub-class must be implemented.')

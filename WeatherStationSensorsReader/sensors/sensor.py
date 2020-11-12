@@ -15,7 +15,7 @@ class Sensor(object):
 
         for n in range(0, self.NUMBER_OF_READS):
             try:
-                values = self._read_values()
+                values = self.read_values()
                 logging.debug(msg=f'Obtained "{values}" from the sensor "{sensor_name}". Attempt {n + 1}.')
 
                 reads.append(values)
@@ -29,5 +29,5 @@ class Sensor(object):
 
         return averages
 
-    def _read_values(self):
+    def read_values(self):
         raise NotImplementedError('A sub-class must be implemented.')

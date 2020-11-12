@@ -145,3 +145,8 @@ class Main(object):
                 controller.execute()
             except Exception as e:
                 logging.error(f'Error while executing controller "{controller.__class__.__name__}". ', e)
+
+    @staticmethod
+    def execute_controllers_health_check(controllers):
+        for controller in controllers:
+            controller.health_check()
