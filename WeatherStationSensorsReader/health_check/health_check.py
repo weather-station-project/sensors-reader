@@ -23,7 +23,7 @@ def main():
 
         main_class.execute_controllers_health_check(controllers=controllers_enabled)
     except Exception as e:
-        logging.critical('[HEALTH CHECK ERROR]', e)
+        logging.critical(e, exc_info=True)
         return 1
 
     return 0

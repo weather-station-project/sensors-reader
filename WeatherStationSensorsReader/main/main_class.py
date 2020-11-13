@@ -143,8 +143,8 @@ class Main(object):
         for controller in controllers:
             try:
                 controller.execute()
-            except Exception as e:
-                logging.error(f'Error while executing controller "{controller.__class__.__name__}". ', e)
+            except Exception:
+                logging.error(f'Error while executing controller "{controller.__class__.__name__}". ', exc_info=True)
 
     @staticmethod
     def execute_controllers_health_check(controllers):

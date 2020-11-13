@@ -34,8 +34,8 @@ class Dao(object):
         except ValueError:
             raise
         except Exception as e:
-            raise Exception(f'Error in DAO "{self.__class__.__name__} while executing the query "{sql_query}" with values {query_parameter_values}. ',
-                            e)
+            raise Exception(
+                f'Error in DAO "{self.__class__.__name__} while executing the query "{sql_query}" with values {query_parameter_values}. ') from e
 
     def _get_query(self):
         raise NotImplementedError('A sub-class must be implemented.')

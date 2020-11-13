@@ -19,8 +19,8 @@ class Sensor(object):
                 logging.debug(msg=f'Obtained "{values}" from the sensor "{sensor_name}". Attempt {n + 1}.')
 
                 reads.append(values)
-            except Exception as e:
-                logging.error(f'Error while reading from sensor "{sensor_name}". Attempt {n + 1}. ', e)
+            except Exception:
+                logging.error(f'Error while reading from sensor "{sensor_name}". Attempt {n + 1}. ', exc_info=True)
 
             sleep(self.SECONDS_BETWEEN_READS)
 

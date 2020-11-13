@@ -35,7 +35,7 @@ def main():
             logging.debug(msg=f'Sleeping "{seconds_between_reads}" seconds.')
             sleep(seconds_between_reads)
     except Exception as e:
-        logging.critical(e)
+        logging.critical(e, exc_info=True)
         return 1
 
     return 0
