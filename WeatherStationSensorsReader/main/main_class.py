@@ -122,10 +122,10 @@ class Main(object):
         controllers = []
 
         if self.FAKE_SENSOR_VARIABLE in self.variables and self.variables[self.FAKE_SENSOR_VARIABLE] == 'true':
-            controllers.append(FakeController(server=self.variables[self.SERVER_VARIABLE],
-                                              database=self.variables[self.DATABASE_VARIABLE],
-                                              user=self.variables[self.USER_VARIABLE],
-                                              password=self.variables[self.PASSWORD_VARIABLE]))
+            controllers.append(FakeController(server=self.variables[self.SERVER_VARIABLE] if self.SERVER_VARIABLE in self.variables else None,
+                                              database=self.variables[self.DATABASE_VARIABLE] if self.DATABASE_VARIABLE in self.variables else None,
+                                              user=self.variables[self.USER_VARIABLE] if self.USER_VARIABLE in self.variables else None,
+                                              password=self.variables[self.PASSWORD_VARIABLE] if self.PASSWORD_VARIABLE in self.variables else None))
             # When the fake controller is enabled, it will be the only one working
             return controllers
         # TODO Add more controllers!

@@ -283,6 +283,23 @@ class TestMainClass(unittest.TestCase):
                                                      user=test_user,
                                                      password=test_password)
 
+    @mock.patch('main.main_class.FakeController', autospec=True)
+    def test_when_getting_controllers_given_fake_sensor_without_database_dao_should_be_initialize_with_empty_values(self, mock_fake_controller):
+        # arrange
+        main_class = Main(variables={Main.FAKE_SENSOR_VARIABLE: 'true'})
+
+        # act
+        result = main_class.get_controllers_enabled()
+
+        # assert
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 1)
+        self.assertIsInstance(result[0], FakeController)
+        mock_fake_controller.assert_called_once_with(server=None,
+                                                     database=None,
+                                                     user=None,
+                                                     password=None)
+
     def test_when_getting_minutes_given_no_variable_default_should_be_returned(self):
         # arrange
         main_class = Main(variables={})
