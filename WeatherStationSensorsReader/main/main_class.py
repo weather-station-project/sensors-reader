@@ -1,5 +1,6 @@
 import logging
 
+from controllers.ambient_temperature_controller import AmbientTemperatureController
 from controllers.fake_controller import FakeController
 
 
@@ -119,18 +120,34 @@ class Main(object):
         logging.basicConfig(level=self.LOGGING_LEVELS[level_value], format=self.LOG_FORMAT)
 
     def get_controllers_enabled(self):
+        server = self.variables[self.SERVER_VARIABLE] if self.SERVER_VARIABLE in self.variables else None
+        database = self.variables[self.DATABASE_VARIABLE] if self.DATABASE_VARIABLE in self.variables else None
+        user = self.variables[self.USER_VARIABLE] if self.USER_VARIABLE in self.variables else None
+        password = self.variables[self.PASSWORD_VARIABLE] if self.PASSWORD_VARIABLE in self.variables else None
         controllers = []
 
-        if self.FAKE_SENSOR_VARIABLE in self.variables and self.variables[self.FAKE_SENSOR_VARIABLE] == 'true':
-            controllers.append(FakeController(server=self.variables[self.SERVER_VARIABLE] if self.SERVER_VARIABLE in self.variables else None,
-                                              database=self.variables[self.DATABASE_VARIABLE] if self.DATABASE_VARIABLE in self.variables else None,
-                                              user=self.variables[self.USER_VARIABLE] if self.USER_VARIABLE in self.variables else None,
-                                              password=self.variables[self.PASSWORD_VARIABLE] if self.PASSWORD_VARIABLE in self.variables else None))
+        if self.is_controller_enabled(self.FAKE_SENSOR_VARIABLE):
+            controllers.append(FakeController(server=server, database=database, user=user, password=password))
             # When the fake controller is enabled, it will be the only one working
             return controllers
-        # TODO Add more controllers!
+
+        if self.is_controller_enabled(self.BME_280_SENSOR_VARIABLE):
+            controllers.append(AmbientTemperatureController(server=server, database=database, user=user, password=password))
+            # TODO AÑADIR EL OTRO CONTROLLER QUE USA ESTE SENSOR
+
+        # if self.is_controller_enabled(self.GROUND_SENSOR_VARIABLE):
+        #     controllers.append(AmbientTemperatureController(server=server, database=database, user=user, password=password))
+        #
+        # if self.is_controller_enabled(self.RAINFALL_SENSOR_VARIABLE):
+        #     controllers.append(AmbientTemperatureController(server=server, database=database, user=user, password=password))
+        #
+        # if self.is_controller_enabled(self.WIND_SENSOR_VARIABLE):
+        #     controllers.append(AmbientTemperatureController(server=server, database=database, user=user, password=password))
 
         return controllers
+
+    def is_controller_enabled(self, variable_name):
+        return variable_name in self.variables and self.variables[variable_name] == 'true'
 
     def get_minutes_between_reads(self):
         if self.MINUTES_BETWEEN_READS_VARIABLE in self.variables:
@@ -143,8 +160,8 @@ class Main(object):
         for controller in controllers:
             try:
                 controller.execute()
-            except Exception:
-                logging.error(f'Error while executing controller "{controller.__class__.__name__}". ', exc_info=True)
+            except Exception as e:
+                logging.error(f'Error while executing controller "{controller.__class__.__name__}". ', exc_info=e)
 
     @staticmethod
     def execute_controllers_health_check(controllers):

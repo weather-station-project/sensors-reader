@@ -2,17 +2,17 @@ import unittest
 from datetime import datetime
 from unittest import mock
 
-from dao.fake_dao import FakeDao
+from dao.ambient_temperature_dao import AmbientTemperatureDao
 
 
-class TestFakeDao(unittest.TestCase):
+class TestAmbientTemperatureDao(unittest.TestCase):
     test_server = 'test_server'
     test_database = 'test_database'
     test_user = 'test_user'
     test_password = 'test_password'
 
     def setUp(self):
-        self.dao = FakeDao(server=self.test_server, database=self.test_database, user=self.test_user, password=self.test_password)
+        self.dao = AmbientTemperatureDao(server=self.test_server, database=self.test_database, user=self.test_user, password=self.test_password)
 
     def test_when_constructor_called_properties_should_be_passed_to_the_correctly(self):
         self.assertEqual(self.dao.server, self.test_server)
@@ -21,13 +21,13 @@ class TestFakeDao(unittest.TestCase):
         self.assertEqual(self.dao.password, self.test_password)
 
     def _test_when_getting_query_expected_value_should_be_returned(self):
-        self.assertEqual(self.dao._get_query(), self.dao.QUERY)
+        self.assertEqual(self.dao._get_query(), self.dao.INSERT_QUERY)
 
-    @mock.patch('dao.fake_dao.datetime')
+    @mock.patch('dao.ambient_temperature_dao.datetime')
     def test_when_getting_parameters_expected_values_should_be_returned(self, mock_datetime):
         # arrange
-        test_values = 'test_values'
-        expected_values = test_values
+        test_values = ['test_values', 'test2']
+        expected_value = test_values[0]
         expected_time = datetime.now()
         mock_datetime.now.return_value = expected_time
 
@@ -35,12 +35,12 @@ class TestFakeDao(unittest.TestCase):
         values, date = self.dao._get_parameters(values=test_values)
 
         # assert
-        self.assertEqual(values, expected_values)
+        self.assertEqual(values, expected_value)
         self.assertEqual(date, expected_time)
         mock_datetime.now.assert_called_once()
 
     def _test_when_getting_health_query_called_expected_value_should_be_returned(self):
-        self.assertEqual(self.dao._get_health_check_query(), self.dao.QUERY)
+        self.assertEqual(self.dao._get_health_check_query(), self.dao.DATA_QUERY)
 
 
 if __name__ == '__main__':
