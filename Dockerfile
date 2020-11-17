@@ -1,4 +1,4 @@
-FROM python:3.9.0-alpine
+FROM arm32v6/python:3.9.0-alpine
 LABEL maintainer="David Leon <david.leon.m@gmail.com>"
 
 # Copy the application folder by folder because .gitignore does not work for me to skip unit tests
@@ -11,7 +11,14 @@ COPY WeatherStationSensorsReader/sensors /WeatherStationSensorsReader/sensors
 COPY WeatherStationSensorsReader/requirements.txt /WeatherStationSensorsReader/requirements.txt
 
 # Install needed packages for Python libraries
-RUN apk add --no-cache postgresql-dev gcc python3-dev musl-dev
+RUN apk add --no-cache postgresql-dev \
+                       gcc \
+                       python3-dev \
+                       musl-dev \
+                       make \
+                       build-base \
+                       py3-smbus \
+                       i2c-tools
 
 # Install Python references
 RUN pip install --upgrade pip
