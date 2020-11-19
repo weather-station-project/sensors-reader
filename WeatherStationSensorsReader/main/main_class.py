@@ -1,5 +1,6 @@
 import logging
 
+from controllers.air_measurement_controller import AirMeasurementController
 from controllers.ambient_temperature_controller import AmbientTemperatureController
 from controllers.fake_controller import FakeController
 
@@ -133,16 +134,7 @@ class Main(object):
 
         if self.is_controller_enabled(self.BME_280_SENSOR_VARIABLE):
             controllers.append(AmbientTemperatureController(server=server, database=database, user=user, password=password))
-            # TODO AÑADIR EL OTRO CONTROLLER QUE USA ESTE SENSOR
-
-        # if self.is_controller_enabled(self.GROUND_SENSOR_VARIABLE):
-        #     controllers.append(AmbientTemperatureController(server=server, database=database, user=user, password=password))
-        #
-        # if self.is_controller_enabled(self.RAINFALL_SENSOR_VARIABLE):
-        #     controllers.append(AmbientTemperatureController(server=server, database=database, user=user, password=password))
-        #
-        # if self.is_controller_enabled(self.WIND_SENSOR_VARIABLE):
-        #     controllers.append(AmbientTemperatureController(server=server, database=database, user=user, password=password))
+            controllers.append(AirMeasurementController(server=server, database=database, user=user, password=password))
 
         return controllers
 
