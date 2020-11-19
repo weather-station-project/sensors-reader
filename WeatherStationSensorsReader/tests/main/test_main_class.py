@@ -1,8 +1,10 @@
 import logging
+import sys
 import unittest
 from unittest import mock
 from unittest.mock import MagicMock, Mock
 
+sys.modules['bme280pi'] = MagicMock()
 from controllers.air_measurement_controller import AirMeasurementController
 from controllers.ambient_temperature_controller import AmbientTemperatureController
 from controllers.controller import Controller
