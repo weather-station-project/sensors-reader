@@ -14,8 +14,8 @@ pipeline {
           sh 'rm -rf ENV'
           sh 'python3 -m venv ENV'
 
-          sh 'ENV/bin/pip install --upgrade pip'
-          sh "ENV/bin/pip install -r ${WORKSPACE}/WeatherStationSensorsReader/requirements.txt"
+          // sh 'ENV/bin/pip install --upgrade pip'
+          // sh "ENV/bin/pip install -r ${WORKSPACE}/WeatherStationSensorsReader/requirements.txt"
         }
       }
     }
