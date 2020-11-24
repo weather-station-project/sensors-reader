@@ -11,13 +11,13 @@ pipeline {
           setBuildStatus('pending', "${WeatherStationSensorsReaderVariables.RepositoryName}")
 
           // Clean & Prepare new python environment
-          sh """
+          sh '''
              rm -rf ENV
              python3 -m venv ENV
 
              ENV/bin/pip install --upgrade pip
-             ENV/bin/pip install -r ${WORKSPACE}/WeatherStationSensorsReader/requirements.txt
-             """
+             ENV/bin/pip install psycopg2
+             '''
         }
       }
     }
