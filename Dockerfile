@@ -8,7 +8,6 @@ COPY WeatherStationSensorsReader/dao /WeatherStationSensorsReader/dao
 COPY WeatherStationSensorsReader/health_check /WeatherStationSensorsReader/health_check
 COPY WeatherStationSensorsReader/main /WeatherStationSensorsReader/main
 COPY WeatherStationSensorsReader/sensors /WeatherStationSensorsReader/sensors
-COPY WeatherStationSensorsReader/requirements.txt /WeatherStationSensorsReader/requirements.txt
 
 # Install needed packages for Python libraries
 RUN apk add --no-cache postgresql-dev \
