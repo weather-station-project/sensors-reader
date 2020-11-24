@@ -14,14 +14,7 @@ pipeline {
           sh """
              rm -rf ENV
              python3 -m venv ENV
-             apk add --no-cache postgresql-dev \
-                                gcc \
-                                python3-dev \
-                                musl-dev \
-                                make \
-                                build-base \
-                                py3-smbus \
-                                i2c-tools
+
              ENV/bin/pip install --upgrade pip
              ENV/bin/pip install -r ${WORKSPACE}/WeatherStationSensorsReader/requirements.txt
              """
