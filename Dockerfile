@@ -9,6 +9,10 @@ COPY WeatherStationSensorsReader/health_check /WeatherStationSensorsReader/healt
 COPY WeatherStationSensorsReader/main /WeatherStationSensorsReader/main
 COPY WeatherStationSensorsReader/sensors /WeatherStationSensorsReader/sensors
 
+# Copy qemu-arm-static. Necessary to build and run ARM containers on x86 hosts
+# You may need to install qemu binaries and follow this tutorial previously -> https://matchboxdorry.gitbooks.io/matchboxblog/content/blogs/build_and_run_arm_images.html
+COPY /usr/bin/qemu-arm-static /usr/bin/qemu-arm-static
+
 # Install needed packages for Python libraries
 RUN apk add --no-cache postgresql-dev \
                        gcc \

@@ -33,7 +33,6 @@ pipeline {
     stage('Deploy on staging') {
       steps {
         script {
-          executePythonHelloWorldCITest()
           deployWeatherStationSensorsReaderOnStaging()
         }
       }
