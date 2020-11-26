@@ -21,10 +21,13 @@ RUN apk add --no-cache postgresql-dev \
                        make \
                        build-base \
                        py3-smbus \
-                       i2c-tools
+                       i2c-tools \
+                       linux-headers
 
 # Install Python references
 RUN pip install --upgrade pip
+RUN pip install --upgrade wheel
+RUN pip install --upgrade setuptools
 RUN pip install psycopg2 bme280pi
 
 # Change working directory to the app binaries
