@@ -11,11 +11,16 @@ pipeline {
           setBuildStatus('pending', "${WeatherStationSensorsReaderVariables.RepositoryName}")
 
           // Clean & Prepare new python environment
-          sh 'rm -rf ENV'
-          sh 'python3 -m venv ENV'
+          sh '''
+             rm -rf ENV
+             python3 -m venv ENV
 
-          sh 'ENV/bin/pip install --upgrade pip'
-          sh "ENV/bin/pip install -r ${WORKSPACE}/WeatherStationSensorsReader/requirements.txt"
+             ENV/bin/pip install --upgrade pip
+             ENV/bin/pip install --upgrade wheel
+             ENV/bin/pip install --upgrade setuptools
+
+             ENV/bin/pip install psycopg2
+             '''
         }
       }
     }
@@ -65,9 +70,9 @@ pipeline {
           } finally {
             if (dockerImage != null) {
               sh """
-                docker rmi -f ${WeatherStationSensorsReaderVariables.DockerHubRegistryName}:${version}
-                docker rmi -f ${WeatherStationSensorsReaderVariables.DockerHubRegistryName}:latest
-              """
+                 docker rmi -f ${WeatherStationSensorsReaderVariables.DockerHubRegistryName}:${version}
+                 docker rmi -f ${WeatherStationSensorsReaderVariables.DockerHubRegistryName}:latest
+                 """
             }
           }
         }

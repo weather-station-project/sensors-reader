@@ -16,6 +16,9 @@ pipeline {
              python3 -m venv ENV
 
              ENV/bin/pip install --upgrade pip
+             ENV/bin/pip install --upgrade wheel
+             ENV/bin/pip install --upgrade setuptools
+
              ENV/bin/pip install psycopg2
              '''
         }
