@@ -17,6 +17,7 @@ class TestDao(unittest.TestCase):
     test_health_check_query = 'test_health_check_query'
 
     def setUp(self):
+        Dao.__abstractmethods__ = set()
         self.dao = Dao(server=self.test_server, database=self.test_database, user=self.test_user, password=self.test_password)
         self.dao.get_query = MagicMock(return_value=self.test_query)
         self.dao.get_parameters = MagicMock(return_value=self.test_parameter_values)
