@@ -1,7 +1,8 @@
 import logging
+from abc import ABC
 
 
-class Controller(object):
+class Controller(ABC):
     """Base class for controllers"""
 
     def __init__(self, sensor, dao):

@@ -21,7 +21,7 @@ class TestAirMeasurementDao(unittest.TestCase):
         self.assertEqual(self.dao.password, self.test_password)
 
     def test_when_getting_query_expected_value_should_be_returned(self):
-        self.assertEqual(self.dao._get_query(), self.dao.INSERT_QUERY)
+        self.assertEqual(self.dao.get_query(), self.dao.INSERT_QUERY)
 
     @mock.patch('dao.air_measurement_dao.datetime')
     def test_when_getting_parameters_expected_values_should_be_returned(self, mock_datetime):
@@ -32,7 +32,7 @@ class TestAirMeasurementDao(unittest.TestCase):
         mock_datetime.now.return_value = expected_time
 
         # act
-        value1, value2, date = self.dao._get_parameters(values=test_values)
+        value1, value2, date = self.dao.get_parameters(values=test_values)
 
         # assert
         self.assertEqual(value1, expected_value[0])
@@ -42,7 +42,7 @@ class TestAirMeasurementDao(unittest.TestCase):
         mock_datetime.now.assert_called_once()
 
     def test_when_getting_health_query_called_expected_value_should_be_returned(self):
-        self.assertEqual(self.dao._get_health_check_query(), self.dao.DATA_QUERY)
+        self.assertEqual(self.dao.get_health_check_query(), self.dao.DATA_QUERY)
 
 
 if __name__ == '__main__':

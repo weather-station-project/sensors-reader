@@ -18,9 +18,9 @@ class TestDao(unittest.TestCase):
 
     def setUp(self):
         self.dao = Dao(server=self.test_server, database=self.test_database, user=self.test_user, password=self.test_password)
-        self.dao._get_query = MagicMock(return_value=self.test_query)
-        self.dao._get_parameters = MagicMock(return_value=self.test_parameter_values)
-        self.dao._get_health_check_query = MagicMock(return_value=self.test_health_check_query)
+        self.dao.get_query = MagicMock(return_value=self.test_query)
+        self.dao.get_parameters = MagicMock(return_value=self.test_parameter_values)
+        self.dao.get_health_check_query = MagicMock(return_value=self.test_health_check_query)
 
     def test_when_constructor_called_properties_should_be_assigned_correctly(self):
         self.assertEqual(self.dao.server, self.test_server)
@@ -53,8 +53,8 @@ class TestDao(unittest.TestCase):
 
         # assert
         mock_logging.warning.assert_not_called()
-        self.dao._get_query.assert_called_once()
-        self.dao._get_parameters.assert_called_once_with(values=self.test_values)
+        self.dao.get_query.assert_called_once()
+        self.dao.get_parameters.assert_called_once_with(values=self.test_values)
         mock_psycopg2.connect.assert_called_once_with(host=self.test_server,
                                                       database=self.test_database,
                                                       user=self.test_user,
@@ -69,8 +69,8 @@ class TestDao(unittest.TestCase):
 
         # assert
         mock_logging.warning.assert_not_called()
-        self.dao._get_query.assert_called_once()
-        self.dao._get_parameters.assert_called_once_with(values=self.test_values)
+        self.dao.get_query.assert_called_once()
+        self.dao.get_parameters.assert_called_once_with(values=self.test_values)
         mock_connect.assert_called_once_with(host=self.test_server,
                                              database=self.test_database,
                                              user=self.test_user,
@@ -85,7 +85,7 @@ class TestDao(unittest.TestCase):
         self.assertIsNone(self.dao.health_check())
 
         # assert
-        self.dao._get_health_check_query.assert_called_once()
+        self.dao.get_health_check_query.assert_called_once()
         mock_connect.assert_called_once_with(host=self.test_server,
                                              database=self.test_database,
                                              user=self.test_user,

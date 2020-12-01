@@ -21,7 +21,7 @@ class TestFakeDao(unittest.TestCase):
         self.assertEqual(self.dao.password, self.test_password)
 
     def _test_when_getting_query_expected_value_should_be_returned(self):
-        self.assertEqual(self.dao._get_query(), self.dao.QUERY)
+        self.assertEqual(self.dao.get_query(), self.dao.QUERY)
 
     @mock.patch('dao.fake_dao.datetime')
     def test_when_getting_parameters_expected_values_should_be_returned(self, mock_datetime):
@@ -32,7 +32,7 @@ class TestFakeDao(unittest.TestCase):
         mock_datetime.now.return_value = expected_time
 
         # act
-        values, date = self.dao._get_parameters(values=test_values)
+        values, date = self.dao.get_parameters(values=test_values)
 
         # assert
         self.assertEqual(values, expected_values)
@@ -40,7 +40,7 @@ class TestFakeDao(unittest.TestCase):
         mock_datetime.now.assert_called_once()
 
     def _test_when_getting_health_query_called_expected_value_should_be_returned(self):
-        self.assertEqual(self.dao._get_health_check_query(), self.dao.QUERY)
+        self.assertEqual(self.dao.get_health_check_query(), self.dao.QUERY)
 
 
 if __name__ == '__main__':

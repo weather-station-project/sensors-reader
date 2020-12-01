@@ -1,9 +1,10 @@
 import logging
+from abc import ABC, abstractmethod
 from statistics import mean
 from time import sleep
 
 
-class Sensor(object):
+class Sensor(ABC):
     """Base class for sensors"""
 
     NUMBER_OF_READS = 5
@@ -29,5 +30,6 @@ class Sensor(object):
 
         return averages
 
+    @abstractmethod
     def read_values(self):
         raise NotImplementedError('A sub-class must be implemented.')
