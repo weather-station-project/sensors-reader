@@ -9,7 +9,6 @@ class Main(object):
     """Represents the main class when the app is started"""
 
     # Environment variables
-    HEALTH_CHECK_VARIABLE = 'HEALTH_CHECK'
     LOGGING_LEVEL_VARIABLE = 'LOGGING_LEVEL'
     MINUTES_BETWEEN_READS_VARIABLE = 'MINUTES_BETWEEN_READS'
 
@@ -44,9 +43,6 @@ class Main(object):
         self.validate_database_variables()
 
     def validate_generic_variables(self):
-        if self.HEALTH_CHECK_VARIABLE in self.variables:
-            self._check_bool_value(variable_name=self.HEALTH_CHECK_VARIABLE)
-
         if self.LOGGING_LEVEL_VARIABLE in self.variables:
             self._check_in_expected_values(variable_name=self.LOGGING_LEVEL_VARIABLE, expected_values=self.LOGGING_LEVELS.keys())
 

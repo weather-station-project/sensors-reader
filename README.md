@@ -13,7 +13,7 @@ The rest of the solutions can be found in the other repositories in my [Github a
 ## Components used and where to find them
 As commented previously, the same components described in the project "[Build your own weather station](https://projects.raspberrypi.org/en/projects/build-your-own-weather-station)" have been used. Here is a list and where to find them (At least from Spain).
 
-* **Bme280** - Temperature, atmosphere pressure and air humidty sensor. +- 5€ [Ebay](https://www.ebay.es/itm/BME280-Temperatur-Sensor-Luftdruck-Feuchtigkeit-I2C-5V-Barometer-Arduino-Digital/253107395109?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2057872.m2749.l2649)
+* **Bme280** - Ambient temperature, atmosphere pressure and air humidty sensor. +- 5€ [Ebay](https://www.ebay.es/itm/BME280-Temperatur-Sensor-Luftdruck-Feuchtigkeit-I2C-5V-Barometer-Arduino-Digital/253107395109?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2057872.m2749.l2649)
 * **Cables jumper Male - Female** - To join the sensors with the Raspberry Pi. +- 3€ [Ebay](https://www.ebay.es/itm/40-cables-jumper-protoboard-de-30cm-Macho-Hembra-cable-jumpers-Arduino-Elect/322771656278?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2057872.m2749.l2649)
 * **Cables jumper Female - Female** - To enlarge the cables if desired. +- 3€ [Ebay](https://www.ebay.es/itm/40-Cables-30cm-Hembra-Hembra-jumper-dupont-2-54-arduino-protoboar-cable-jumpers/322148283107?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2057872.m2749.l2649)
 
@@ -28,8 +28,15 @@ As commented previously, the same components described in the project "[Build yo
 * **VERSION** - Plain/text file with the version of the solution. It is used to tag the image once it is deployed.
 
 ## Usage
-The app runs a listener on the port 9999. Using curl, any browser or a rest client, you can get the result.
-Being Python 3 previously installed, just execute:
+The solution is intended to take measurements from the environment and also to store the obtained values in a database passed as parameters. There are some parameters to define the behavior of the solution or just to limit some aspects of its execution, they are described below.
+
+* **LOGGING_LEVEL** - Possible values are CRITICAL, ERROR, WARNING, INFO and DEBUG. It defines the level of loggin traces to register.
+* **MINUTES_BETWEEN_READS** - By default, the app waits 5 minutes between measurements, with this parameter you can change the waiting time.
+* **FAKE_SENSOR_ENABLED** - true / false. Just for testing purposes, instead of getting values from the sensors, random values are obtained. No values are inserted in the database but only showed in the log traces. It is useful for checking if the application runs correctly and it has access to the database configured. In case of configuring a fake sensor, the rest of the possible sensors defined are skipped.
+* **BME_280_SENSOR_ENABLED** - true / false. In case of being enabled, the application will perform ambient temperatures, air humidity and atmosphere pressure measurements.
+
+> :warning: There are more parameters defined in the code related to other sensors but they are not used yet.
+
 ```bash
 python hello_world.py
 ```
@@ -37,6 +44,8 @@ And to query the API:
 ```bash
 curl http://127.0.0.1:9999/helloworld
 ```
+
+A docker-compose example is provided with the solution code, but it can be launched via command-line. Either way, the container must be created with privileged permissions to be able to access to Raspberry Pi hardware.
 
 ## Changelog
 * **First release** - First version with ambient temperature, air humidity and atmosphere pressure sensors.

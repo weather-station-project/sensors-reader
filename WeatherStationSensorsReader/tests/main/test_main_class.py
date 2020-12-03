@@ -34,8 +34,7 @@ class TestMainClass(unittest.TestCase):
 
     def test_when_validating_generic_variables_expected_methods_should_be_called(self):
         # arrange
-        test_variables = {Main.HEALTH_CHECK_VARIABLE: 'test',
-                          Main.LOGGING_LEVEL_VARIABLE: 'test',
+        test_variables = {Main.LOGGING_LEVEL_VARIABLE: 'test',
                           Main.MINUTES_BETWEEN_READS_VARIABLE: 'test'}
         main_class = Main(variables=test_variables)
         main_class._check_bool_value = MagicMock()
@@ -46,7 +45,6 @@ class TestMainClass(unittest.TestCase):
         self.assertIsNone(main_class.validate_generic_variables())
 
         # arrange
-        main_class._check_bool_value.assert_called_once_with(variable_name=Main.HEALTH_CHECK_VARIABLE)
         main_class._check_in_expected_values.assert_called_once_with(variable_name=Main.LOGGING_LEVEL_VARIABLE,
                                                                      expected_values=Main.LOGGING_LEVELS.keys())
         main_class._check_positive_integer_value.assert_called_once_with(variable_name=Main.MINUTES_BETWEEN_READS_VARIABLE)
