@@ -69,7 +69,7 @@ services:
     - '/etc/localtime:/etc/localtime:ro'
 ```
 ```bash
-docker run --rm -d --name=sensors-reader -e LOGGING_LEVEL=ERROR -e BME_280_SENSOR_ENABLED=true -e SERVER=xx -e DATABASE=xx -e USER=xx -e PASSWORD=xx -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro davidleonm/weather-station-sensors-reader
+docker run --rm -d --name=sensors-reader --privileged -e LOGGING_LEVEL=ERROR -e BME_280_SENSOR_ENABLED=true -e SERVER=xx -e DATABASE=xx -e USER=xx -e PASSWORD=xx -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro davidleonm/weather-station-sensors-reader
 ```
 
 ### Example of an execution with only the fake sensor and without database
