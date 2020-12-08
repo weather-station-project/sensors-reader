@@ -32,6 +32,12 @@ As commented previously, the same components described in the project "[Build yo
 
 
 ## Usage
+### Pre-requisites
+* All the componets must be connected to the Raspberry Pi.
+* The device needs a LAN connection, either Wi-Fi or wired.
+* I2C kernel support must be enabled. Follow this [tutorial](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-4-gpio-setup/configuring-i2c#installing-kernel-support-with-raspi-config-2724565-4) but you can ignore the libraries section, as the app is dockerized, all the necessary is deployed in the image used by the container.
+
+### Execution parameterss
 The solution is intended to take measurements from the environment and also to store the obtained values in a database passed as parameters. There are some parameters to define the behavior of the solution or just to limit some aspects of its execution, they are described below.
 
 * **LOGGING_LEVEL** - Possible values are CRITICAL, ERROR, WARNING, INFO and DEBUG. It defines the level of loggin traces to register.
@@ -43,7 +49,7 @@ The solution is intended to take measurements from the environment and also to s
 * **USER** - Database name
 * **PASSWORD** - Database name
 
-> :warning: There are more parameters defined in the code related to other sensors but they are not used yet.
+> :warning: There are more parameters defined in the code related to other sensors but they are not used yet. (Keep posted for future versions!)
 
 A docker-compose example is provided with the solution code, but it can be launched via command-line. Either way, the container must be created with privileged permissions to be able to access to Raspberry Pi hardware.
 
@@ -60,16 +66,16 @@ services:
     environment:
       - LOGGING_LEVEL: ERROR
       - BME_280_SENSOR_ENABLED: true
-      - SERVER: <Type your value>
-      - DATABASE: <Type your value>
-      - USER: <Type your value>
-      - PASSWORD: <Type your value>
+      - SERVER: 127.0.0.1
+      - DATABASE: my_db
+      - USER: my_user
+      - PASSWORD: my_password
     volumes:
     - '/etc/timezone:/etc/timezone:ro'
     - '/etc/localtime:/etc/localtime:ro'
 ```
 ```bash
-docker run --rm -d --name=sensors-reader --privileged -e LOGGING_LEVEL=ERROR -e BME_280_SENSOR_ENABLED=true -e SERVER=xx -e DATABASE=xx -e USER=xx -e PASSWORD=xx -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro davidleonm/weather-station-sensors-reader
+docker run --rm -d --name=sensors-reader --privileged -e LOGGING_LEVEL=ERROR -e BME_280_SENSOR_ENABLED=true -e SERVER=127.0.0.1 -e DATABASE=my_db -e USER=my_user -e PASSWORD=my_password -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro davidleonm/weather-station-sensors-reader
 ```
 
 ### Example of an execution with only the fake sensor and without database
@@ -93,7 +99,7 @@ docker run --rm -d --name=sensors-reader -e LOGGING_LEVEL=ERROR -e FAKE_SENSOR_E
 
 
 ## Changelog
-* **First release** - First version with ambient temperature, air humidity and atmosphere pressure sensors.
+* **First release - 1.0.0** - First version with ambient temperature, air humidity and atmosphere pressure sensors.
 
 
 ## License
