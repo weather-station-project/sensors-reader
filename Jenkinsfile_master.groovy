@@ -73,8 +73,8 @@ pipeline {
             dockerImage = docker.build("${WeatherStationSensorsReaderVariables.DockerHubRegistryName}", "--file ./Dockerfile ${WORKSPACE}")
 
             docker.withRegistry('', 'docker-hub-login') {
-              dockerImage.push("${version}")
               dockerImage.push('latest')
+              dockerImage.push("${version}")
             }
           } finally {
             if (dockerImage != null) {
