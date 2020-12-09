@@ -57,11 +57,11 @@ pipeline {
 
     stage('Upload report to Coveralls.io') {
       steps {
-        script {
-          sh """
-             COVERALLS_REPO_TOKEN=${WeatherStationSensorsReaderVariables.CoverallsRepoToken}
+        withCredentials([string(credentialsId: 'coveralls-sensors-reader-repo-token', variable: 'RepoToken')]) {
+          sh '''
+             COVERALLS_REPO_TOKEN="$RepoToken"
              ENV/bin/coveralls
-             """
+             '''
         }
       }
     }
