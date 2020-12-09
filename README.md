@@ -6,6 +6,13 @@ It is a dockerized Python application developed for [Raspberry Pi](https://www.r
 The solution has been dockerized to ease its deployment and usage, but it can be executed in a Rasperry Pi natively with Python 3 installed.
 
 
+## Release information
+|     |     |
+| --- | --- |
+| Coverage       | [![Coverage Status](https://coveralls.io/repos/github/davidleonm/weather-station-sensors-reader/badge.svg?branch=master)](https://coveralls.io/github/davidleonm/weather-station-sensors-reader?branch=master) |
+| Last version   | ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/davidleonm/weather-station-sensors-reader) |
+
+
 ## Solution overview
 ![Overview](https://github.com/davidleonm/weather-station-sensors-reader/raw/master/overview.png)
 

@@ -20,15 +20,17 @@ pipeline {
              ENV/bin/pip install --upgrade setuptools
 
              ENV/bin/pip install psycopg2
+             ENV/bin/pip install coveralls
              '''
         }
       }
     }
 
-    stage('Execute unit tests') {
+    stage('Execute unit tests and code coverage') {
       steps {
         script {
           sh "ENV/bin/python -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader"
+          sh "ENV/bin/coverage run -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader"
         }
       }
     }
@@ -40,8 +42,7 @@ pipeline {
 
       steps {
         script {
-          sh "ENV/bin/coverage run -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader"
-          sh "ENV/bin/coverage xml -i"
+          sh "ENV/bin/coverage xml"
         }
 
         withSonarQubeEnv('Sonarqube') {
@@ -50,6 +51,17 @@ pipeline {
 
         timeout(time: 10, unit: 'MINUTES') {
           waitForQualityGate abortPipeline: true
+        }
+      }
+    }
+
+    stage('Upload report to Coveralls.io') {
+      steps {
+        script {
+          sh """
+             COVERALLS_REPO_TOKEN=${WeatherStationSensorsReaderVariables.CoverallsRepoToken}
+             ENV/bin/coveralls
+             """
         }
       }
     }
