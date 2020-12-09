@@ -57,11 +57,8 @@ pipeline {
 
     stage('Upload report to Coveralls.io') {
       steps {
-        withCredentials([string(credentialsId: 'coveralls-sensors-reader-repo-token', variable: 'RepoToken')]) {
-          sh '''
-             COVERALLS_REPO_TOKEN="$RepoToken"
-             ENV/bin/coveralls
-             '''
+        withCredentials([string(credentialsId: 'coveralls-sensors-reader-repo-token', variable: 'COVERALLS_REPO_TOKEN')]) {
+          sh 'ENV/bin/coveralls'
         }
       }
     }
