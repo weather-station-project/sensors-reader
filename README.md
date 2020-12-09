@@ -11,8 +11,10 @@ The solution has been dockerized to ease its deployment and usage, but it can be
 ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/davidleonm/weather-station-sensors-reader)
 
 
-## Solution overview
+## Weather Station Project overview
 ![Overview](https://github.com/davidleonm/weather-station-sensors-reader/raw/master/overview.png)
+
+This picture represents the whole "Weather Station" project. It is a set of dockerized applications to take measurements from the environment, store them in a database and visualize the data in a Web site. This current repository is the code for the "Sensors Reader".
 
 The rest of the solutions can be found in the other repositories in my [Github account](https://github.com/davidleonm).
 
@@ -27,6 +29,7 @@ As commented previously, the same components described in the project "[Build yo
 
 ## Composition
 * **WeatherStationSensorsReader** - Folder with the solution and its unit tests.
+* **.coveragerc** - File with configuration for the coverage tests, to skip virtual environment folders.
 * **Dockerfile** - Dockerfile to build the solution. Note that it is dockerized based on an ARMv6 Python image.
 * **docker-compose.yml** - Example of compose file to run the solution from a Docker host. Note that the container must be launched with privileged mode enabled to be allowed to read information from the ic2 component.
 * **Jenkins files** - Files with Jenkins pipelines, separating branches from master branch. They are using this [shared library](https://github.com/davidleonm/shared-library) project.
@@ -49,7 +52,7 @@ The solution is intended to take measurements from the environment and also to s
 * **MINUTES_BETWEEN_READS** - By default, the app waits 5 minutes between measurements, with this parameter you can change the waiting time.
 * **FAKE_SENSOR_ENABLED** - true / false. Just for testing purposes, instead of getting values from the sensors, random values are obtained. No values are inserted in the database but only showed in the log traces. It is useful for checking if the application runs correctly and it has access to the database configured. In case of configuring a fake sensor, the rest of the possible sensors defined are skipped.
 * **BME_280_SENSOR_ENABLED** - true / false. In case of being enabled, the application will perform ambient temperatures, air humidity and atmosphere pressure measurements.
-* **SERVER** - Database server. Measurements retrieved will not be stored anywhere, just showed in the log traces with INFO level.
+* **SERVER** - Database server. In case of it is empty, measurements retrieved will not be stored anywhere, just showed in the log traces with INFO level.
 * **DATABASE** - Database name
 * **USER** - Database name
 * **PASSWORD** - Database name
@@ -104,6 +107,7 @@ docker run --rm -d --name=sensors-reader -e LOGGING_LEVEL=ERROR -e FAKE_SENSOR_E
 
 
 ## Changelog
+* **1.1.0** - Added ground temperature sensor, fixed some code smells and documentation.
 * **1.0.0** - First version with ambient temperature, air humidity and atmosphere pressure sensors.
 
 
