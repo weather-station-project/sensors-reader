@@ -3,6 +3,7 @@ import os
 import sys
 from time import sleep
 
+from exceptions.no_controller_exception import NoControllersException
 from main.main_class import Main
 
 
@@ -26,7 +27,7 @@ def main():
         controllers_enabled = main_class.get_controllers_enabled()
 
         if not controllers_enabled:
-            raise Exception('There is no controller configured on the init. Please, read the documentation available on Github.')
+            raise NoControllersException('There is no controller configured on the init. Please, read the documentation available on Github.')
 
         seconds_between_reads = main_class.get_minutes_between_reads() * 60
         while get_true():

@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 
 import psycopg2
 
+from exceptions.dao_exception import DaoException
+
 
 class Dao(ABC):
     """Base class for DAOs"""
@@ -35,16 +37,16 @@ class Dao(ABC):
         except ValueError:
             raise
         except Exception as e:
-            raise Exception(
+            raise DaoException(
                 f'Error in DAO "{self.__class__.__name__} while executing the query "{sql_query}" with values {query_parameter_values}. ') from e
 
     @abstractmethod
     def get_query(self):
-        raise NotImplementedError('A sub-class must be implemented.')
+        raise NotImplementedError()
 
     @abstractmethod
     def get_parameters(self, values):
-        raise NotImplementedError('A sub-class must be implemented.')
+        raise NotImplementedError()
 
     def health_check(self):
         if not self.server:
@@ -60,4 +62,4 @@ class Dao(ABC):
 
     @abstractmethod
     def get_health_check_query(self):
-        raise NotImplementedError('A sub-class must be implemented.')
+        raise NotImplementedError()
