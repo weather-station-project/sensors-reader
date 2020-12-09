@@ -29,8 +29,8 @@ pipeline {
     stage('Execute unit tests and code coverage') {
       steps {
         script {
-          sh "ENV/bin/python -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader"
-          sh "ENV/bin/coverage run -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader"
+          sh "ENV/bin/python -m unittest discover --source ${WORKSPACE}/WeatherStationSensorsReader"
+          sh "ENV/bin/coverage run -m unittest discover --source ${WORKSPACE}/WeatherStationSensorsReader"
         }
       }
     }
