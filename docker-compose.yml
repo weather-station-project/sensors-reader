@@ -1,0 +1,17 @@
+version: '3.5'
+services:
+  sensors-reader:
+    container_name: sensors-reader
+    image: davidleonm/weather-station-sensors-reader
+    privileged: true
+    restart: unless-stopped
+    environment:
+      - LOGGING_LEVEL: INFO
+      - BME_280_SENSOR_ENABLED: true
+      - SERVER: <Type your value>
+      - DATABASE: <Type your value>
+      - USER: <Type your value>
+      - PASSWORD: <Type your value>
+    volumes:
+    - '/etc/timezone:/etc/timezone:ro'
+    - '/etc/localtime:/etc/localtime:ro'
