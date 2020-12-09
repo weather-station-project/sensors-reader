@@ -7,10 +7,8 @@ The solution has been dockerized to ease its deployment and usage, but it can be
 
 
 ## Release information
-|     |     |
-| --- | --- |
-| Coverage       | [![Coverage Status](https://coveralls.io/repos/github/davidleonm/weather-station-sensors-reader/badge.svg?branch=master)](https://coveralls.io/github/davidleonm/weather-station-sensors-reader?branch=master) |
-| Last version   | ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/davidleonm/weather-station-sensors-reader) |
+[![Coverage Status](https://coveralls.io/repos/github/davidleonm/weather-station-sensors-reader/badge.svg?branch=master)](https://coveralls.io/github/davidleonm/weather-station-sensors-reader?branch=master)
+![Docker Image Version (latest by date)](https://img.shields.io/docker/v/davidleonm/weather-station-sensors-reader)
 
 
 ## Solution overview
@@ -106,7 +104,7 @@ docker run --rm -d --name=sensors-reader -e LOGGING_LEVEL=ERROR -e FAKE_SENSOR_E
 
 
 ## Changelog
-* **First release - 1.0.0** - First version with ambient temperature, air humidity and atmosphere pressure sensors.
+* **1.0.0** - First version with ambient temperature, air humidity and atmosphere pressure sensors.
 
 
 ## License
