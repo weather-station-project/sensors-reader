@@ -21,10 +21,10 @@ RUN apk add --no-cache postgresql-dev \
                        linux-headers
 
 # Install Python references
-RUN pip install --upgrade pip
-RUN pip install --upgrade wheel
-RUN pip install --upgrade setuptools
-RUN pip install psycopg2 bme280pi w1thermsensor
+RUN pip install --no-cache-dir --upgrade pip
+RUN pip install --no-cache-dir --upgrade wheel
+RUN pip install --no-cache-dir --upgrade setuptools
+RUN pip install --no-cache-dir  psycopg2 bme280pi w1thermsensor
 
 # Change working directory to the app binaries
 WORKDIR /WeatherStationSensorsReader
