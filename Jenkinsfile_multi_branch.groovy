@@ -19,7 +19,7 @@ pipeline {
              ENV/bin/pip install --upgrade wheel
              ENV/bin/pip install --upgrade setuptools
 
-             ENV/bin/pip install psycopg2
+             ENV/bin/pip install psycopg2 w1thermsensor
              '''
         }
       }
