@@ -4,7 +4,7 @@ from sensors.ambient_temperature_sensor import AmbientTemperatureSensor
 
 
 class AmbientTemperatureController(Controller):
-    """ Class with a controller with the ambient temperature sensor and DAO """
+    """ Represents the controller with the ambient temperature sensor and DAO """
 
     def __init__(self, server, database, user, password):
         super(AmbientTemperatureController, self).__init__(sensor=AmbientTemperatureSensor(), dao=AmbientTemperatureDao(server=server,

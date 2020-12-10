@@ -4,7 +4,7 @@ from sensors.fake_sensor import FakeSensor
 
 
 class FakeController(Controller):
-    """ Class with a controller without any real sensor """
+    """ Represents the controller without any real sensor """
 
     def __init__(self, server, database, user, password):
         super(FakeController, self).__init__(sensor=FakeSensor(), dao=FakeDao(server=server,
