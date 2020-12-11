@@ -4,7 +4,10 @@ import unittest
 from unittest import mock
 from unittest.mock import MagicMock, Mock
 
+from controllers.ground_temperature_controller import GroundTemperatureController
+
 sys.modules['bme280pi'] = MagicMock()
+sys.modules['w1thermsensor'] = MagicMock()
 from controllers.air_measurement_controller import AirMeasurementController
 from controllers.ambient_temperature_controller import AmbientTemperatureController
 from controllers.controller import Controller
@@ -246,13 +249,15 @@ class TestMainClass(unittest.TestCase):
         # assert
         mock_logging.basicConfig.assert_called_once_with(level=logging.WARNING, format=Main.LOG_FORMAT)
 
+    @mock.patch('main.main_class.GroundTemperatureController', autospec=True)
     @mock.patch('main.main_class.AmbientTemperatureController', autospec=True)
     @mock.patch('main.main_class.AirMeasurementController', autospec=True)
     @mock.patch('main.main_class.FakeController', autospec=True)
     def test_when_getting_controllers_given_no_variables_empty_list_should_be_returned(self,
                                                                                        mock_fake_controller,
                                                                                        mock_air_measurement_controller,
-                                                                                       mock_ambient_controller):
+                                                                                       mock_ambient_controller,
+                                                                                       mock_ground_controller):
         # arrange
         main_class = Main(variables={})
 
@@ -266,14 +271,17 @@ class TestMainClass(unittest.TestCase):
         mock_fake_controller.assert_not_called()
         mock_ambient_controller.assert_not_called()
         mock_air_measurement_controller.assert_not_called()
+        mock_ground_controller.assert_not_called
 
+    @mock.patch('main.main_class.GroundTemperatureController', autospec=True)
     @mock.patch('main.main_class.AmbientTemperatureController', autospec=True)
     @mock.patch('main.main_class.AirMeasurementController', autospec=True)
     @mock.patch('main.main_class.FakeController', autospec=True)
     def test_when_getting_controllers_given_fake_sensor_only_fake_controller_should_be_returned(self,
                                                                                                 mock_fake_controller,
                                                                                                 mock_air_measurement_controller,
-                                                                                                mock_ambient_controller):
+                                                                                                mock_ambient_controller,
+                                                                                                mock_ground_controller):
         # arrange
         test_server = 'test_server'
         test_database = 'test_database'
@@ -300,14 +308,17 @@ class TestMainClass(unittest.TestCase):
                                                      password=test_password)
         mock_ambient_controller.assert_not_called()
         mock_air_measurement_controller.assert_not_called()
+        mock_ground_controller.assert_not_called()
 
+    @mock.patch('main.main_class.GroundTemperatureController', autospec=True)
     @mock.patch('main.main_class.AmbientTemperatureController', autospec=True)
     @mock.patch('main.main_class.AirMeasurementController', autospec=True)
     @mock.patch('main.main_class.FakeController', autospec=True)
     def test_when_getting_controllers_given_fake_sensor_without_database_dao_should_be_initialize_with_empty_values(self,
                                                                                                                     mock_fake_controller,
                                                                                                                     mock_air_measurement_controller,
-                                                                                                                    mock_ambient_controller):
+                                                                                                                    mock_ambient_controller,
+                                                                                                                    mock_ground_controller):
         # arrange
         main_class = Main(variables={Main.FAKE_SENSOR_VARIABLE: 'true'})
 
@@ -325,14 +336,17 @@ class TestMainClass(unittest.TestCase):
                                                      password=None)
         mock_ambient_controller.assert_not_called()
         mock_air_measurement_controller.assert_not_called()
+        mock_ground_controller.assert_not_called()
 
+    @mock.patch('main.main_class.GroundTemperatureController', autospec=True)
     @mock.patch('main.main_class.AmbientTemperatureController', autospec=True)
     @mock.patch('main.main_class.AirMeasurementController', autospec=True)
     @mock.patch('main.main_class.FakeController', autospec=True)
-    def test_when_getting_controllers_given_ambient_sensor_ambient_controller_should_be_returned(self,
-                                                                                                 mock_fake_controller,
-                                                                                                 mock_air_measurement_controller,
-                                                                                                 mock_ambient_controller):
+    def test_when_getting_controllers_given_all_sensors_expected_controllers_should_be_returned(self,
+                                                                                                mock_fake_controller,
+                                                                                                mock_air_measurement_controller,
+                                                                                                mock_ambient_controller,
+                                                                                                mock_ground_controller):
         # arrange
         test_server = 'server'
         test_database = 'database'
@@ -340,6 +354,7 @@ class TestMainClass(unittest.TestCase):
         test_password = 'password'
 
         main_class = Main(variables={Main.BME_280_SENSOR_VARIABLE: 'true',
+                                     Main.GROUND_SENSOR_VARIABLE: 'true',
                                      Main.SERVER_VARIABLE: test_server,
                                      Main.DATABASE_VARIABLE: test_database,
                                      Main.USER_VARIABLE: test_user,
@@ -350,9 +365,10 @@ class TestMainClass(unittest.TestCase):
 
         # assert
         self.assertIsInstance(result, list)
-        self.assertEqual(len(result), 2)
+        self.assertEqual(len(result), 3)
         self.assertIsInstance(result[0], AmbientTemperatureController)
         self.assertIsInstance(result[1], AirMeasurementController)
+        self.assertIsInstance(result[2], GroundTemperatureController)
 
         mock_ambient_controller.assert_called_once_with(server=test_server,
                                                         database=test_database,
@@ -362,6 +378,10 @@ class TestMainClass(unittest.TestCase):
                                                                 database=test_database,
                                                                 user=test_user,
                                                                 password=test_password)
+        mock_ground_controller.assert_called_once_with(server=test_server,
+                                                       database=test_database,
+                                                       user=test_user,
+                                                       password=test_password)
         mock_fake_controller.assert_not_called()
 
     def test_when_getting_if_controller_is_enabled_expected_return_should_be_returned(self):
