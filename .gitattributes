@@ -1,0 +1,5 @@
+# All text files must have line end with LF
+* text eol=lf
+
+# Binary files
+*.png binary
