@@ -14,7 +14,7 @@ class TestGroundTemperatureDao(unittest.TestCase):
     def setUp(self):
         self.dao = GroundTemperatureDao(server=self.test_server, database=self.test_database, user=self.test_user, password=self.test_password)
 
-    def test_when_constructor_called_properties_should_be_passed_to_the_correctly(self):
+    def test_when_constructor_called_properties_should_be_passed_to_the_dao_correctly(self):
         self.assertEqual(self.dao.server, self.test_server)
         self.assertEqual(self.dao.database, self.test_database)
         self.assertEqual(self.dao.user, self.test_user)
