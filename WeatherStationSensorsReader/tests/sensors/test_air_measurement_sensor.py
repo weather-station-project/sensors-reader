@@ -28,14 +28,12 @@ class TestAirMeasurementSensor(unittest.TestCase):
         test_humidity = 67
 
         mock_sensor = Mock()
-        mock_sensor.get_pressure.return_value = test_pressure
-        mock_sensor.get_humidity.return_value = test_humidity
+        mock_sensor.get_data.return_value = {'pressure': test_pressure, 'humidity': test_humidity}
         mock_bme280_sensor.return_value = mock_sensor
 
         self.assertEqual(AirMeasurementSensor().read_values(), [test_pressure, test_humidity])
 
-        mock_sensor.get_pressure.assert_called_once_with(unit='hPa')
-        mock_sensor.get_humidity.assert_called_once_with(relative=True)
+        mock_sensor.get_data.assert_called_once()
 
 
 if __name__ == '__main__':
