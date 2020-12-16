@@ -82,13 +82,13 @@ services:
     privileged: true
     restart: unless-stopped
     environment:
-      - LOGGING_LEVEL: ERROR
-      - BME_280_SENSOR_ENABLED: true
-      - GROUND_SENSOR_ENABLED: true
-      - SERVER: 127.0.0.1
-      - DATABASE: my_db
-      - USER: my_user
-      - PASSWORD: my_password
+      - LOGGING_LEVEL=ERROR
+      - BME_280_SENSOR_ENABLED=true
+      - GROUND_SENSOR_ENABLED=true
+      - SERVER=127.0.0.1
+      - DATABASE=my_db
+      - USER=my_user
+      - PASSWORD=my_password
     volumes:
     - '/etc/timezone:/etc/timezone:ro'
     - '/etc/localtime:/etc/localtime:ro'
@@ -106,8 +106,8 @@ services:
     image: davidleonm/weather-station-sensors-reader
     restart: unless-stopped
     environment:
-      - LOGGING_LEVEL: ERROR
-      - FAKE_SENSOR_ENABLED: true
+      - LOGGING_LEVEL=ERROR
+      - FAKE_SENSOR_ENABLED=true
     volumes:
     - '/etc/timezone:/etc/timezone:ro'
     - '/etc/localtime:/etc/localtime:ro'

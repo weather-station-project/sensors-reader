@@ -5,6 +5,7 @@ LABEL maintainer="David Leon <david.leon.m@gmail.com>"
 COPY WeatherStationSensorsReader/app /WeatherStationSensorsReader/app
 COPY WeatherStationSensorsReader/controllers /WeatherStationSensorsReader/controllers
 COPY WeatherStationSensorsReader/dao /WeatherStationSensorsReader/dao
+COPY WeatherStationSensorsReader/exceptions /WeatherStationSensorsReader/exceptions
 COPY WeatherStationSensorsReader/health_check /WeatherStationSensorsReader/health_check
 COPY WeatherStationSensorsReader/main /WeatherStationSensorsReader/main
 COPY WeatherStationSensorsReader/sensors /WeatherStationSensorsReader/sensors
