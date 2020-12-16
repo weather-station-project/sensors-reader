@@ -25,7 +25,7 @@ RUN apk add --no-cache postgresql-dev \
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir --upgrade wheel
 RUN pip install --no-cache-dir --upgrade setuptools
-RUN pip install --no-cache-dir  psycopg2 bme280pi w1thermsensor
+RUN pip install --no-cache-dir psycopg2 bme280pi w1thermsensor
 
 # Change working directory to the app binaries
 WORKDIR /WeatherStationSensorsReader
