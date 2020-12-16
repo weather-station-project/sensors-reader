@@ -2,17 +2,17 @@ import unittest
 from datetime import datetime
 from unittest import mock
 
-from dao.ambient_temperature_dao import AmbientTemperatureDao
+from dao.ground_temperature_dao import GroundTemperatureDao
 
 
-class TestAmbientTemperatureDao(unittest.TestCase):
+class TestGroundTemperatureDao(unittest.TestCase):
     test_server = 'test_server'
     test_database = 'test_database'
     test_user = 'test_user'
     test_password = 'test_password'
 
     def setUp(self):
-        self.dao = AmbientTemperatureDao(server=self.test_server, database=self.test_database, user=self.test_user, password=self.test_password)
+        self.dao = GroundTemperatureDao(server=self.test_server, database=self.test_database, user=self.test_user, password=self.test_password)
 
     def test_when_constructor_called_properties_should_be_passed_to_the_dao_correctly(self):
         self.assertEqual(self.dao.server, self.test_server)
@@ -23,7 +23,7 @@ class TestAmbientTemperatureDao(unittest.TestCase):
     def test_when_getting_query_expected_value_should_be_returned(self):
         self.assertEqual(self.dao.get_query(), self.dao.INSERT_QUERY)
 
-    @mock.patch('dao.ambient_temperature_dao.datetime')
+    @mock.patch('dao.ground_temperature_dao.datetime')
     def test_when_getting_parameters_expected_values_should_be_returned(self, mock_datetime):
         # arrange
         test_values = ['test_values', 'test2']

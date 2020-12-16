@@ -3,11 +3,11 @@ from datetime import datetime
 from dao.dao import Dao
 
 
-class AmbientTemperatureDao(Dao):
-    """ Represents the ambient temperature database access """
+class GroundTemperatureDao(Dao):
+    """ Represents the ground temperature database access """
 
-    INSERT_QUERY = 'INSERT INTO ambient_temperatures(temperature, date_time) VALUES(%s, %s)'
-    DATA_QUERY = 'SELECT * FROM ambient_temperatures FETCH FIRST ROW ONLY'
+    INSERT_QUERY = 'INSERT INTO ground_temperatures(temperature, date_time) VALUES(%s, %s)'
+    DATA_QUERY = 'SELECT * FROM ground_temperatures FETCH FIRST ROW ONLY'
 
     def get_query(self):
         return self.INSERT_QUERY

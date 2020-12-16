@@ -14,5 +14,5 @@ class AirMeasurementSensor(Sensor):
                           f'chip_version "{self.sensor.chip_version}" in the sensor "{self.__class__.__name__}".')
 
     def read_values(self):
-        return [self.sensor.get_pressure(unit='hPa'),
-                self.sensor.get_humidity(relative=True)]
+        result = self.sensor.get_data()
+        return [result['pressure'], result['humidity']]

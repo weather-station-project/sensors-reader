@@ -5,6 +5,7 @@ LABEL maintainer="David Leon <david.leon.m@gmail.com>"
 COPY WeatherStationSensorsReader/app /WeatherStationSensorsReader/app
 COPY WeatherStationSensorsReader/controllers /WeatherStationSensorsReader/controllers
 COPY WeatherStationSensorsReader/dao /WeatherStationSensorsReader/dao
+COPY WeatherStationSensorsReader/exceptions /WeatherStationSensorsReader/exceptions
 COPY WeatherStationSensorsReader/health_check /WeatherStationSensorsReader/health_check
 COPY WeatherStationSensorsReader/main /WeatherStationSensorsReader/main
 COPY WeatherStationSensorsReader/sensors /WeatherStationSensorsReader/sensors
@@ -21,10 +22,10 @@ RUN apk add --no-cache postgresql-dev \
                        linux-headers
 
 # Install Python references
-RUN pip install --upgrade pip
-RUN pip install --upgrade wheel
-RUN pip install --upgrade setuptools
-RUN pip install psycopg2 bme280pi
+RUN pip install --no-cache-dir --upgrade pip
+RUN pip install --no-cache-dir --upgrade wheel
+RUN pip install --no-cache-dir --upgrade setuptools
+RUN pip install --no-cache-dir psycopg2 bme280pi w1thermsensor
 
 # Change working directory to the app binaries
 WORKDIR /WeatherStationSensorsReader

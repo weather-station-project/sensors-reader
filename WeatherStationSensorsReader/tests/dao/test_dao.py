@@ -3,6 +3,7 @@ from unittest import mock
 from unittest.mock import MagicMock
 
 from dao.dao import Dao
+from exceptions.dao_exception import DaoException
 
 
 class TestDao(unittest.TestCase):
@@ -49,7 +50,7 @@ class TestDao(unittest.TestCase):
         mock_psycopg2.connect.side_effect = Exception('test')
 
         # act
-        with self.assertRaises(Exception):
+        with self.assertRaises(DaoException):
             self.dao.insert(values=self.test_values)
 
         # assert

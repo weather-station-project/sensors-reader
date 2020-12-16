@@ -15,12 +15,11 @@ pipeline {
              rm -rf ENV
              python3 -m venv ENV
 
-             ENV/bin/pip install --upgrade pip
-             ENV/bin/pip install --upgrade wheel
-             ENV/bin/pip install --upgrade setuptools
+             ENV/bin/pip install --no-cache-dir --upgrade pip
+             ENV/bin/pip install --no-cache-dir --upgrade wheel
+             ENV/bin/pip install --no-cache-dir --upgrade setuptools
 
-             ENV/bin/pip install psycopg2
-             ENV/bin/pip install coveralls
+             ENV/bin/pip install --no-cache-dir psycopg2 coveralls w1thermsensor
              '''
         }
       }

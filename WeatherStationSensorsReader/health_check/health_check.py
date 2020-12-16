@@ -2,6 +2,7 @@ import logging
 import os
 import sys
 
+from exceptions.no_controller_exception import NoControllersException
 from main.main_class import Main
 
 
@@ -19,7 +20,7 @@ def main():
         controllers_enabled = main_class.get_controllers_enabled()
 
         if not controllers_enabled:
-            raise Exception('There is no controller configured on the init. Please, read the documentation available on Github.')
+            raise NoControllersException('There is no controller configured on the init. Please, read the documentation available on Github.')
 
         main_class.execute_controllers_health_check(controllers=controllers_enabled)
     except Exception as e:
