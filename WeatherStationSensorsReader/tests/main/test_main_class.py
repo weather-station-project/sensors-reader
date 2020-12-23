@@ -4,7 +4,7 @@ import unittest
 from unittest import mock
 from unittest.mock import MagicMock, Mock
 
-from tests.async_run import async_run
+from helpers.async_run import run_async_from_sync
 
 sys.modules['bme280pi'] = MagicMock()
 sys.modules['w1thermsensor'] = MagicMock()
@@ -411,8 +411,8 @@ class TestMainClass(unittest.TestCase):
         # act
         self.assertEqual(main_class.get_minutes_between_reads(), int(test_value))
 
-    @mock.patch('main.main_class.asyncio', autospec=True)
-    def test_when_executing_controllers_given_empty_list_nothing_should_be_executed(self, mock_asyncio):
+    @mock.patch('main.main_class.run_async_from_sync', autospec=True)
+    def test_when_executing_controllers_given_empty_list_nothing_should_be_executed(self, mock_run_async):
         # arrange
         main_class = Main(variables={})
         test_controllers = []
@@ -421,10 +421,10 @@ class TestMainClass(unittest.TestCase):
         self.assertIsNone(main_class.execute_controllers(test_controllers))
 
         # assert
-        mock_asyncio.run.assert_not_called()
+        mock_run_async.assert_not_called()
 
-    @mock.patch('main.main_class.asyncio', autospec=True)
-    def test_when_executing_controllers_given_controllers_they_should_be_executed(self, mock_asyncio):
+    @mock.patch('main.main_class.run_async_from_sync', autospec=True)
+    def test_when_executing_controllers_given_controllers_they_should_be_executed(self, mock_run_async):
         # arrange
         main_class = Main(variables={})
         mock_controller = Mock(spec=Controller)
@@ -434,7 +434,7 @@ class TestMainClass(unittest.TestCase):
         self.assertIsNone(main_class.execute_controllers(test_controllers))
 
         # assert
-        mock_asyncio.run.assert_called_once()
+        mock_run_async.assert_called_once()
 
     @mock.patch('main.main_class.asyncio', autospec=True)
     @mock.patch('main.main_class.logging', autospec=True)
@@ -456,14 +456,44 @@ class TestMainClass(unittest.TestCase):
         mock_asyncio.wait.return_value = test_tasks, None
 
         # act
-        self.assertIsNone(async_run(coroutine=main_class.execute_coroutines(test_coroutines)))
+        self.assertIsNone(run_async_from_sync(coroutine=main_class.execute_coroutines(test_coroutines)))
 
         # assert
         mock_asyncio.create_task.assert_called_once_with(coro=mock_coroutine())
         mock_asyncio.wait.assert_called_once_with(fs=test_tasks, return_when=mock_asyncio.ALL_COMPLETED)
         mock_logging.error.assert_not_called()
 
-    def test_when_executing_health_check_given_controllers_it_should_be_executed(self):
+    @mock.patch('main.main_class.asyncio', autospec=True)
+    @mock.patch('main.main_class.logging', autospec=True)
+    def test_when_executing_coroutines_given_failing_controllers_error_should_be_thrown(self,
+                                                                                        mock_logging,
+                                                                                        mock_asyncio):
+        # arrange
+        main_class = Main(variables={})
+
+        mock_coroutine = Mock()
+        test_coroutines = [mock_coroutine]
+
+        mock_exception = Mock()
+
+        mock_task = Mock()
+        mock_task.exception.return_value = mock_exception
+        test_tasks = [mock_task]
+
+        mock_asyncio.ALL_COMPLETED = 'ALL_COMPLETED'
+        mock_asyncio.create_task.return_value = mock_task
+        mock_asyncio.wait.return_value = test_tasks, None
+
+        # act
+        self.assertIsNone(run_async_from_sync(coroutine=main_class.execute_coroutines(test_coroutines)))
+
+        # assert
+        mock_asyncio.create_task.assert_called_once_with(coro=mock_coroutine())
+        mock_asyncio.wait.assert_called_once_with(fs=test_tasks, return_when=mock_asyncio.ALL_COMPLETED)
+        mock_logging.error.assert_called_once_with(mock_exception)
+
+    @mock.patch('main.main_class.run_async_from_sync', autospec=True)
+    def test_when_executing_health_check_given_controllers_it_should_be_executed(self, mock_run_async):
         # arrange
         main_class = Main(variables={})
         mock_controller = Mock(spec=Controller)
@@ -473,7 +503,7 @@ class TestMainClass(unittest.TestCase):
         self.assertIsNone(main_class.execute_controllers_health_check(test_controllers))
 
         # assert
-        mock_controller.execute.health_check()
+        mock_run_async.assert_called_once()
 
 
 if __name__ == '__main__':

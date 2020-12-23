@@ -6,6 +6,7 @@ from controllers.ambient_temperature_controller import AmbientTemperatureControl
 from controllers.fake_controller import FakeController
 from controllers.ground_temperature_controller import GroundTemperatureController
 from controllers.wind_measurement_controller import WindMeasurementController
+from helpers.async_run import run_async_from_sync
 
 
 class Main(object):
@@ -160,7 +161,7 @@ class Main(object):
         for controller in controllers:
             coroutines_list.append(controller.execute)
 
-        asyncio.run(main=self.execute_coroutines(coroutines_list=coroutines_list))
+        run_async_from_sync(coroutine=self.execute_coroutines(coroutines_list=coroutines_list))
 
     @staticmethod
     async def execute_coroutines(coroutines_list):
@@ -183,4 +184,4 @@ class Main(object):
         for controller in controllers:
             coroutines_list.append(controller.health_check)
 
-        self.execute_coroutines(coroutines_list=coroutines_list)
+        run_async_from_sync(coroutine=self.execute_coroutines(coroutines_list=coroutines_list))
