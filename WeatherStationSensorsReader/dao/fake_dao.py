@@ -4,7 +4,7 @@ from dao.dao import Dao
 
 
 class FakeDao(Dao):
-    """ Represents fake the database access """
+    """ Represents the fake the database access """
 
     QUERY = 'SELECT 1'
 

@@ -4,7 +4,7 @@ from dao.dao import Dao
 
 
 class AirMeasurementDao(Dao):
-    """ Represents air measurement database access """
+    """ Represents the air measurement database access """
 
     INSERT_QUERY = 'INSERT INTO air_measurements(pressure, humidity, date_time) VALUES(%s, %s, %s)'
     DATA_QUERY = 'SELECT * FROM air_measurements FETCH FIRST ROW ONLY'
