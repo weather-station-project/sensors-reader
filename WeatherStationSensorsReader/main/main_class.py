@@ -1,9 +1,11 @@
+import asyncio
 import logging
 
 from controllers.air_measurement_controller import AirMeasurementController
 from controllers.ambient_temperature_controller import AmbientTemperatureController
 from controllers.fake_controller import FakeController
 from controllers.ground_temperature_controller import GroundTemperatureController
+from controllers.wind_measurement_controller import WindMeasurementController
 
 
 class Main(object):
@@ -136,6 +138,9 @@ class Main(object):
         if self.is_controller_enabled(self.GROUND_SENSOR_VARIABLE):
             controllers.append(GroundTemperatureController(server=server, database=database, user=user, password=password))
 
+        if self.is_controller_enabled(self.WIND_SENSOR_VARIABLE):
+            controllers.append(WindMeasurementController(server=server, database=database, user=user, password=password))
+
         return controllers
 
     def is_controller_enabled(self, variable_name):
@@ -147,15 +152,31 @@ class Main(object):
 
         return self.DEFAULT_MINUTES_BETWEEN_READS
 
-    @staticmethod
-    def execute_controllers(controllers):
+    def execute_controllers(self, controllers):
+        coroutines_list = []
+
         for controller in controllers:
-            try:
-                controller.execute()
-            except Exception as e:
-                logging.error(f'Error while executing controller "{controller.__class__.__name__}". ', exc_info=e)
+            coroutines_list.append(controller.execute)
+
+        asyncio.run(main=self._execute_coroutines(coroutines_list=coroutines_list))
 
     @staticmethod
-    def execute_controllers_health_check(controllers):
+    async def _execute_coroutines(coroutines_list):
+        tasks = []
+
+        for coroutine in coroutines_list:
+            tasks.append(asyncio.create_task(coro=coroutine()))
+
+        finished_tasks, pending_tasks = await asyncio.wait(fs=tasks, return_when=asyncio.ALL_COMPLETED)
+        for t in finished_tasks:
+            e = t.exception()
+            if e:
+                logging.error(e)
+
+    def execute_controllers_health_check(self, controllers):
+        coroutines_list = []
+
         for controller in controllers:
-            controller.health_check()
+            coroutines_list.append(controller.health_check)
+
+        self._execute_coroutines(coroutines_list=coroutines_list)
