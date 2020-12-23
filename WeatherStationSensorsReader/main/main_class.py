@@ -153,15 +153,17 @@ class Main(object):
         return self.DEFAULT_MINUTES_BETWEEN_READS
 
     def execute_controllers(self, controllers):
-        coroutines_list = []
+        if not controllers:
+            return
 
+        coroutines_list = []
         for controller in controllers:
             coroutines_list.append(controller.execute)
 
-        asyncio.run(main=self._execute_coroutines(coroutines_list=coroutines_list))
+        asyncio.run(main=self.execute_coroutines(coroutines_list=coroutines_list))
 
     @staticmethod
-    async def _execute_coroutines(coroutines_list):
+    async def execute_coroutines(coroutines_list):
         tasks = []
 
         for coroutine in coroutines_list:
@@ -174,9 +176,11 @@ class Main(object):
                 logging.error(e)
 
     def execute_controllers_health_check(self, controllers):
-        coroutines_list = []
+        if not controllers:
+            return
 
+        coroutines_list = []
         for controller in controllers:
             coroutines_list.append(controller.health_check)
 
-        self._execute_coroutines(coroutines_list=coroutines_list)
+        self.execute_coroutines(coroutines_list=coroutines_list)

@@ -4,7 +4,7 @@ import unittest
 from unittest import mock
 from unittest.mock import MagicMock, Mock
 
-from controllers.ground_temperature_controller import GroundTemperatureController
+from tests.async_run import async_run
 
 sys.modules['bme280pi'] = MagicMock()
 sys.modules['w1thermsensor'] = MagicMock()
@@ -12,6 +12,7 @@ from controllers.air_measurement_controller import AirMeasurementController
 from controllers.ambient_temperature_controller import AmbientTemperatureController
 from controllers.controller import Controller
 from controllers.fake_controller import FakeController
+from controllers.ground_temperature_controller import GroundTemperatureController
 from main.main_class import Main
 
 
@@ -410,22 +411,20 @@ class TestMainClass(unittest.TestCase):
         # act
         self.assertEqual(main_class.get_minutes_between_reads(), int(test_value))
 
-    @mock.patch('main.main_class.logging', autospec=True)
-    def test_when_executing_controllers_given_empty_list_nothing_should_be_executed(self, mock_logging):
+    @mock.patch('main.main_class.asyncio', autospec=True)
+    def test_when_executing_controllers_given_empty_list_nothing_should_be_executed(self, mock_asyncio):
         # arrange
         main_class = Main(variables={})
-        mock_controller = Mock(spec=Controller)
         test_controllers = []
 
         # act
         self.assertIsNone(main_class.execute_controllers(test_controllers))
 
         # assert
-        mock_controller.execute.assert_not_called()
-        mock_logging.error.assert_not_called()
+        mock_asyncio.run.assert_not_called()
 
-    @mock.patch('main.main_class.logging', autospec=True)
-    def test_when_executing_controllers_given_controllers_they_should_be_executed(self, mock_logging):
+    @mock.patch('main.main_class.asyncio', autospec=True)
+    def test_when_executing_controllers_given_controllers_they_should_be_executed(self, mock_asyncio):
         # arrange
         main_class = Main(variables={})
         mock_controller = Mock(spec=Controller)
@@ -435,24 +434,34 @@ class TestMainClass(unittest.TestCase):
         self.assertIsNone(main_class.execute_controllers(test_controllers))
 
         # assert
-        mock_controller.execute.assert_called_once()
-        mock_logging.error.assert_not_called()
+        mock_asyncio.run.assert_called_once()
 
+    @mock.patch('main.main_class.asyncio', autospec=True)
     @mock.patch('main.main_class.logging', autospec=True)
-    def test_when_executing_controllers_given_failing_controllers_error_should_not_be_thrown(self, mock_logging):
+    def test_when_executing_coroutines_given_successful_controllers_error_should_not_be_thrown(self,
+                                                                                               mock_logging,
+                                                                                               mock_asyncio):
         # arrange
         main_class = Main(variables={})
-        mock_controller = Mock(spec=Controller)
-        mock_controller.execute.side_effect = Exception('test')
-        test_controllers = [mock_controller]
+
+        mock_coroutine = Mock()
+        test_coroutines = [mock_coroutine]
+
+        mock_task = Mock()
+        mock_task.exception.return_value = None
+        test_tasks = [mock_task]
+
+        mock_asyncio.ALL_COMPLETED = 'ALL_COMPLETED'
+        mock_asyncio.create_task.return_value = mock_task
+        mock_asyncio.wait.return_value = test_tasks, None
 
         # act
-        self.assertIsNone(main_class.execute_controllers(test_controllers))
+        self.assertIsNone(async_run(coroutine=main_class.execute_coroutines(test_coroutines)))
 
         # assert
-        mock_controller.execute.assert_called_once()
-        mock_logging.error.assert_called_once_with(f'Error while executing controller "{mock_controller.__class__.__name__}". ',
-                                                   exc_info=mock_controller.execute.side_effect)
+        mock_asyncio.create_task.assert_called_once_with(coro=mock_coroutine())
+        mock_asyncio.wait.assert_called_once_with(fs=test_tasks, return_when=mock_asyncio.ALL_COMPLETED)
+        mock_logging.error.assert_not_called()
 
     def test_when_executing_health_check_given_controllers_it_should_be_executed(self):
         # arrange
