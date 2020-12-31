@@ -25,10 +25,31 @@ pipeline {
       }
     }
 
-    stage('Execute unit tests') {
+    stage('Execute unit tests and code coverage') {
       steps {
         script {
           sh "ENV/bin/python -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader"
+          sh "ENV/bin/coverage run -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader"
+        }
+      }
+    }
+
+    stage('SonarQube analysis') {
+      environment {
+        def scannerHome = tool 'Sonarqube'
+      }
+
+      steps {
+        script {
+          sh "ENV/bin/coverage xml"
+        }
+
+        withSonarQubeEnv('Sonarqube') {
+          sh "${scannerHome}/bin/sonar-scanner"
+        }
+
+        timeout(time: 10, unit: 'MINUTES') {
+          waitForQualityGate abortPipeline: true
         }
       }
     }

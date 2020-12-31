@@ -34,26 +34,6 @@ pipeline {
       }
     }
 
-    stage('SonarQube analysis') {
-      environment {
-        def scannerHome = tool 'Sonarqube'
-      }
-
-      steps {
-        script {
-          sh "ENV/bin/coverage xml"
-        }
-
-        withSonarQubeEnv('Sonarqube') {
-          sh "${scannerHome}/bin/sonar-scanner"
-        }
-
-        timeout(time: 10, unit: 'MINUTES') {
-          waitForQualityGate abortPipeline: true
-        }
-      }
-    }
-
     stage('Upload report to Coveralls.io') {
       steps {
         withCredentials([string(credentialsId: 'coveralls-sensors-reader-repo-token', variable: 'COVERALLS_REPO_TOKEN')]) {
