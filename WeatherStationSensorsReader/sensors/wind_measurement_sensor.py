@@ -1,8 +1,7 @@
 import logging
 import math
-from datetime import time
+import time
 from statistics import mean
-from time import sleep
 
 from gpiozero import Button
 
@@ -27,34 +26,40 @@ class WindMeasurementSensor(Sensor):
         logging.debug(msg=f'Started anemometer on port "{self.GPIO_PORT_NUMBER}" in the sensor "{self.__class__.__name__}".')
 
     def read_values(self):
-        wind_samples = self.get_samples()
+        speed_samples = self.get_samples()
 
-        wind_speed = mean(data=wind_samples)
-        gust_speed = max(wind_samples)
+        wind_speed = mean(data=speed_samples)
+        gust_speed = max(speed_samples)
         direction = -1
 
         return [direction, wind_speed, gust_speed]
 
     def get_samples(self):
         samples = []
-        wind_speed_sensor = Button(self.GPIO_PORT_NUMBER)
+        wind_speed_sensor = Button(pin=self.GPIO_PORT_NUMBER)
         wind_speed_sensor.when_pressed = self.spin
 
         for n in range(0, self.SAMPLES_COUNT):
-            self.signals_count = 0
-            start_time = time.time()
-            sleep(self.SECONDS_BETWEEN_SAMPLES)
+            speed = self.get_sample_speed()
+            samples.append(speed)
 
-            current_count = self.signals_count
-            elapsed_seconds = time.time() - start_time
-            samples.append(self.get_speed(current_signals_count=current_count, elapsed_seconds=elapsed_seconds))
+            logging.debug(msg=f'Sample speed obtained "{speed}" km/h. Attempt {n + 1}.')
 
         return samples
 
     def spin(self):
         self.signals_count = self.signals_count + 1
 
-        logging.debug(msg=f'Wind count {self.signals_count}.')
+        logging.debug(msg=f'Signals count {self.signals_count}.')
+
+    def get_sample_speed(self):
+        self.signals_count = 0
+        start_time = time.time()
+        time.sleep(self.SECONDS_BETWEEN_SAMPLES)
+
+        current_count = self.signals_count
+        elapsed_seconds = time.time() - start_time
+        return self.get_speed(current_signals_count=current_count, elapsed_seconds=elapsed_seconds)
 
     def get_speed(self, current_signals_count, elapsed_seconds):
         rotations = current_signals_count / 2.0
