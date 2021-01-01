@@ -19,7 +19,7 @@ pipeline {
              ENV/bin/pip install --no-cache-dir --upgrade wheel
              ENV/bin/pip install --no-cache-dir --upgrade setuptools
 
-             ENV/bin/pip install --no-cache-dir psycopg2 coveralls
+             ENV/bin/pip install --no-cache-dir psycopg2 gpiozero coveralls
              '''
         }
       }
