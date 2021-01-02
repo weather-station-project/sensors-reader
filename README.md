@@ -136,4 +136,5 @@ Use this code as you wish! Totally free to be copied/pasted.
 
 ## Donation
 If you liked the project and you are willing to contribute, don't hesitate! I will be very grateful! :-)
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](david.leon.m@gmail.com)
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=4TFR2PQ2J3KLA&item_name=If+you+liked+the+project+and+you+are+willing+to+contribute%2C+don%27t+hesitate%21+I+will+be+very+grateful%21+%3A-%29&currency_code=EUR)
