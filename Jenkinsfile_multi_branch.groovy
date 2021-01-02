@@ -59,7 +59,7 @@ pipeline {
     stage('Deploy on staging') {
       steps {
         script {
-          deployContainerOnRepository("${WeatherStationSensorsReaderVariables.DockerHubStagingRegistryName}")
+          deployContainerOnDockerHub("${WeatherStationSensorsReaderVariables.DockerHubStagingRegistryName}")
         }
       }
     }

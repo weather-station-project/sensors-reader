@@ -47,7 +47,7 @@ pipeline {
     stage('Build & Deploy image') {
       steps {
         script {
-          deployContainerOnRepository("${WeatherStationSensorsReaderVariables.DockerHubRegistryName}")
+          deployContainerOnDockerHub("${WeatherStationSensorsReaderVariables.DockerHubRegistryName}")
         }
       }
     }
