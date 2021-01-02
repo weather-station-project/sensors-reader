@@ -28,8 +28,10 @@ pipeline {
     stage('Execute unit tests and code coverage') {
       steps {
         script {
-          sh "ENV/bin/python -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader"
-          sh "ENV/bin/coverage run -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader"
+          sh """
+             ENV/bin/python -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader
+             ENV/bin/coverage run -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader
+             """
         }
       }
     }
@@ -45,24 +47,7 @@ pipeline {
     stage('Build & Deploy image') {
       steps {
         script {
-          def dockerImage = null
-
-          try {
-            version = sh(script: 'cat VERSION', returnStdout: true)
-            dockerImage = docker.build("${WeatherStationSensorsReaderVariables.DockerHubRegistryName}", "--file ./Dockerfile ${WORKSPACE}")
-
-            docker.withRegistry('', 'docker-hub-login') {
-              dockerImage.push('latest')
-              dockerImage.push("${version}")
-            }
-          } finally {
-            if (dockerImage != null) {
-              sh """
-                 docker rmi -f ${WeatherStationSensorsReaderVariables.DockerHubRegistryName}:${version}
-                 docker rmi -f ${WeatherStationSensorsReaderVariables.DockerHubRegistryName}:latest
-                 """
-            }
-          }
+          deployContainerOnRepository("${WeatherStationSensorsReaderVariables.DockerHubRegistryName}")
         }
       }
     }

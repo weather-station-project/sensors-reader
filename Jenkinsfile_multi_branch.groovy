@@ -28,8 +28,10 @@ pipeline {
     stage('Execute unit tests and code coverage') {
       steps {
         script {
-          sh "ENV/bin/python -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader"
-          sh "ENV/bin/coverage run -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader"
+          sh """
+             ENV/bin/python -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader
+             ENV/bin/coverage run -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader
+             """
         }
       }
     }
@@ -57,7 +59,7 @@ pipeline {
     stage('Deploy on staging') {
       steps {
         script {
-          deployWeatherStationSensorsReaderOnStaging()
+          deployContainerOnRepository("${WeatherStationSensorsReaderVariables.DockerHubStagingRegistryName}")
         }
       }
     }
