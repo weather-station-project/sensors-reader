@@ -25,7 +25,7 @@ class Sensor(ABC):
 
             sleep(self.SECONDS_BETWEEN_READS)
 
-        averages = [mean(data=row) for row in list(zip(*reads))]
+        averages = self.get_averages(reads=reads)
         logging.debug(msg=f'Average "{averages}" from the sensor "{sensor_name}".')
 
         return averages
@@ -33,3 +33,6 @@ class Sensor(ABC):
     @abstractmethod
     def read_values(self):
         raise NotImplementedError('A sub-class must be implemented.')
+
+    def get_averages(self, reads):
+        return [mean(data=row) for row in list(zip(*reads))]
