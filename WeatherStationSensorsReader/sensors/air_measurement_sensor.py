@@ -1,8 +1,6 @@
 import logging
-import os
 
-if os.name != 'nt':
-    from bme280pi import Sensor as Bme280Sensor
+from bme280pi import Sensor as Bme280Sensor
 
 from sensors.sensor import Sensor
 

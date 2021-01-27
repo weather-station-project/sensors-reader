@@ -1,8 +1,7 @@
+import logging
 import math
-import os
 
-if os.name != 'nt':
-    import MCP342X
+import MCP342X
 
 
 class Vane(object):
@@ -28,14 +27,19 @@ class Vane(object):
                                         {'direction': 'N-NW', 'angle': 337.5, 'ohms': 21880}]
 
     def __init__(self):
-        self.adc = MCP342X.MCP342X(address=self.ADDRESS)
+        self.adc = MCP342X(address=self.ADDRESS)
         self.fill_adc_field()
         self.fill_min_max_adc()
 
+        logging.debug(msg=f'Started vane on port "{self.ADDRESS}" in the sensor "{self.__class__.__name__}".')
+
     def fill_adc_field(self):
         for item in self.VANE_ANGLES_AND_DIRECTIONS_TABLE:
-            voltage_out = self.calculate_voltage_out(item['ohms'])
+            voltage_out = self.calculate_voltage_out(r2=item['ohms'])
             item['adc'] = round(self.adc.max * (voltage_out / self.adc.vref))
+
+    def calculate_voltage_out(self, r2):
+        return (float(r2) / float(self.VOLTAGE_DIVIDER + r2)) * float(self.VOLTAGE_IN)
 
     def fill_min_max_adc(self):
         sorted_by_adc = sorted(self.VANE_ANGLES_AND_DIRECTIONS_TABLE, key=lambda x: x['adc'])
@@ -55,9 +59,6 @@ class Vane(object):
                 item['adc_max'] = item['adc'] + delta
             else:
                 item['adc_max'] = self.adc.max - 1
-
-    def calculate_voltage_out(self, r2):
-        return (float(r2) / float(self.VOLTAGE_DIVIDER + r2)) * float(self.VOLTAGE_IN)
 
     def get_wind_direction_angle(self):
         adc_value = self.adc.read(self.ADC_CHANNEL)

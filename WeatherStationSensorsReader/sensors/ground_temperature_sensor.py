@@ -1,8 +1,6 @@
 import logging
-import os
 
-if os.name != 'nt':
-    from w1thermsensor import W1ThermSensor
+from w1thermsensor import W1ThermSensor
 
 from sensors.sensor import Sensor
 
