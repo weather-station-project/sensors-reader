@@ -82,18 +82,21 @@ class Vane(object):
 
     @staticmethod
     def get_angles_average(angles):
+        if not angles:
+            return 0.0
+
         sin_sum = 0.0
         cos_sum = 0.0
 
-        for angles in angles:
-            r = math.radians(angles)
-            sin_sum += math.sin(r)
-            cos_sum += math.cos(r)
+        for angle in angles:
+            radians = math.radians(angle)
+            sin_sum += math.sin(radians)
+            cos_sum += math.cos(radians)
 
         float_length = float(len(angles))
         s = sin_sum / float_length
         c = cos_sum / float_length
-        arc = math.degrees(math.atan(s / c))
+        arc = 0 if c == 0 else math.degrees(math.atan(s / c))
         average = 0.0
 
         if s > 0 and c > 0:
@@ -106,8 +109,12 @@ class Vane(object):
         return 0.0 if average == 360 else average
 
     def get_direction_by_direction_angle(self, direction_angle):
-        for item in self.VANE_ANGLES_AND_DIRECTIONS_TABLE:
-            if item['angle'] == direction_angle:
-                return item['direction']
+        current_direction = None
 
-        raise Exception(f'Cannot identify wind direction by the value "{direction_angle}".')
+        for item in self.VANE_ANGLES_AND_DIRECTIONS_TABLE:
+            if item['angle'] > direction_angle:
+                return current_direction
+
+            current_direction = item['direction']
+
+        return None
