@@ -8,8 +8,8 @@ from sensors.vane import Vane
 class WindMeasurementSensor(Sensor):
     """Represents the sensor which measures wind speed, wind direction and wind gust"""
 
-    def __init__(self):
-        self.anemometer = Anemometer()
+    def __init__(self, anemometer_port_number):
+        self.anemometer = Anemometer(anemometer_port_number=anemometer_port_number)
         self.vane = Vane()
 
     def read_values(self):

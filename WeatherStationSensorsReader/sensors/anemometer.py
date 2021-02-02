@@ -8,7 +8,6 @@ from gpiozero import Button
 class Anemometer(object):
     """Represents the sensor which measures wind speed and wind gust"""
 
-    GPIO_PORT_NUMBER = 5
     SAMPLES_COUNT = 5
     SECONDS_BETWEEN_SAMPLES = 5
 
@@ -17,14 +16,15 @@ class Anemometer(object):
 
     SENSOR_ADJUSTMENT = 1.18
 
-    def __init__(self):
+    def __init__(self, anemometer_port_number):
         self.signals_count = 0
+        self.anemometer_port_number = anemometer_port_number
 
-        logging.debug(msg=f'Started anemometer on port "{self.GPIO_PORT_NUMBER}" in the sensor "{self.__class__.__name__}".')
+        logging.debug(msg=f'Started anemometer on port "{self.anemometer_port_number}" in the sensor "{self.__class__.__name__}".')
 
     def get_wind_speed_samples(self):
         samples = []
-        wind_speed_sensor = Button(pin=self.GPIO_PORT_NUMBER)
+        wind_speed_sensor = Button(pin=self.anemometer_port_number)
         wind_speed_sensor.when_pressed = self.spin
 
         for n in range(0, self.SAMPLES_COUNT):
