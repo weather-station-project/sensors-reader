@@ -7,14 +7,16 @@ from sensors.anemometer import Anemometer
 
 
 class TestAnemometer(unittest.TestCase):
+    test_port_number = 55
+
     def setUp(self):
-        self.test_anemometer = Anemometer()
+        self.test_anemometer = Anemometer(anemometer_port_number=self.test_port_number)
 
     @mock.patch('sensors.anemometer.logging')
     def test_when_calling_constructor_new_mock_should_be_initialized(self, mock_logging):
-        self.assertIsNotNone(Anemometer())
+        self.assertIsNotNone(Anemometer(anemometer_port_number=self.test_port_number))
 
-        mock_logging.debug.assert_called_once_with(msg=f'Started anemometer on port "{self.test_anemometer.GPIO_PORT_NUMBER}"'
+        mock_logging.debug.assert_called_once_with(msg=f'Started anemometer on port "{self.test_anemometer.anemometer_port_number}"'
                                                        f' in the sensor "{self.test_anemometer.__class__.__name__}".')
 
     @mock.patch('sensors.anemometer.Button')
@@ -28,7 +30,7 @@ class TestAnemometer(unittest.TestCase):
         self.assertEqual(self.test_anemometer.get_wind_speed_samples(), test_samples)
 
         # assert
-        mock_button.assert_called_once_with(pin=self.test_anemometer.GPIO_PORT_NUMBER)
+        mock_button.assert_called_once_with(pin=self.test_anemometer.anemometer_port_number)
         self.test_anemometer.get_speed_sample.assert_called()
         for n in range(0, self.test_anemometer.SAMPLES_COUNT):
             mock_logging.debug.assert_any_call(msg=f'Speed sample obtained "{test_samples[n]}" km/h. Attempt {n + 1}.')

@@ -1,18 +1,22 @@
+import sys
 import unittest
 from statistics import mean
 from unittest import mock
-from unittest.mock import Mock
+from unittest.mock import Mock, MagicMock
 
+sys.modules['MCP342X'] = MagicMock()
 from sensors.wind_measurement_sensor import WindMeasurementSensor
 
 
 class TestWindMeasurementSensor(unittest.TestCase):
+    test_port_number = 55
+
     @mock.patch('sensors.wind_measurement_sensor.Anemometer')
     @mock.patch('sensors.wind_measurement_sensor.Vane')
-    def test_when_calling_constructor_new_mock_should_be_initialized(self, mock_anemometer, mock_vane):
-        self.assertIsNotNone(WindMeasurementSensor())
+    def test_when_calling_constructor_new_mock_should_be_initialized(self, mock_vane, mock_anemometer):
+        self.assertIsNotNone(WindMeasurementSensor(anemometer_port_number=self.test_port_number))
 
-        mock_anemometer.assert_called_once()
+        mock_anemometer.assert_called_once_with(anemometer_port_number=self.test_port_number)
         mock_vane.assert_called_once()
 
     @mock.patch('sensors.wind_measurement_sensor.Anemometer')
@@ -34,12 +38,13 @@ class TestWindMeasurementSensor(unittest.TestCase):
         mock_vane.get_wind_direction_angle.return_value = test_direction_angle
 
         # act
-        self.assertEqual(WindMeasurementSensor().read_values(), [test_direction_angle,
-                                                                 mean(data=test_samples),
-                                                                 max(test_samples)])
+        sensor = WindMeasurementSensor(anemometer_port_number=self.test_port_number)
+        self.assertEqual(sensor.read_values(), [test_direction_angle,
+                                                mean(data=test_samples),
+                                                max(test_samples)])
 
         # assert
-        mock_anemometer.assert_called_once()
+        mock_anemometer.assert_called_once_with(anemometer_port_number=self.test_port_number)
         mock_vane.assert_called_once()
 
 

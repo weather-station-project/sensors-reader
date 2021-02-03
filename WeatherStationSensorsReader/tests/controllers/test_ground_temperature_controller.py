@@ -1,6 +1,9 @@
+import sys
 import unittest
 from unittest import mock
+from unittest.mock import MagicMock
 
+sys.modules['w1thermsensor'] = MagicMock()
 from controllers.ground_temperature_controller import GroundTemperatureController
 from dao.ground_temperature_dao import GroundTemperatureDao
 from sensors.ground_temperature_sensor import GroundTemperatureSensor
