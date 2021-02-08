@@ -8,8 +8,8 @@ from gpiozero import Button
 class Anemometer(object):
     """Represents the sensor which measures wind speed and wind gust"""
 
-    SAMPLES_COUNT = 5
-    SECONDS_BETWEEN_SAMPLES = 5
+    SAMPLES_COUNT = 3
+    SECONDS_BETWEEN_SAMPLES = 10
 
     SENSOR_RADIUS_CM = 9.0
     SENSOR_CIRCUMFERENCE_LONG_KM = (2 * math.pi) * SENSOR_RADIUS_CM / 100000.0

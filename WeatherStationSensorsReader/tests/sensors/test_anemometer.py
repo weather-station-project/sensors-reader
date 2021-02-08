@@ -23,7 +23,7 @@ class TestAnemometer(unittest.TestCase):
     @mock.patch('sensors.anemometer.logging')
     def test_when_getting_samples_expected_methods_should_be_called_and_expected_values_returned(self, mock_logging, mock_button):
         # arrange
-        test_samples = [10, 20, 30, 40, 50]
+        test_samples = [10, 20, 30]
         self.test_anemometer.get_speed_sample = MagicMock(side_effect=test_samples)
 
         # act
@@ -65,6 +65,9 @@ class TestAnemometer(unittest.TestCase):
     def test_when_getting_speed_expected_result_should_be_returned(self):
         self.assertAlmostEqual(first=self.test_anemometer.calculate_speed(current_signals_count=2, elapsed_seconds=1),
                                second=2.4,
+                               delta=0.1)
+        self.assertAlmostEqual(first=self.test_anemometer.calculate_speed(current_signals_count=80, elapsed_seconds=1),
+                               second=96,
                                delta=0.1)
 
 
