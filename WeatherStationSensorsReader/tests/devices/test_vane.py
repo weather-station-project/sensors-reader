@@ -79,27 +79,27 @@ class TestVane(unittest.TestCase):
 
     def test_when_getting_wind_direction_angle_given_no_direction_exception_should_be_thrown(self):
         # arrange
-        self.test_vane.get_direction_angle_by_adc = MagicMock(return_value=None)
+        self.test_vane.get_direction_angle_by_gpio_value = MagicMock(return_value=None)
 
         # act
         with self.assertRaises(Exception):
             self.test_vane.get_wind_direction_angle()
 
         # assert
-        self.test_vane.adc.read.assert_called_once_with(self.test_vane.ADC_CHANNEL)
-        self.test_vane.get_direction_angle_by_adc.assert_called_once_with(adc_value=self.test_vane.adc.read())
+        self.test_vane.adc.read.assert_called_once_with(self.test_vane.CHANNEL)
+        self.test_vane.get_direction_angle_by_gpio_value.assert_called_once_with(adc_value=self.test_vane.adc.read())
 
     def test_when_getting_wind_direction_angle_given_direction_it_should_be_returned(self):
         # arrange
         test_result = 5
-        self.test_vane.get_direction_angle_by_adc = MagicMock(return_value=test_result)
+        self.test_vane.get_direction_angle_by_gpio_value = MagicMock(return_value=test_result)
 
         # act
         self.assertIsNotNone(self.test_vane.get_wind_direction_angle())
 
         # assert
-        self.test_vane.adc.read.assert_called_once_with(self.test_vane.ADC_CHANNEL)
-        self.test_vane.get_direction_angle_by_adc.assert_called_once_with(adc_value=self.test_vane.adc.read())
+        self.test_vane.adc.read.assert_called_once_with(self.test_vane.CHANNEL)
+        self.test_vane.get_direction_angle_by_gpio_value.assert_called_once_with(adc_value=self.test_vane.adc.read())
 
     def test_when_getting_direction_angle_by_adc_given_value_expected_angle_should_be_returned(self):
         # arrange
@@ -107,7 +107,7 @@ class TestVane(unittest.TestCase):
         self.test_vane.VANE_ANGLES_AND_DIRECTIONS_TABLE[1]['adc_max'] = 0.9
 
         # act
-        self.assertEqual(self.test_vane.get_direction_angle_by_adc(adc_value=0.5),
+        self.assertEqual(self.test_vane.get_direction_angle_by_gpio_value(adc_value=0.5),
                          self.test_vane.VANE_ANGLES_AND_DIRECTIONS_TABLE[1]['angle'])
 
     def test_when_getting_direction_angle_by_adc_given_wrong_values_none_should_be_returned(self):
@@ -116,9 +116,9 @@ class TestVane(unittest.TestCase):
         self.test_vane.VANE_ANGLES_AND_DIRECTIONS_TABLE[1]['adc_max'] = 0.9
 
         # act
-        self.assertIsNone(self.test_vane.get_direction_angle_by_adc(adc_value=0))
-        self.assertIsNone(self.test_vane.get_direction_angle_by_adc(adc_value=0.05))
-        self.assertIsNone(self.test_vane.get_direction_angle_by_adc(adc_value=1))
+        self.assertIsNone(self.test_vane.get_direction_angle_by_gpio_value(adc_value=0))
+        self.assertIsNone(self.test_vane.get_direction_angle_by_gpio_value(adc_value=0.05))
+        self.assertIsNone(self.test_vane.get_direction_angle_by_gpio_value(adc_value=1))
 
     def test_when_getting_direction_average_given_angle_expected_value_should_be_returned(self):
         # arrange

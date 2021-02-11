@@ -34,7 +34,7 @@ class TestWindMeasurementSensor(unittest.TestCase):
         mock_sensor.get_wind_direction_angle.return_value = test_direction_angle
         mock_vane.return_value = mock_sensor
 
-        mock_anemometer.get_wind_speed_samples.return_value = test_samples
+        mock_anemometer.get_samples.return_value = test_samples
         mock_vane.get_wind_direction_angle.return_value = test_direction_angle
 
         # act

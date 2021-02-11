@@ -1,8 +1,8 @@
 from statistics import mean
 
-from sensors.anemometer import Anemometer
+from devices.anemometer import Anemometer
+from devices.vane import Vane
 from sensors.sensor import Sensor
-from sensors.vane import Vane
 
 
 class WindMeasurementSensor(Sensor):
@@ -13,17 +13,11 @@ class WindMeasurementSensor(Sensor):
         self.vane = Vane()
 
     def read_values(self):
-        speed_samples = self.anemometer.get_wind_speed_samples()
-
-        direction_angle = self.vane.get_wind_direction_angle()
-        wind_speed = mean(data=speed_samples)
-        gust_speed = max(speed_samples)
-
-        return [direction_angle, wind_speed, gust_speed]
+        return [self.vane.get_sample(), self.anemometer.get_sample()]
 
     def get_averages(self, reads):
         transposed_matrix = list(zip(*reads))
 
         return [self.vane.get_direction_average(direction_angles=transposed_matrix[0]),
                 mean(data=transposed_matrix[1]),
-                mean(data=transposed_matrix[2])]
+                max(transposed_matrix[1])]

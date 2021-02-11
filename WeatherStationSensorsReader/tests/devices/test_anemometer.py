@@ -27,7 +27,7 @@ class TestAnemometer(unittest.TestCase):
         self.test_anemometer.get_speed_sample = MagicMock(side_effect=test_samples)
 
         # act
-        self.assertEqual(self.test_anemometer.get_wind_speed_samples(), test_samples)
+        self.assertEqual(self.test_anemometer.get_samples(), test_samples)
 
         # assert
         mock_button.assert_called_once_with(pin=self.test_anemometer.anemometer_port_number)
@@ -59,7 +59,7 @@ class TestAnemometer(unittest.TestCase):
 
         # assert
         mock_time.time.assert_any_call()
-        mock_time.sleep.assert_called_once_with(self.test_anemometer.SECONDS_BETWEEN_SAMPLES)
+        mock_time.sleep.assert_called_once_with(self.test_anemometer.SAMPLES_DURATION_IN_SECONDS)
         self.test_anemometer.calculate_speed.assert_called_once_with(current_signals_count=0, elapsed_seconds=test_finish_time - test_start_time)
 
     def test_when_getting_speed_expected_result_should_be_returned(self):

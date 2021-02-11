@@ -8,7 +8,7 @@ class Sensor(ABC):
     """Base class for sensors"""
 
     NUMBER_OF_READS = 5
-    SECONDS_BETWEEN_READS = 5
+    SECONDS_BETWEEN_READS = 10
 
     def get_read_averages(self):
         reads = []
