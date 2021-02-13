@@ -1,10 +1,7 @@
-import sys
 import unittest
-from statistics import mean
 from unittest import mock
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 
-sys.modules['MCP342X'] = MagicMock()
 from sensors.wind_measurement_sensor import WindMeasurementSensor
 
 
@@ -23,25 +20,23 @@ class TestWindMeasurementSensor(unittest.TestCase):
     @mock.patch('sensors.wind_measurement_sensor.Vane')
     def test_when_reading_values_given_some_samples_expected_values_should_be_returned(self, mock_vane, mock_anemometer):
         # arrange
-        test_samples = [10, 20, 40, 30]
+        test_sample = 10
         test_direction_angle = 100
 
         mock_sensor = Mock()
-        mock_sensor.get_wind_speed_samples.return_value = test_samples
+        mock_sensor.get_sample.return_value = test_sample
         mock_anemometer.return_value = mock_sensor
 
         mock_sensor = Mock()
-        mock_sensor.get_wind_direction_angle.return_value = test_direction_angle
+        mock_sensor.get_sample.return_value = test_direction_angle
         mock_vane.return_value = mock_sensor
 
-        mock_anemometer.get_samples.return_value = test_samples
+        mock_anemometer.get_samples.return_value = test_sample
         mock_vane.get_wind_direction_angle.return_value = test_direction_angle
 
         # act
         sensor = WindMeasurementSensor(anemometer_port_number=self.test_port_number)
-        self.assertEqual(sensor.read_values(), [test_direction_angle,
-                                                mean(data=test_samples),
-                                                max(test_samples)])
+        self.assertEqual(sensor.read_values(), [test_direction_angle, test_sample])
 
         # assert
         mock_anemometer.assert_called_once_with(anemometer_port_number=self.test_port_number)
