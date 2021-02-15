@@ -1,6 +1,6 @@
 import logging
 import math
-import time
+from time import sleep
 
 from gpiozero import MCP3008
 
@@ -46,9 +46,10 @@ class Vane(SamplesDuringTimeDevice):
                 samples.append(sample)
                 logging.debug(msg=f'Wind sample obtained "{sample}" degrees.')
 
-            time.sleep(time_sleeping)
+            sleep(time_sleeping)
 
-        return self.get_direction_average(direction_angles=samples)
+        average = self.get_direction_average(direction_angles=samples)
+        return average
 
     def get_wind_direction_angle(self):
         gpio_value = round(self.mcp_chip.value * self.VOLTAGE_IN, 1)

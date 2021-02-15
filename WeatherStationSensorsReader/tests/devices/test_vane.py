@@ -6,12 +6,12 @@ from devices.vane import Vane
 
 
 class TestVane(unittest.TestCase):
-    @mock.patch('devices.vane.MCP3008')
+    @mock.patch('devices.vane.MCP3008', autospec=True)
     def setUp(self, mock_mcp):
         self.test_vane = Vane()
 
-    @mock.patch('devices.vane.MCP3008')
-    @mock.patch('devices.vane.logging')
+    @mock.patch('devices.vane.MCP3008', autospec=True)
+    @mock.patch('devices.vane.logging', autospec=True)
     def test_when_calling_constructor_expected_values_should_be_returned(self, mock_logging, mock_mcp):
         # act
         self.assertIsNotNone(Vane())
@@ -20,7 +20,29 @@ class TestVane(unittest.TestCase):
         mock_mcp.assert_called_once_with(channel=self.test_vane.CHANNEL)
         mock_logging.debug.assert_called_once_with(msg=f'Started vane on the channel "{self.test_vane.CHANNEL}".')
 
-    @mock.patch('devices.vane.logging')
+    @mock.patch('devices.vane.logging', autospec=True)
+    @mock.patch('devices.vane.sleep', autospec=True)
+    def test_when_getting_samples_expected_calls_should_be_done_and_expected_value_returned(self, mock_sleep, mock_logging):
+        # arrange
+        test_samples = [1, 2, None, 4, 5]
+        test_average = 10
+
+        self.test_vane.get_wind_direction_angle = MagicMock(side_effect=test_samples)
+        self.test_vane.get_direction_average = MagicMock(return_value=test_average)
+
+        # act
+        self.assertEqual(self.test_vane.get_sample(), test_average)
+
+        # assert
+        for test_sample in test_samples:
+            if test_sample:
+                mock_logging.debug.assert_any_call(msg=f'Wind sample obtained "{test_sample}" degrees.')
+            mock_sleep.assert_any_call(self.test_vane.SAMPLES_DURATION_IN_SECONDS / self.test_vane.NUMBER_OF_SAMPLES)
+
+        self.test_vane.get_wind_direction_angle.assert_any_call()
+        self.test_vane.get_direction_average.assert_called_once_with(direction_angles=[1, 2, 4, 5])
+
+    @mock.patch('devices.vane.logging', autospec=True)
     def test_when_getting_wind_direction_angle_given_wrong_voltage_null_should_be_returned(self, mock_logging):
         # arrange
         test_value = 50
@@ -35,7 +57,7 @@ class TestVane(unittest.TestCase):
         # assert
         mock_logging.debug.assert_called_once_with(msg=f'Cannot determine wind direction for MCP reading "{test_value * self.test_vane.VOLTAGE_IN}".')
 
-    @mock.patch('devices.vane.logging')
+    @mock.patch('devices.vane.logging', autospec=True)
     def test_when_getting_wind_direction_angle_given_correct_voltage_expected_angle_should_be_returned(self, mock_logging):
         # arrange
         test_value = 0.87878787878787
