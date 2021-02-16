@@ -39,7 +39,7 @@ class Vane(SamplesDuringTimeDevice):
         time_sleeping = self.SAMPLES_DURATION_IN_SECONDS / self.NUMBER_OF_SAMPLES
         samples = []
 
-        for n in range(0, self.NUMBER_OF_SAMPLES):
+        for _ in range(0, self.NUMBER_OF_SAMPLES):
             sample = self.get_wind_direction_angle()
 
             if sample:
