@@ -10,6 +10,7 @@ services:
       - BME_280_SENSOR_ENABLED=true
       - GROUND_SENSOR_ENABLED=true
       - WIND_SENSOR_ENABLED=true
+      - ANEMOMETER_PORT_NUMBER=22
       - SERVER=127.0.0.1
       - DATABASE=my_db
       - USER=my_user

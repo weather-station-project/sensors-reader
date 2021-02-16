@@ -68,6 +68,7 @@ The solution is intended to take measurements from the environment and also to s
 * **BME_280_SENSOR_ENABLED** - true / false. In case of being enabled, the application will perform ambient temperatures, air humidity and atmosphere pressure measurements.
 * **GROUND_SENSOR_ENABLED** - true / false. In case of being enabled, the application will perform ground temperature measurements.
 * **WIND_SENSOR_ENABLED** - true / false. In case of being enabled the application will perform wind measurements such as wind speed, gust speed and wind direction.
+* **ANEMOMETER_PORT_NUMBER** - The GPIO port number where the anemometer device is connected to.
 * **SERVER** - Database server. In case of it is empty, measurements retrieved will not be stored anywhere, just showed in the log traces with INFO level.
 * **DATABASE** - Database name
 * **USER** - Database name
@@ -92,6 +93,7 @@ services:
       - BME_280_SENSOR_ENABLED=true
       - GROUND_SENSOR_ENABLED=true
       - WIND_SENSOR_ENABLED=true
+      - ANEMOMETER_PORT_NUMBER=22
       - SERVER=127.0.0.1
       - DATABASE=my_db
       - USER=my_user
@@ -101,7 +103,7 @@ services:
     - '/etc/localtime:/etc/localtime:ro'
 ```
 ```bash
-docker run --rm -d --name=sensors-reader --privileged -e LOGGING_LEVEL=ERROR -e BME_280_SENSOR_ENABLED=true -e GROUND_SENSOR_ENABLED=true -e WIND_SENSOR_ENABLED=true -e SERVER=127.0.0.1 -e DATABASE=my_db -e USER=my_user -e PASSWORD=my_password -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro davidleonm/weather-station-sensors-reader
+docker run --rm -d --name=sensors-reader --privileged -e LOGGING_LEVEL=ERROR -e BME_280_SENSOR_ENABLED=true -e GROUND_SENSOR_ENABLED=true -e WIND_SENSOR_ENABLED=true -e ANEMOMETER_PORT_NUMBER=22 -e SERVER=127.0.0.1 -e DATABASE=my_db -e USER=my_user -e PASSWORD=my_password -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro davidleonm/weather-station-sensors-reader
 ```
 
 ### Example of an execution with only the fake sensor and without database
@@ -125,7 +127,7 @@ docker run --rm -d --name=sensors-reader -e LOGGING_LEVEL=ERROR -e FAKE_SENSOR_E
 
 
 ## Changelog
-* **1.2.0** - Added wind sensors such as the anemometer and the vane. Measurements executed asynchronously.
+* **1.2.0** - Added wind sensors such as the anemometer and the vane. Measurements executed asynchronously. Restructuring of Jenkins files.
 * **1.1.0** - Added ground temperature sensor, fixed some code smells and documentation.
 * **1.0.0** - First version with ambient temperature, air humidity and atmosphere pressure sensors.
 
