@@ -8,7 +8,6 @@ COPY WeatherStationSensorsReader/dao /WeatherStationSensorsReader/dao
 COPY WeatherStationSensorsReader/devices /WeatherStationSensorsReader/devices
 COPY WeatherStationSensorsReader/exceptions /WeatherStationSensorsReader/exceptions
 COPY WeatherStationSensorsReader/health_check /WeatherStationSensorsReader/health_check
-COPY WeatherStationSensorsReader/helpers /WeatherStationSensorsReader/helpers
 COPY WeatherStationSensorsReader/main /WeatherStationSensorsReader/main
 COPY WeatherStationSensorsReader/sensors /WeatherStationSensorsReader/sensors
 
