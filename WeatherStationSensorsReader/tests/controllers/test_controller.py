@@ -4,7 +4,6 @@ from unittest.mock import Mock
 
 from controllers.controller import Controller
 from dao.dao import Dao
-from helpers.async_run_from_sync import async_run_from_sync
 from sensors.sensor import Sensor
 
 
@@ -30,7 +29,7 @@ class TestController(unittest.TestCase):
 
         # act
         controller = Controller(sensor=self.mock_sensor, dao=self.mock_dao)
-        self.assertIsNone(async_run_from_sync(method=controller.execute, parameter=None))
+        self.assertIsNone(controller.execute())
 
         # assert
         self.mock_sensor.get_read_averages.assert_called_once()
@@ -41,7 +40,7 @@ class TestController(unittest.TestCase):
     def test_when_checking_health_expected_methods_should_be_called(self, ):
         # act
         controller = Controller(sensor=self.mock_sensor, dao=self.mock_dao)
-        self.assertIsNone(async_run_from_sync(method=controller.health_check, parameter=None))
+        self.assertIsNone(controller.health_check())
 
         # assert
         self.mock_sensor.read_values.assert_called_once()

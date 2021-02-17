@@ -1,4 +1,3 @@
-import asyncio
 import logging
 
 from controllers.air_measurement_controller import AirMeasurementController
@@ -6,7 +5,6 @@ from controllers.ambient_temperature_controller import AmbientTemperatureControl
 from controllers.fake_controller import FakeController
 from controllers.ground_temperature_controller import GroundTemperatureController
 from controllers.wind_measurement_controller import WindMeasurementController
-from helpers.async_run_from_sync import async_run_from_sync
 
 
 class Main(object):
@@ -169,35 +167,15 @@ class Main(object):
 
         return self.DEFAULT_MINUTES_BETWEEN_READS
 
-    def execute_controllers(self, controllers):
-        if not controllers:
-            return
-
-        coroutines_list = []
+    @staticmethod
+    def execute_controllers(controllers):
         for controller in controllers:
-            coroutines_list.append(controller.execute)
-
-        async_run_from_sync(method=self.execute_coroutines, parameter=coroutines_list)
+            try:
+                controller.execute()
+            except Exception as e:
+                logging.error(f'Error while executing controller "{controller.__class__.__name__}". ', exc_info=e)
 
     @staticmethod
-    async def execute_coroutines(coroutines_list):
-        tasks = []
-
-        for coroutine in coroutines_list:
-            tasks.append(asyncio.create_task(coro=coroutine()))
-
-        finished_tasks, pending_tasks = await asyncio.wait(fs=tasks, return_when=asyncio.ALL_COMPLETED)
-        for t in finished_tasks:
-            e = t.exception()
-            if e:
-                logging.error(e)
-
-    def execute_controllers_health_check(self, controllers):
-        if not controllers:
-            return
-
-        coroutines_list = []
+    def execute_controllers_health_check(controllers):
         for controller in controllers:
-            coroutines_list.append(controller.health_check)
-
-        async_run_from_sync(method=self.execute_coroutines, parameter=coroutines_list)
+            controller.health_check()
