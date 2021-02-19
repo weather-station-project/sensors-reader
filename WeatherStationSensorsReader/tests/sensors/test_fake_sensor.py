@@ -15,6 +15,11 @@ class TestFakeSensor(unittest.TestCase):
             self.assertGreaterEqual(value, fake_sensor.MIN_LIMIT)
             self.assertLessEqual(value, fake_sensor.MAX_LIMIT)
 
+    def test_when_executing_health_check_nothing_should_be_returned(self):
+        fake_sensor = FakeSensor()
+
+        self.assertIsNone(fake_sensor.health_check())
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -60,6 +60,9 @@ class TestAnemometer(unittest.TestCase):
                                second=96,
                                delta=0.1)
 
+    def test_when_executing_health_check_nothing_should_be_returned(self):
+        self.assertIsNone(self.test_anemometer.health_check())
+
 
 if __name__ == '__main__':
     unittest.main()

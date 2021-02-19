@@ -43,7 +43,7 @@ class TestController(unittest.TestCase):
         self.assertIsNone(controller.health_check())
 
         # assert
-        self.mock_sensor.read_values.assert_called_once()
+        self.mock_sensor.health_check.assert_called_once()
         self.mock_dao.health_check.assert_called_once()
 
 

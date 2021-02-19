@@ -23,16 +23,13 @@ class TestWindMeasurementSensor(unittest.TestCase):
         test_sample = 10
         test_direction_angle = 100
 
-        mock_sensor = Mock()
-        mock_sensor.get_sample.return_value = test_sample
-        mock_anemometer.return_value = mock_sensor
+        mock_anemometer_device = Mock()
+        mock_anemometer_device.get_sample.return_value = test_sample
+        mock_anemometer.return_value = mock_anemometer_device
 
-        mock_sensor = Mock()
-        mock_sensor.get_sample.return_value = test_direction_angle
-        mock_vane.return_value = mock_sensor
-
-        mock_anemometer.get_samples.return_value = test_sample
-        mock_vane.get_wind_direction_angle.return_value = test_direction_angle
+        mock_vane_device = Mock()
+        mock_vane_device.get_sample.return_value = test_direction_angle
+        mock_vane.return_value = mock_vane_device
 
         # act
         sensor = WindMeasurementSensor(anemometer_port_number=self.test_port_number)
@@ -41,6 +38,8 @@ class TestWindMeasurementSensor(unittest.TestCase):
         # assert
         mock_anemometer.assert_called_once_with(anemometer_port_number=self.test_port_number)
         mock_vane.assert_called_once()
+        mock_anemometer_device.get_sample.assert_called_once()
+        mock_vane_device.get_sample.assert_called_once()
 
     @mock.patch('sensors.wind_measurement_sensor.Anemometer')
     @mock.patch('sensors.wind_measurement_sensor.Vane')
@@ -62,6 +61,28 @@ class TestWindMeasurementSensor(unittest.TestCase):
 
         # arrange
         mock_vane.return_value.get_direction_average.assert_called_once_with(direction_angles=(10, 15, 15, 30, 30))
+
+    @mock.patch('sensors.wind_measurement_sensor.Anemometer')
+    @mock.patch('sensors.wind_measurement_sensor.Vane')
+    def test_when_executing_health_check_nothing_should_be_returned_and_expected_methods_should_be_called(self, mock_vane, mock_anemometer):
+        # arrange
+        mock_anemometer_device = Mock()
+        mock_anemometer_device.health_check.return_value = 50
+        mock_anemometer.return_value = mock_anemometer_device
+
+        mock_vane_device = Mock()
+        mock_vane_device.health_check.return_value = 60
+        mock_vane.return_value = mock_vane_device
+
+        # act
+        sensor = WindMeasurementSensor(anemometer_port_number=self.test_port_number)
+        self.assertIsNone(sensor.health_check())
+
+        # assert
+        mock_anemometer.assert_called_once_with(anemometer_port_number=self.test_port_number)
+        mock_vane.assert_called_once()
+        mock_anemometer_device.health_check.assert_called_once()
+        mock_vane_device.health_check.assert_called_once()
 
 
 if __name__ == '__main__':

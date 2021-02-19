@@ -15,3 +15,6 @@ class AmbientTemperatureSensor(Sensor):
 
     def read_values(self):
         return [self.sensor.get_temperature(unit='C')]
+
+    def health_check(self):
+        _ = self.sensor.get_temperature(unit='C')

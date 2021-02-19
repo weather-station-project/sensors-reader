@@ -12,3 +12,6 @@ class FakeSensor(Sensor):
 
     def read_values(self):
         return random.sample(range(self.MIN_LIMIT, self.MAX_LIMIT), self.VALUES_NUMBER)
+
+    def health_check(self):
+        pass

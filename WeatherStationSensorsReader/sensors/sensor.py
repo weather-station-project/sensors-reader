@@ -36,3 +36,7 @@ class Sensor(ABC):
 
     def get_averages(self, reads):
         return [mean(data=row) for row in list(zip(*reads))]
+
+    @abstractmethod
+    def health_check(self):
+        raise NotImplementedError('A sub-class must be implemented.')

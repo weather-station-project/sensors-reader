@@ -43,3 +43,6 @@ class Anemometer(SamplesDuringTimeDevice):
         rotations = current_signals_count / 2.0
         speed_per_hour = ((self.SENSOR_CIRCUMFERENCE_LONG_KM * rotations) / elapsed_seconds) * 3600
         return speed_per_hour * self.SENSOR_ADJUSTMENT
+
+    def health_check(self):
+        pass

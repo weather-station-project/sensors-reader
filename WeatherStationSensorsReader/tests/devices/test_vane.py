@@ -119,6 +119,14 @@ class TestVane(unittest.TestCase):
             self.assertEqual(self.test_vane.get_direction_by_direction_angle(direction_angle=direction_angle),
                              test_direction_angles[direction_angle])
 
+    def test_when_executing_health_check_nothing_should_be_returned_and_expected_methods_should_be_called(self):
+        mcp_mock = MagicMock()
+        mcp_mock.value = 50
+        self.test_vane.mcp_chip = mcp_mock
+
+        # act
+        self.assertIsNone(self.test_vane.health_check())
+
 
 if __name__ == '__main__':
     unittest.main()

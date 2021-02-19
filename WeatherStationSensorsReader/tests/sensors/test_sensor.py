@@ -75,6 +75,12 @@ class TestSensor(unittest.TestCase):
         for i in range(len(test_expected_averages)):
             self.assertEqual(test_expected_averages[i], result[i])
 
+    def test_when_calling_health_check_method_error_should_be_thrown(self):
+        sensor = Sensor()
+
+        with self.assertRaises(NotImplementedError):
+            sensor.health_check()
+
 
 if __name__ == '__main__':
     unittest.main()

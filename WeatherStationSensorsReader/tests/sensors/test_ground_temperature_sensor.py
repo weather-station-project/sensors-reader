@@ -35,6 +35,17 @@ class TestGroundTemperatureSensor(unittest.TestCase):
 
         mock_sensor.get_temperature.assert_called_once_with(unit=mock_sensor.DEGREES_C)
 
+    @mock.patch('sensors.ground_temperature_sensor.W1ThermSensor')
+    def test_when_executing_health_check_nothing_should_be_returned_and_expected_methods_should_be_called(self, mock_w1thermsensor_sensor):
+        mock_sensor = Mock()
+        mock_sensor.get_temperature.return_value = 50
+        mock_sensor.DEGREES_C = 0x01
+        mock_w1thermsensor_sensor.return_value = mock_sensor
+
+        self.assertIsNone(GroundTemperatureSensor().health_check())
+
+        mock_sensor.get_temperature.assert_called_once_with(unit=mock_sensor.DEGREES_C)
+
 
 if __name__ == '__main__':
     unittest.main()
