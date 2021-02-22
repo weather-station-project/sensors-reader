@@ -6,7 +6,7 @@ from dao.dao import Dao
 class WindMeasurementDao(Dao):
     """ Represents the wind measurement database access """
 
-    INSERT_QUERY = 'INSERT INTO wind_measurements(directon, speed, gust_speed, date_time) VALUES(%s, %s, %s, %s)'
+    INSERT_QUERY = 'INSERT INTO wind_measurements(direction, speed, gust_speed, date_time) VALUES(%s, %s, %s, %s)'
     DATA_QUERY = 'SELECT * FROM wind_measurements FETCH FIRST ROW ONLY'
 
     def get_query(self):
