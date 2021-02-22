@@ -17,7 +17,8 @@ class Anemometer(SamplesDuringTimeDevice):
 
     def __init__(self, anemometer_port_number):
         self.signals_count = 0
-        _ = Button(pin=anemometer_port_number).when_pressed = self.spin
+        self.button = Button(pin=anemometer_port_number)
+        self.button.when_pressed = self.spin
 
         logging.debug(msg=f'Started anemometer on port "{anemometer_port_number}" in the sensor "{self.__class__.__name__}".')
 

@@ -48,14 +48,15 @@ class Vane(SamplesDuringTimeDevice):
 
             sleep(time_sleeping)
 
-        average = self.get_direction_average(direction_angles=samples)
+        average = self.get_angles_average(angles=samples)
         return average
 
     def get_wind_direction_angle(self):
-        gpio_value = round(self.mcp_chip.value * self.VOLTAGE_IN, 1)
+        mcp_value = self.mcp_chip.value
+        gpio_value = round(mcp_value * self.VOLTAGE_IN, 1)
 
         if gpio_value not in self.VANE_ANGLES_AND_DIRECTIONS_TABLE:
-            logging.debug(msg=f'Cannot determine wind direction for MCP reading "{gpio_value}".')
+            logging.debug(msg=f'Cannot determine wind direction for MCP reading "{mcp_value}".')
             return None
 
         return self.VANE_ANGLES_AND_DIRECTIONS_TABLE[gpio_value]['angle']
