@@ -33,7 +33,7 @@ class Dao(ABC):
                 with conn.cursor() as cursor:
                     cursor.execute(query=sql_query, vars=query_parameter_values)
 
-            logging.debug(f'Executed query "{sql_query}" with values {query_parameter_values}.')
+            logging.debug(msg=f'Executed query "{sql_query}" with values "{query_parameter_values}".')
             register_success_for_class_into_health_check_file(class_name=dao_name)
         except Exception as e:
             raise DaoException(class_name=dao_name,
