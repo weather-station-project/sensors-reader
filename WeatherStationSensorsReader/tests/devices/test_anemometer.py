@@ -33,7 +33,7 @@ class TestAnemometer(unittest.TestCase):
         mock_logging.debug.assert_called_once_with(msg=f'Signals count {self.test_anemometer.signals_count}.')
 
     @mock.patch('devices.anemometer.logging')
-    @mock.patch('devices.anemometer.time', autospec=True)
+    @mock.patch('devices.anemometer.time')
     def test_when_getting_sample_speed_expected_calls_should_be_done(self, mock_time, mock_logging):
         # arrange
         test_start_time = time.time()
@@ -59,9 +59,6 @@ class TestAnemometer(unittest.TestCase):
         self.assertAlmostEqual(first=self.test_anemometer.calculate_speed(current_signals_count=80, elapsed_seconds=1),
                                second=96,
                                delta=0.1)
-
-    def test_when_executing_health_check_nothing_should_be_returned(self):
-        self.assertIsNone(self.test_anemometer.health_check())
 
 
 if __name__ == '__main__':
