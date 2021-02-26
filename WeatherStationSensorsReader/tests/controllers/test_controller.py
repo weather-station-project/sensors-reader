@@ -12,7 +12,7 @@ class TestController(unittest.TestCase):
         self.mock_sensor = Mock(spec=Sensor)
         self.mock_dao = Mock(spec=Dao)
 
-    @mock.patch('controllers.controller.logging', autospec=True)
+    @mock.patch('controllers.controller.logging')
     def test_when_constructor_called_logging_debug_should_be_called(self, mock_logging):
         controller = Controller(sensor=self.mock_sensor, dao=self.mock_dao)
 
@@ -21,7 +21,7 @@ class TestController(unittest.TestCase):
                            f'and DAO "{self.mock_dao.__class__.__name__}".'
         mock_logging.debug.assert_called_once_with(msg=expected_message)
 
-    @mock.patch('controllers.controller.logging', autospec=True)
+    @mock.patch('controllers.controller.logging')
     def test_when_normal_execution_expected_methods_should_be_called(self, mock_logging):
         # arrange
         test_read_result = 'test_read_result'
@@ -36,15 +36,6 @@ class TestController(unittest.TestCase):
         mock_logging.info.assert_any_call(msg=f'Obtained "{test_read_result}" from the sensor "{self.mock_sensor.__class__.__name__}".')
         self.mock_dao.insert.assert_called_once_with(values=test_read_result)
         mock_logging.info.assert_called_with(msg=f'{test_read_result} inserted correctly.')
-
-    def test_when_checking_health_expected_methods_should_be_called(self, ):
-        # act
-        controller = Controller(sensor=self.mock_sensor, dao=self.mock_dao)
-        self.assertIsNone(controller.health_check())
-
-        # assert
-        self.mock_sensor.health_check.assert_called_once()
-        self.mock_dao.health_check.assert_called_once()
 
 
 if __name__ == '__main__':
