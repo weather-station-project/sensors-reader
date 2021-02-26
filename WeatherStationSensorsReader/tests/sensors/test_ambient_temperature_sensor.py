@@ -34,16 +34,6 @@ class TestAmbientTemperatureSensor(unittest.TestCase):
 
         mock_sensor.get_temperature.assert_called_once_with(unit='C')
 
-    @mock.patch('sensors.ambient_temperature_sensor.Bme280Sensor')
-    def test_when_executing_health_check_nothing_should_be_returned_and_expected_methods_should_be_called(self, mock_bme280_sensor):
-        mock_sensor = Mock()
-        mock_sensor.get_temperature.return_value = 45
-        mock_bme280_sensor.return_value = mock_sensor
-
-        self.assertIsNone(AmbientTemperatureSensor().health_check())
-
-        mock_sensor.get_temperature.assert_called_once_with(unit='C')
-
 
 if __name__ == '__main__':
     unittest.main()
