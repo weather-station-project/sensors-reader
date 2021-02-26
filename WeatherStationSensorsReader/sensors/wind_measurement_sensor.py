@@ -21,7 +21,3 @@ class WindMeasurementSensor(Sensor):
         return [self.vane.get_direction_average(direction_angles=transposed_matrix[0]),
                 mean(data=transposed_matrix[1]),
                 max(transposed_matrix[1])]
-
-    def health_check(self):
-        _ = self.anemometer.health_check()
-        _ = self.vane.health_check()

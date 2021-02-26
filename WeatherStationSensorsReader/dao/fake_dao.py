@@ -13,6 +13,3 @@ class FakeDao(Dao):
 
     def get_parameters(self, values):
         return values, datetime.now()
-
-    def get_health_check_query(self):
-        return self.QUERY

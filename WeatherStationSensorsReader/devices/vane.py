@@ -102,6 +102,3 @@ class Vane(SamplesDuringTimeDevice):
             current_direction = data['direction']
 
         return None
-
-    def health_check(self):
-        _ = self.mcp_chip.value

@@ -32,7 +32,7 @@ RUN pip install --no-cache-dir psycopg2 bme280pi w1thermsensor gpiozero RPi.GPIO
 WORKDIR /WeatherStationSensorsReader
 
 # Configure the health check command
-HEALTHCHECK --interval=5m --start-period=60s CMD ["python", "-u", "-m", "health_check.health_check"] || exit 1
+HEALTHCHECK --interval=60s --start-period=60s CMD ["python", "-u", "-m", "health_check.health_check"] || exit 1
 
 # Start the application
 ENTRYPOINT ["python", "-u", "-m", "app.app"]

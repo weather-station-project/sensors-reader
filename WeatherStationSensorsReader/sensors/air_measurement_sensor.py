@@ -16,6 +16,3 @@ class AirMeasurementSensor(Sensor):
     def read_values(self):
         result = self.sensor.get_data()
         return [result['pressure'], result['humidity']]
-
-    def health_check(self):
-        _ = self.sensor.get_data()

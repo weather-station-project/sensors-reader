@@ -1,0 +1,3 @@
+{
+    "APP": "Exception('There is no controller configured on the init. Please, read the documentation available on Github.')"
+}

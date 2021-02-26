@@ -5,6 +5,9 @@ from controllers.ambient_temperature_controller import AmbientTemperatureControl
 from controllers.fake_controller import FakeController
 from controllers.ground_temperature_controller import GroundTemperatureController
 from controllers.wind_measurement_controller import WindMeasurementController
+from exceptions.dao_exception import DaoException
+from exceptions.sensor_exception import SensorException
+from health_check.health_check_file_manager import register_error_in_health_check_file, APP_KEY
 
 
 class Main(object):
@@ -172,10 +175,9 @@ class Main(object):
         for controller in controllers:
             try:
                 controller.execute()
+            except (DaoException, SensorException) as e:
+                logging.error(e, exc_info=True)
+                register_error_in_health_check_file(key=e.class_name, message=repr(e))
             except Exception as e:
-                logging.error(f'Error while executing controller "{controller.__class__.__name__}". ', exc_info=e)
-
-    @staticmethod
-    def execute_controllers_health_check(controllers):
-        for controller in controllers:
-            controller.health_check()
+                logging.exception(f'Error while executing controller "{controller.__class__.__name__}".')
+                register_error_in_health_check_file(key=APP_KEY, message=repr(e))

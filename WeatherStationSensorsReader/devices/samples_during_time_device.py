@@ -9,7 +9,3 @@ class SamplesDuringTimeDevice(ABC):
     @abstractmethod
     def get_sample(self):
         pass
-
-    @abstractmethod
-    def health_check(self):
-        raise NotImplementedError('A sub-class must be implemented.')
