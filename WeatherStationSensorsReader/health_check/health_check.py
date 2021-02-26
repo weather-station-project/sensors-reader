@@ -2,11 +2,10 @@ import logging
 import sys
 
 from health_check.health_check_file_manager import get_error_messages
-from main.main_class import Main
 
 
 def configure_logging_critical_level():
-    logging.basicConfig(level=logging.CRITICAL, format=Main.LOG_FORMAT)
+    logging.basicConfig(level=logging.CRITICAL, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def main():
