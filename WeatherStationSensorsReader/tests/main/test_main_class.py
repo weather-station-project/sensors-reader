@@ -4,6 +4,7 @@ import unittest
 from unittest import mock
 from unittest.mock import MagicMock, Mock
 
+from exceptions.sensor_exception import SensorException
 
 sys.modules['bme280pi'] = MagicMock()
 sys.modules['w1thermsensor'] = MagicMock()
@@ -232,7 +233,7 @@ class TestMainClass(unittest.TestCase):
         # act
         self.assertIsNone(main_class.check_not_null_value(variable_name=test_variable_name))
 
-    @mock.patch('main.main_class.logging', autospec=True)
+    @mock.patch('main.main_class.logging')
     def test_when_configuring_logging_given_no_variable_nothing_should_be_configured(self, mock_logging):
         # arrange
         main_class = Main(variables={})
@@ -244,7 +245,7 @@ class TestMainClass(unittest.TestCase):
         mock_logging.root.removeHandler.assert_not_called()
         mock_logging.basicConfig.assert_not_called()
 
-    @mock.patch('main.main_class.logging', autospec=True)
+    @mock.patch('main.main_class.logging')
     def test_when_configuring_logging_given_expected_methods_should_be_called(self, mock_logging):
         # arrange
         main_class = Main(variables={Main.LOGGING_LEVEL_VARIABLE: 'WARNING'})
@@ -449,8 +450,9 @@ class TestMainClass(unittest.TestCase):
         # act
         self.assertEqual(main_class.get_minutes_between_reads(), int(test_value))
 
-    @mock.patch('main.main_class.logging', autospec=True)
-    def test_when_executing_controllers_given_empty_list_nothing_should_be_executed(self, mock_logging):
+    @mock.patch('main.main_class.logging')
+    @mock.patch('main.main_class.register_error_in_health_check_file')
+    def test_when_executing_controllers_given_empty_list_nothing_should_be_executed(self, mock_register, mock_logging):
         # arrange
         main_class = Main(variables={})
         mock_controller = Mock(spec=Controller)
@@ -462,9 +464,11 @@ class TestMainClass(unittest.TestCase):
         # assert
         mock_controller.execute.assert_not_called()
         mock_logging.error.assert_not_called()
+        mock_register.assert_not_called()
 
-    @mock.patch('main.main_class.logging', autospec=True)
-    def test_when_executing_controllers_given_controllers_they_should_be_executed(self, mock_logging):
+    @mock.patch('main.main_class.logging')
+    @mock.patch('main.main_class.register_error_in_health_check_file')
+    def test_when_executing_controllers_given_controllers_they_should_be_executed(self, mock_register, mock_logging):
         # arrange
         main_class = Main(variables={})
         mock_controller = Mock(spec=Controller)
@@ -476,9 +480,12 @@ class TestMainClass(unittest.TestCase):
         # assert
         mock_controller.execute.assert_called_once()
         mock_logging.error.assert_not_called()
+        mock_logging.exception.assert_not_called()
+        mock_register.assert_not_called()
 
-    @mock.patch('main.main_class.logging', autospec=True)
-    def test_when_executing_controllers_given_failing_controllers_error_should_not_be_thrown(self, mock_logging):
+    @mock.patch('main.main_class.logging')
+    @mock.patch('main.main_class.register_error_in_health_check_file')
+    def test_when_executing_controllers_given_failing_controllers_error_should_be_logged(self, mock_register, mock_logging):
         # arrange
         main_class = Main(variables={})
         mock_controller = Mock(spec=Controller)
@@ -490,20 +497,28 @@ class TestMainClass(unittest.TestCase):
 
         # assert
         mock_controller.execute.assert_called_once()
-        mock_logging.error.assert_called_once_with(f'Error while executing controller "{mock_controller.__class__.__name__}". ',
-                                                   exc_info=mock_controller.execute.side_effect)
+        mock_logging.exception.assert_called_once_with(f'Error while executing controller "{mock_controller.__class__.__name__}".')
+        mock_logging.error.assert_not_called()
+        mock_register.assert_called_once_with(key='APP', message="Exception('test')")
 
-    def test_when_executing_health_check_given_controllers_it_should_be_executed(self):
+    @mock.patch('main.main_class.logging')
+    @mock.patch('main.main_class.register_error_in_health_check_file')
+    def test_when_executing_controllers_given_failing_sensor_error_should_be_logged(self, mock_register, mock_logging):
         # arrange
         main_class = Main(variables={})
         mock_controller = Mock(spec=Controller)
+        test_exception = SensorException(class_name='test', message='test')
+        mock_controller.execute.side_effect = test_exception
         test_controllers = [mock_controller]
 
         # act
-        self.assertIsNone(main_class.execute_controllers_health_check(test_controllers))
+        self.assertIsNone(main_class.execute_controllers(test_controllers))
 
         # assert
-        mock_controller.execute.health_check()
+        mock_controller.execute.assert_called_once()
+        mock_logging.error.assert_called_once_with(test_exception, exc_info=True)
+        mock_logging.exception.assert_not_called()
+        mock_register.assert_called_once_with(key='test', message="SensorException('test')")
 
 
 if __name__ == '__main__':
