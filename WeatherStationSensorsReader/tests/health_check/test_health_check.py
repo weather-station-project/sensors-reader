@@ -12,7 +12,7 @@ sys.modules['w1thermsensor'] = MagicMock()
 from main.main_class import Main
 
 
-class TesHealthCheck(unittest.TestCase):
+class TestHealthCheck(unittest.TestCase):
     @mock.patch('health_check.health_check.logging')
     def test_when_configuring_critical_log_expected_method_should_be_called(self, mock_logging):
         # arrange

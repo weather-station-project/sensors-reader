@@ -37,7 +37,7 @@ class Dao(ABC):
             register_success_for_class_into_health_check_file(class_name=dao_name)
         except Exception as e:
             raise DaoException(class_name=dao_name,
-                               message=f'Error in DAO "{dao_name} while executing the query '
+                               message=f'Error in DAO "{dao_name}" while executing the query '
                                        f'"{sql_query}" with values {query_parameter_values}. ') from e
 
     @abstractmethod
