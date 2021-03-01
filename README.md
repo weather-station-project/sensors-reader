@@ -127,7 +127,7 @@ docker run --rm -d --name=sensors-reader -e LOGGING_LEVEL=ERROR -e FAKE_SENSOR_E
 
 
 ## Changelog
-* **1.2.0** - Added wind sensors such as the anemometer and the vane. Restructuring of Jenkins files.
+* **1.2.0** - Added wind sensors such as the anemometer and the vane. Restructuring of Jenkins files. Improved the health check.
 * **1.1.0** - Added ground temperature sensor, fixed some code smells and documentation.
 * **1.0.0** - First version with ambient temperature, air humidity and atmosphere pressure sensors.
 
