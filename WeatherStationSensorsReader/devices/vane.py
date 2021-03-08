@@ -94,7 +94,7 @@ class Vane(SamplesDuringTimeDevice):
         return 0.0 if average == 360 else average
 
     def get_direction_by_direction_angle(self, direction_angle):
-        if not direction_angle:
+        if direction_angle is None:
             return self.UNKNOWN_WIND_DIRECTION
 
         current_direction = None
