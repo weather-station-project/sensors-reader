@@ -35,7 +35,7 @@ class TestVane(unittest.TestCase):
 
         # assert
         for test_sample in test_samples:
-            if test_sample:
+            if test_sample is not None:
                 mock_logging.debug.assert_any_call(msg=f'Wind sample obtained "{test_sample}" degrees.')
             mock_sleep.assert_any_call(self.test_vane.SAMPLES_DURATION_IN_SECONDS / self.test_vane.NUMBER_OF_SAMPLES)
 
