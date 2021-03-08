@@ -24,7 +24,7 @@ class TestVane(unittest.TestCase):
     @mock.patch('devices.vane.sleep')
     def test_when_getting_samples_expected_calls_should_be_done_and_expected_value_returned(self, mock_sleep, mock_logging):
         # arrange
-        test_samples = [1, 2, None, 4, 5]
+        test_samples = [1, 0.0, None, 4, 5]
         test_average = 10
 
         self.test_vane.get_wind_direction_angle = MagicMock(side_effect=test_samples)
@@ -40,7 +40,7 @@ class TestVane(unittest.TestCase):
             mock_sleep.assert_any_call(self.test_vane.SAMPLES_DURATION_IN_SECONDS / self.test_vane.NUMBER_OF_SAMPLES)
 
         self.test_vane.get_wind_direction_angle.assert_any_call()
-        self.test_vane.get_angles_average.assert_called_once_with(angles=[1, 2, 4, 5])
+        self.test_vane.get_angles_average.assert_called_once_with(angles=[1, 0.0, 4, 5])
 
     @mock.patch('devices.vane.logging')
     def test_when_getting_wind_direction_angle_given_wrong_voltage_null_should_be_returned(self, mock_logging):

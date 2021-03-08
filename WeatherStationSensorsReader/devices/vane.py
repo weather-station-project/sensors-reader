@@ -41,7 +41,7 @@ class Vane(SamplesDuringTimeDevice):
         for _ in range(0, self.NUMBER_OF_SAMPLES):
             sample = self.get_wind_direction_angle()
 
-            if sample:
+            if sample is not None:
                 samples.append(sample)
                 logging.debug(msg=f'Wind sample obtained "{sample}" degrees.')
 
