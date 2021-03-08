@@ -18,7 +18,3 @@ class Controller(ABC):
 
         self.dao.insert(values=read_result)
         logging.info(msg=f'{read_result} inserted correctly.')
-
-    def health_check(self):
-        self.sensor.read_values()
-        self.dao.health_check()

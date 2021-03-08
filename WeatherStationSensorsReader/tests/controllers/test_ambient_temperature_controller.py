@@ -1,6 +1,9 @@
+import sys
 import unittest
 from unittest import mock
+from unittest.mock import MagicMock
 
+sys.modules['bme280pi'] = MagicMock()
 from controllers.ambient_temperature_controller import AmbientTemperatureController
 from dao.ambient_temperature_dao import AmbientTemperatureDao
 from sensors.ambient_temperature_sensor import AmbientTemperatureSensor

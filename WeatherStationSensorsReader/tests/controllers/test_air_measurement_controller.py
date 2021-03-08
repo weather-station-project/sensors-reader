@@ -1,6 +1,9 @@
+import sys
 import unittest
 from unittest import mock
+from unittest.mock import MagicMock
 
+sys.modules['bme280pi'] = MagicMock()
 from controllers.air_measurement_controller import AirMeasurementController
 from dao.air_measurement_dao import AirMeasurementDao
 from sensors.air_measurement_sensor import AirMeasurementSensor

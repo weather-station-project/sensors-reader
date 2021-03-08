@@ -39,9 +39,6 @@ class TestFakeDao(unittest.TestCase):
         self.assertEqual(date, expected_time)
         mock_datetime.now.assert_called_once()
 
-    def _test_when_getting_health_query_called_expected_value_should_be_returned(self):
-        self.assertEqual(self.dao.get_health_check_query(), self.dao.QUERY)
-
 
 if __name__ == '__main__':
     unittest.main()

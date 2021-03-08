@@ -4,7 +4,7 @@ import unittest
 from unittest import mock
 from unittest.mock import MagicMock, Mock
 
-from controllers.ground_temperature_controller import GroundTemperatureController
+from exceptions.sensor_exception import SensorException
 
 sys.modules['bme280pi'] = MagicMock()
 sys.modules['w1thermsensor'] = MagicMock()
@@ -12,6 +12,8 @@ from controllers.air_measurement_controller import AirMeasurementController
 from controllers.ambient_temperature_controller import AmbientTemperatureController
 from controllers.controller import Controller
 from controllers.fake_controller import FakeController
+from controllers.ground_temperature_controller import GroundTemperatureController
+from controllers.wind_measurement_controller import WindMeasurementController
 from main.main_class import Main
 
 
@@ -40,32 +42,32 @@ class TestMainClass(unittest.TestCase):
         test_variables = {Main.LOGGING_LEVEL_VARIABLE: 'test',
                           Main.MINUTES_BETWEEN_READS_VARIABLE: 'test'}
         main_class = Main(variables=test_variables)
-        main_class._check_bool_value = MagicMock()
-        main_class._check_in_expected_values = MagicMock()
-        main_class._check_positive_integer_value = MagicMock()
+        main_class.check_bool_value = MagicMock()
+        main_class.check_in_expected_values = MagicMock()
+        main_class.check_positive_integer_value = MagicMock()
 
         # act
         self.assertIsNone(main_class.validate_generic_variables())
 
         # arrange
-        main_class._check_in_expected_values.assert_called_once_with(variable_name=Main.LOGGING_LEVEL_VARIABLE,
-                                                                     expected_values=Main.LOGGING_LEVELS.keys())
-        main_class._check_positive_integer_value.assert_called_once_with(variable_name=Main.MINUTES_BETWEEN_READS_VARIABLE)
+        main_class.check_in_expected_values.assert_called_once_with(variable_name=Main.LOGGING_LEVEL_VARIABLE,
+                                                                    expected_values=Main.LOGGING_LEVELS.keys())
+        main_class.check_positive_integer_value.assert_called_once_with(variable_name=Main.MINUTES_BETWEEN_READS_VARIABLE)
 
     def test_when_validating_generic_variables_given_no_variables_methods_should_not_be_called(self):
         # arrange
         main_class = Main(variables={})
-        main_class._check_bool_value = MagicMock()
-        main_class._check_in_expected_values = MagicMock()
-        main_class._check_positive_integer_value = MagicMock()
+        main_class.check_bool_value = MagicMock()
+        main_class.check_in_expected_values = MagicMock()
+        main_class.check_positive_integer_value = MagicMock()
 
         # act
         self.assertIsNone(main_class.validate_generic_variables())
 
         # arrange
-        main_class._check_bool_value.assert_not_called()
-        main_class._check_in_expected_values.assert_not_called()
-        main_class._check_positive_integer_value.assert_not_called()
+        main_class.check_bool_value.assert_not_called()
+        main_class.check_in_expected_values.assert_not_called()
+        main_class.check_positive_integer_value.assert_not_called()
 
     def test_when_checking_bool_value_given_true_as_string_no_error_should_be_thrown(self):
         # arrange
@@ -74,7 +76,7 @@ class TestMainClass(unittest.TestCase):
         main_class = Main(variables={test_variable_name: 'true'})
 
         # act
-        self.assertIsNone(main_class._check_bool_value(variable_name=test_variable_name))
+        self.assertIsNone(main_class.check_bool_value(variable_name=test_variable_name))
 
     def test_when_checking_bool_value_given_false_as_string_no_error_should_be_thrown(self):
         # arrange
@@ -83,7 +85,7 @@ class TestMainClass(unittest.TestCase):
         main_class = Main(variables={test_variable_name: 'false'})
 
         # act
-        self.assertIsNone(main_class._check_bool_value(variable_name=test_variable_name))
+        self.assertIsNone(main_class.check_bool_value(variable_name=test_variable_name))
 
     def test_when_checking_bool_value_given_non_bool_string_error_should_be_thrown(self):
         # arrange
@@ -93,7 +95,7 @@ class TestMainClass(unittest.TestCase):
 
         # act
         with self.assertRaises(ValueError):
-            main_class._check_bool_value(variable_name=test_variable_name)
+            main_class.check_bool_value(variable_name=test_variable_name)
 
     def test_when_checking_value_in_expected_values_given_value_included_no_error_should_be_thrown(self):
         # arrange
@@ -103,8 +105,8 @@ class TestMainClass(unittest.TestCase):
         main_class = Main(variables={test_variable_name: test_expected_values[0]})
 
         # act
-        self.assertIsNone(main_class._check_in_expected_values(variable_name=test_variable_name,
-                                                               expected_values=test_expected_values))
+        self.assertIsNone(main_class.check_in_expected_values(variable_name=test_variable_name,
+                                                              expected_values=test_expected_values))
 
     def test_when_checking_value_in_expected_values_given_value_not_included_error_should_be_thrown(self):
         # arrange
@@ -115,8 +117,8 @@ class TestMainClass(unittest.TestCase):
 
         # act
         with self.assertRaises(ValueError):
-            main_class._check_in_expected_values(variable_name=test_variable_name,
-                                                 expected_values=test_expected_values)
+            main_class.check_in_expected_values(variable_name=test_variable_name,
+                                                expected_values=test_expected_values)
 
     def test_when_checking_positive_integer_given_invalid_number_error_should_be_thrown(self):
         # arrange
@@ -126,7 +128,7 @@ class TestMainClass(unittest.TestCase):
 
         # act
         with self.assertRaises(ValueError):
-            main_class._check_positive_integer_value(variable_name=test_variable_name)
+            main_class.check_positive_integer_value(variable_name=test_variable_name)
 
     def test_when_checking_positive_integer_given_negative_number_error_should_be_thrown(self):
         # arrange
@@ -136,7 +138,7 @@ class TestMainClass(unittest.TestCase):
 
         # act
         with self.assertRaises(ValueError):
-            main_class._check_positive_integer_value(variable_name=test_variable_name)
+            main_class.check_positive_integer_value(variable_name=test_variable_name)
 
     def test_when_checking_positive_integer_given_valid_positive_no_error_should_be_thrown(self):
         # arrange
@@ -145,7 +147,7 @@ class TestMainClass(unittest.TestCase):
         main_class = Main(variables={test_variable_name: '10'})
 
         # act
-        self.assertIsNone(main_class._check_positive_integer_value(variable_name=test_variable_name))
+        self.assertIsNone(main_class.check_positive_integer_value(variable_name=test_variable_name))
 
     def test_when_validating_sensors_variables_expected_methods_should_be_called(self):
         # arrange
@@ -153,30 +155,35 @@ class TestMainClass(unittest.TestCase):
                           Main.BME_280_SENSOR_VARIABLE: 'test',
                           Main.GROUND_SENSOR_VARIABLE: 'test',
                           Main.RAINFALL_SENSOR_VARIABLE: 'test',
-                          Main.WIND_SENSOR_VARIABLE: 'test'}
+                          Main.WIND_SENSOR_VARIABLE: 'test',
+                          Main.ANEMOMETER_PORT_NUMBER_VARIABLE: 'test'}
         main_class = Main(variables=test_variables)
-        main_class._check_bool_value = MagicMock()
+        main_class.check_bool_value = MagicMock()
+        main_class.check_positive_integer_value = MagicMock()
 
         # act
         self.assertIsNone(main_class.validate_sensors_variables())
 
         # assert
-        main_class._check_bool_value.assert_any_call(variable_name=Main.FAKE_SENSOR_VARIABLE)
-        main_class._check_bool_value.assert_any_call(variable_name=Main.BME_280_SENSOR_VARIABLE)
-        main_class._check_bool_value.assert_any_call(variable_name=Main.GROUND_SENSOR_VARIABLE)
-        main_class._check_bool_value.assert_any_call(variable_name=Main.RAINFALL_SENSOR_VARIABLE)
-        main_class._check_bool_value.assert_any_call(variable_name=Main.WIND_SENSOR_VARIABLE)
+        main_class.check_bool_value.assert_any_call(variable_name=Main.FAKE_SENSOR_VARIABLE)
+        main_class.check_bool_value.assert_any_call(variable_name=Main.BME_280_SENSOR_VARIABLE)
+        main_class.check_bool_value.assert_any_call(variable_name=Main.GROUND_SENSOR_VARIABLE)
+        main_class.check_bool_value.assert_any_call(variable_name=Main.RAINFALL_SENSOR_VARIABLE)
+        main_class.check_bool_value.assert_any_call(variable_name=Main.WIND_SENSOR_VARIABLE)
+        main_class.check_positive_integer_value.assert_any_call(variable_name=Main.ANEMOMETER_PORT_NUMBER_VARIABLE)
 
     def test_when_validating_sensors_variables_given_no_variables_methods_should_not_be_called(self):
         # arrange
         main_class = Main(variables={})
-        main_class._check_bool_value = MagicMock()
+        main_class.check_bool_value = MagicMock()
+        main_class.check_positive_integer_value = MagicMock()
 
         # act
         self.assertIsNone(main_class.validate_sensors_variables())
 
         # assert
-        main_class._check_bool_value.assert_not_called()
+        main_class.check_bool_value.assert_not_called()
+        main_class.check_positive_integer_value.assert_not_called()
 
     def test_when_validating_database_variables_expected_methods_should_be_called(self):
         # arrange
@@ -185,27 +192,27 @@ class TestMainClass(unittest.TestCase):
                           Main.USER_VARIABLE: 'test',
                           Main.PASSWORD_VARIABLE: 'test'}
         main_class = Main(variables=test_variables)
-        main_class._check_not_null_value = MagicMock()
+        main_class.check_not_null_value = MagicMock()
 
         # act
         self.assertIsNone(main_class.validate_database_variables())
 
         # assert
-        main_class._check_not_null_value.assert_any_call(variable_name=Main.SERVER_VARIABLE)
-        main_class._check_not_null_value.assert_any_call(variable_name=Main.DATABASE_VARIABLE)
-        main_class._check_not_null_value.assert_any_call(variable_name=Main.USER_VARIABLE)
-        main_class._check_not_null_value.assert_any_call(variable_name=Main.PASSWORD_VARIABLE)
+        main_class.check_not_null_value.assert_any_call(variable_name=Main.SERVER_VARIABLE)
+        main_class.check_not_null_value.assert_any_call(variable_name=Main.DATABASE_VARIABLE)
+        main_class.check_not_null_value.assert_any_call(variable_name=Main.USER_VARIABLE)
+        main_class.check_not_null_value.assert_any_call(variable_name=Main.PASSWORD_VARIABLE)
 
     def test_when_validating_database_variables_given_no_variables_methods_should_not_be_called(self):
         # arrange
         main_class = Main(variables={})
-        main_class._check_not_null_value = MagicMock()
+        main_class.check_not_null_value = MagicMock()
 
         # act
         self.assertIsNone(main_class.validate_database_variables())
 
         # assert
-        main_class._check_not_null_value.assert_not_called()
+        main_class.check_not_null_value.assert_not_called()
 
     def test_when_checking_not_null_value_given_empty_string_error_should_be_thrown(self):
         # arrange
@@ -215,7 +222,7 @@ class TestMainClass(unittest.TestCase):
 
         # act
         with self.assertRaises(ValueError):
-            main_class._check_not_null_value(variable_name=test_variable_name)
+            main_class.check_not_null_value(variable_name=test_variable_name)
 
     def test_when_checking_not_null_value_given_something_no_error_should_be_thrown(self):
         # arrange
@@ -224,9 +231,9 @@ class TestMainClass(unittest.TestCase):
         main_class = Main(variables={test_variable_name: 'test'})
 
         # act
-        self.assertIsNone(main_class._check_not_null_value(variable_name=test_variable_name))
+        self.assertIsNone(main_class.check_not_null_value(variable_name=test_variable_name))
 
-    @mock.patch('main.main_class.logging', autospec=True)
+    @mock.patch('main.main_class.logging')
     def test_when_configuring_logging_given_no_variable_nothing_should_be_configured(self, mock_logging):
         # arrange
         main_class = Main(variables={})
@@ -238,7 +245,7 @@ class TestMainClass(unittest.TestCase):
         mock_logging.root.removeHandler.assert_not_called()
         mock_logging.basicConfig.assert_not_called()
 
-    @mock.patch('main.main_class.logging', autospec=True)
+    @mock.patch('main.main_class.logging')
     def test_when_configuring_logging_given_expected_methods_should_be_called(self, mock_logging):
         # arrange
         main_class = Main(variables={Main.LOGGING_LEVEL_VARIABLE: 'WARNING'})
@@ -260,6 +267,7 @@ class TestMainClass(unittest.TestCase):
                                                                                        mock_ground_controller):
         # arrange
         main_class = Main(variables={})
+        main_class.get_anemometer_port_number = MagicMock()
 
         # act
         result = main_class.get_controllers_enabled()
@@ -271,7 +279,8 @@ class TestMainClass(unittest.TestCase):
         mock_fake_controller.assert_not_called()
         mock_ambient_controller.assert_not_called()
         mock_air_measurement_controller.assert_not_called()
-        mock_ground_controller.assert_not_called
+        mock_ground_controller.assert_not_called()
+        main_class.get_anemometer_port_number.assert_not_called()
 
     @mock.patch('main.main_class.GroundTemperatureController', autospec=True)
     @mock.patch('main.main_class.AmbientTemperatureController', autospec=True)
@@ -293,6 +302,7 @@ class TestMainClass(unittest.TestCase):
                                      Main.DATABASE_VARIABLE: test_database,
                                      Main.USER_VARIABLE: test_user,
                                      Main.PASSWORD_VARIABLE: test_password})
+        main_class.get_anemometer_port_number = MagicMock()
 
         # act
         result = main_class.get_controllers_enabled()
@@ -309,6 +319,7 @@ class TestMainClass(unittest.TestCase):
         mock_ambient_controller.assert_not_called()
         mock_air_measurement_controller.assert_not_called()
         mock_ground_controller.assert_not_called()
+        main_class.get_anemometer_port_number.assert_not_called()
 
     @mock.patch('main.main_class.GroundTemperatureController', autospec=True)
     @mock.patch('main.main_class.AmbientTemperatureController', autospec=True)
@@ -321,6 +332,7 @@ class TestMainClass(unittest.TestCase):
                                                                                                                     mock_ground_controller):
         # arrange
         main_class = Main(variables={Main.FAKE_SENSOR_VARIABLE: 'true'})
+        main_class.get_anemometer_port_number = MagicMock()
 
         # act
         result = main_class.get_controllers_enabled()
@@ -337,7 +349,9 @@ class TestMainClass(unittest.TestCase):
         mock_ambient_controller.assert_not_called()
         mock_air_measurement_controller.assert_not_called()
         mock_ground_controller.assert_not_called()
+        main_class.get_anemometer_port_number.assert_not_called()
 
+    @mock.patch('main.main_class.WindMeasurementController', autospec=True)
     @mock.patch('main.main_class.GroundTemperatureController', autospec=True)
     @mock.patch('main.main_class.AmbientTemperatureController', autospec=True)
     @mock.patch('main.main_class.AirMeasurementController', autospec=True)
@@ -346,29 +360,34 @@ class TestMainClass(unittest.TestCase):
                                                                                                 mock_fake_controller,
                                                                                                 mock_air_measurement_controller,
                                                                                                 mock_ambient_controller,
-                                                                                                mock_ground_controller):
+                                                                                                mock_ground_controller,
+                                                                                                mock_wind_controller):
         # arrange
         test_server = 'server'
         test_database = 'database'
         test_user = 'user'
         test_password = 'password'
+        test_port = 22
 
         main_class = Main(variables={Main.BME_280_SENSOR_VARIABLE: 'true',
                                      Main.GROUND_SENSOR_VARIABLE: 'true',
                                      Main.SERVER_VARIABLE: test_server,
                                      Main.DATABASE_VARIABLE: test_database,
                                      Main.USER_VARIABLE: test_user,
-                                     Main.PASSWORD_VARIABLE: test_password})
+                                     Main.PASSWORD_VARIABLE: test_password,
+                                     Main.WIND_SENSOR_VARIABLE: 'true'})
+        main_class.get_anemometer_port_number = MagicMock(return_value=test_port)
 
         # act
         result = main_class.get_controllers_enabled()
 
         # assert
         self.assertIsInstance(result, list)
-        self.assertEqual(len(result), 3)
+        self.assertEqual(len(result), 4)
         self.assertIsInstance(result[0], AmbientTemperatureController)
         self.assertIsInstance(result[1], AirMeasurementController)
         self.assertIsInstance(result[2], GroundTemperatureController)
+        self.assertIsInstance(result[3], WindMeasurementController)
 
         mock_ambient_controller.assert_called_once_with(server=test_server,
                                                         database=test_database,
@@ -382,7 +401,13 @@ class TestMainClass(unittest.TestCase):
                                                        database=test_database,
                                                        user=test_user,
                                                        password=test_password)
+        mock_wind_controller.assert_called_once_with(anemometer_port_number=test_port,
+                                                     server=test_server,
+                                                     database=test_database,
+                                                     user=test_user,
+                                                     password=test_password)
         mock_fake_controller.assert_not_called()
+        main_class.get_anemometer_port_number.assert_called_once()
 
     def test_when_getting_if_controller_is_enabled_expected_return_should_be_returned(self):
         test_true = 'test_true'
@@ -394,6 +419,21 @@ class TestMainClass(unittest.TestCase):
         self.assertTrue(main_class.is_controller_enabled(test_true))
         self.assertFalse(main_class.is_controller_enabled(test_false))
         self.assertFalse(main_class.is_controller_enabled('non-existing'))
+
+    def test_when_getting_anemometer_port_number_given_no_variable_default_should_be_returned(self):
+        # arrange
+        main_class = Main(variables={})
+
+        # act
+        self.assertEqual(main_class.get_anemometer_port_number(), Main.DEFAULT_ANEMOMETER_PORT_NUMBER)
+
+    def test_when_getting_anemometer_port_number_given_value_expected_value_should_be_returned(self):
+        # arrange
+        test_value = '22'
+        main_class = Main(variables={Main.ANEMOMETER_PORT_NUMBER_VARIABLE: test_value})
+
+        # act
+        self.assertEqual(main_class.get_anemometer_port_number(), int(test_value))
 
     def test_when_getting_minutes_given_no_variable_default_should_be_returned(self):
         # arrange
@@ -410,8 +450,9 @@ class TestMainClass(unittest.TestCase):
         # act
         self.assertEqual(main_class.get_minutes_between_reads(), int(test_value))
 
-    @mock.patch('main.main_class.logging', autospec=True)
-    def test_when_executing_controllers_given_empty_list_nothing_should_be_executed(self, mock_logging):
+    @mock.patch('main.main_class.logging')
+    @mock.patch('main.main_class.register_error_in_health_check_file')
+    def test_when_executing_controllers_given_empty_list_nothing_should_be_executed(self, mock_register, mock_logging):
         # arrange
         main_class = Main(variables={})
         mock_controller = Mock(spec=Controller)
@@ -423,9 +464,11 @@ class TestMainClass(unittest.TestCase):
         # assert
         mock_controller.execute.assert_not_called()
         mock_logging.error.assert_not_called()
+        mock_register.assert_not_called()
 
-    @mock.patch('main.main_class.logging', autospec=True)
-    def test_when_executing_controllers_given_controllers_they_should_be_executed(self, mock_logging):
+    @mock.patch('main.main_class.logging')
+    @mock.patch('main.main_class.register_error_in_health_check_file')
+    def test_when_executing_controllers_given_controllers_they_should_be_executed(self, mock_register, mock_logging):
         # arrange
         main_class = Main(variables={})
         mock_controller = Mock(spec=Controller)
@@ -437,9 +480,12 @@ class TestMainClass(unittest.TestCase):
         # assert
         mock_controller.execute.assert_called_once()
         mock_logging.error.assert_not_called()
+        mock_logging.exception.assert_not_called()
+        mock_register.assert_not_called()
 
-    @mock.patch('main.main_class.logging', autospec=True)
-    def test_when_executing_controllers_given_failing_controllers_error_should_not_be_thrown(self, mock_logging):
+    @mock.patch('main.main_class.logging')
+    @mock.patch('main.main_class.register_error_in_health_check_file')
+    def test_when_executing_controllers_given_failing_controllers_error_should_be_logged(self, mock_register, mock_logging):
         # arrange
         main_class = Main(variables={})
         mock_controller = Mock(spec=Controller)
@@ -451,20 +497,28 @@ class TestMainClass(unittest.TestCase):
 
         # assert
         mock_controller.execute.assert_called_once()
-        mock_logging.error.assert_called_once_with(f'Error while executing controller "{mock_controller.__class__.__name__}". ',
-                                                   exc_info=mock_controller.execute.side_effect)
+        mock_logging.exception.assert_called_once_with(f'Error while executing controller "{mock_controller.__class__.__name__}".')
+        mock_logging.error.assert_not_called()
+        mock_register.assert_called_once_with(key='APP', message="Exception('test')")
 
-    def test_when_executing_health_check_given_controllers_it_should_be_executed(self):
+    @mock.patch('main.main_class.logging')
+    @mock.patch('main.main_class.register_error_in_health_check_file')
+    def test_when_executing_controllers_given_failing_sensor_error_should_be_logged(self, mock_register, mock_logging):
         # arrange
         main_class = Main(variables={})
         mock_controller = Mock(spec=Controller)
+        test_exception = SensorException(class_name='test', message='test')
+        mock_controller.execute.side_effect = test_exception
         test_controllers = [mock_controller]
 
         # act
-        self.assertIsNone(main_class.execute_controllers_health_check(test_controllers))
+        self.assertIsNone(main_class.execute_controllers(test_controllers))
 
         # assert
-        mock_controller.execute.health_check()
+        mock_controller.execute.assert_called_once()
+        mock_logging.error.assert_called_once_with(test_exception, exc_info=True)
+        mock_logging.exception.assert_not_called()
+        mock_register.assert_called_once_with(key='test', message="SensorException('test')")
 
 
 if __name__ == '__main__':

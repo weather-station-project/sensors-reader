@@ -6,12 +6,15 @@ services:
     privileged: true
     restart: unless-stopped
     environment:
-      - LOGGING_LEVEL: INFO
-      - BME_280_SENSOR_ENABLED: true
-      - SERVER: <Type your value>
-      - DATABASE: <Type your value>
-      - USER: <Type your value>
-      - PASSWORD: <Type your value>
+      - LOGGING_LEVEL=ERROR
+      - BME_280_SENSOR_ENABLED=true
+      - GROUND_SENSOR_ENABLED=true
+      - WIND_SENSOR_ENABLED=true
+      - ANEMOMETER_PORT_NUMBER=22
+      - SERVER=127.0.0.1
+      - DATABASE=my_db
+      - USER=my_user
+      - PASSWORD=my_password
     volumes:
     - '/etc/timezone:/etc/timezone:ro'
     - '/etc/localtime:/etc/localtime:ro'

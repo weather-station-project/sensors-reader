@@ -19,16 +19,39 @@ pipeline {
              ENV/bin/pip install --no-cache-dir --upgrade wheel
              ENV/bin/pip install --no-cache-dir --upgrade setuptools
 
-             ENV/bin/pip install --no-cache-dir psycopg2 w1thermsensor
+             ENV/bin/pip install --no-cache-dir psycopg2 gpiozero coverage
              '''
         }
       }
     }
 
-    stage('Execute unit tests') {
+    stage('Execute unit tests and code coverage') {
       steps {
         script {
-          sh "ENV/bin/python -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader"
+          sh """
+             ENV/bin/python -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader
+             ENV/bin/coverage run -m unittest discover -s ${WORKSPACE}/WeatherStationSensorsReader
+             """
+        }
+      }
+    }
+
+    stage('SonarQube analysis') {
+      environment {
+        def scannerHome = tool 'Sonarqube'
+      }
+
+      steps {
+        script {
+          sh "ENV/bin/coverage xml"
+        }
+
+        withSonarQubeEnv('Sonarqube') {
+          sh "${scannerHome}/bin/sonar-scanner"
+        }
+
+        timeout(time: 10, unit: 'MINUTES') {
+          waitForQualityGate abortPipeline: true
         }
       }
     }
@@ -36,7 +59,7 @@ pipeline {
     stage('Deploy on staging') {
       steps {
         script {
-          deployWeatherStationSensorsReaderOnStaging()
+          deployContainerOnDockerHub("${WeatherStationSensorsReaderVariables.DockerHubStagingRegistryName}")
         }
       }
     }

@@ -32,6 +32,11 @@ As commented previously, the same components described in the project "[Build yo
 * **4.7K Ohm Resistor** - Do not ask me why... my idea about circuits is really limited. ~ 1.39€ [Ebay](https://www.ebay.es/itm/50x-Resistencias-4-7-Kohm-4K7-OHM-5-1-4w-0-25w-carb%C3%B3n-film-pelicula/254289922617?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2060353.m2749.l2649)
 * **Breadboard** - To mount sensors and cables. ~ 1.30€ [Ebay](https://www.ebay.es/itm/Protoboard-400-puntos-con-lineas-contactos-breadboard-ARDUINO-prototipo-400p/322093153348?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2060353.m2749.l2649)
 * **5mm Terminals** - To join cables and electronic components on the breadboard. ~ 1.29€ [Ebay](https://www.ebay.es/itm/10x-Borna-2-pines-VERDE-Conexion-5mm-Clema-2p-PCB-enlazable-tornillo-terminal/221798044214?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2060353.m2749.l2649)
+* **Rigid cables** - To make bridges between different lines on the proto board. ~ 1€ [Ebay](https://www.ebay.es/itm/6-Metros-de-Cable-Rigido-a-COLOR-protoboard-arduino-electronica-puentes-proto/283452899154?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2060353.m2749.l2649)
+* **Digital-analogical converter** - To be able to analyze vane analogical signals. ~ 3.5€ [Ebay](https://www.ebay.es/itm/1x-MCP3008-DIP16-MCP3008-I-P-DIP-16-Convertidor-De-Analogico-A-Digital-Espa%C3%B1a/223996555390?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2060353.m2749.l2649)
+* **RJ11 breakout** - To join RJ11 devices with the proto board. ~ (8.39 * 2)€ [Amazon](https://www.amazon.es/gp/product/B00UJ8DRCG/ref=ppx_yo_dt_b_asin_title_o04_s00?ie=UTF8&psc=1)
+* **Anemometer** - To measure wind speed and gust speed. ~ 32.9€ [Amazon](https://www.amazon.es/gp/product/B07BMVYBW9/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
+* **Vane** - To measure wind direction. ~ 29.9€ [Amazon](https://www.amazon.es/gp/product/B07KYTKLTB/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
 
 
 ## Composition
@@ -62,6 +67,8 @@ The solution is intended to take measurements from the environment and also to s
 * **FAKE_SENSOR_ENABLED** - true / false. Just for testing purposes, instead of getting values from the sensors, random values are obtained. No values are inserted in the database but only showed in the log traces. It is useful for checking if the application runs correctly and it has access to the database configured. In case of configuring a fake sensor, the rest of the possible sensors defined are skipped.
 * **BME_280_SENSOR_ENABLED** - true / false. In case of being enabled, the application will perform ambient temperatures, air humidity and atmosphere pressure measurements.
 * **GROUND_SENSOR_ENABLED** - true / false. In case of being enabled, the application will perform ground temperature measurements.
+* **WIND_SENSOR_ENABLED** - true / false. In case of being enabled the application will perform wind measurements such as wind speed, gust speed and wind direction.
+* **ANEMOMETER_PORT_NUMBER** - The GPIO port number where the anemometer device is connected to.
 * **SERVER** - Database server. In case of it is empty, measurements retrieved will not be stored anywhere, just showed in the log traces with INFO level.
 * **DATABASE** - Database name
 * **USER** - Database name
@@ -85,6 +92,8 @@ services:
       - LOGGING_LEVEL=ERROR
       - BME_280_SENSOR_ENABLED=true
       - GROUND_SENSOR_ENABLED=true
+      - WIND_SENSOR_ENABLED=true
+      - ANEMOMETER_PORT_NUMBER=22
       - SERVER=127.0.0.1
       - DATABASE=my_db
       - USER=my_user
@@ -94,7 +103,7 @@ services:
     - '/etc/localtime:/etc/localtime:ro'
 ```
 ```bash
-docker run --rm -d --name=sensors-reader --privileged -e LOGGING_LEVEL=ERROR -e BME_280_SENSOR_ENABLED=true -e GROUND_SENSOR_ENABLED=true -e SERVER=127.0.0.1 -e DATABASE=my_db -e USER=my_user -e PASSWORD=my_password -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro davidleonm/weather-station-sensors-reader
+docker run --rm -d --name=sensors-reader --privileged -e LOGGING_LEVEL=ERROR -e BME_280_SENSOR_ENABLED=true -e GROUND_SENSOR_ENABLED=true -e WIND_SENSOR_ENABLED=true -e ANEMOMETER_PORT_NUMBER=22 -e SERVER=127.0.0.1 -e DATABASE=my_db -e USER=my_user -e PASSWORD=my_password -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro davidleonm/weather-station-sensors-reader
 ```
 
 ### Example of an execution with only the fake sensor and without database
@@ -118,9 +127,16 @@ docker run --rm -d --name=sensors-reader -e LOGGING_LEVEL=ERROR -e FAKE_SENSOR_E
 
 
 ## Changelog
+* **1.2.0** - Added wind sensors such as the anemometer and the vane. Restructuring of Jenkins files. Improved the health check.
 * **1.1.0** - Added ground temperature sensor, fixed some code smells and documentation.
 * **1.0.0** - First version with ambient temperature, air humidity and atmosphere pressure sensors.
 
 
 ## License
 Use this code as you wish! Totally free to be copied/pasted.
+
+
+## Donation
+If you liked the project and you are willing to contribute, don't hesitate! I will be very grateful! :-)
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=4TFR2PQ2J3KLA&item_name=If+you+liked+the+project+and+you+are+willing+to+contribute%2C+don%27t+hesitate%21+I+will+be+very+grateful%21+%3A-%29&currency_code=EUR)

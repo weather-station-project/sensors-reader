@@ -3,7 +3,7 @@ import os
 import sys
 from time import sleep
 
-from exceptions.no_controller_exception import NoControllersException
+from health_check.health_check_file_manager import APP_KEY, register_error_in_health_check_file, erase_health_check_file
 from main.main_class import Main
 
 
@@ -18,6 +18,8 @@ def get_true():
 
 def main():
     try:
+        erase_health_check_file()
+
         configure_default_logging()
 
         main_class = Main(variables=os.environ)
@@ -27,7 +29,7 @@ def main():
         controllers_enabled = main_class.get_controllers_enabled()
 
         if not controllers_enabled:
-            raise NoControllersException('There is no controller configured on the init. Please, read the documentation available on Github.')
+            raise Exception('There is no controller configured on the init. Please, read the documentation available on Github.')
 
         seconds_between_reads = main_class.get_minutes_between_reads() * 60
         while get_true():
@@ -37,6 +39,7 @@ def main():
             sleep(seconds_between_reads)
     except Exception as e:
         logging.critical(e)
+        register_error_in_health_check_file(key=APP_KEY, message=repr(e))
         return 1
 
     return 0

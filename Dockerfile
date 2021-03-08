@@ -5,6 +5,7 @@ LABEL maintainer="David Leon <david.leon.m@gmail.com>"
 COPY WeatherStationSensorsReader/app /WeatherStationSensorsReader/app
 COPY WeatherStationSensorsReader/controllers /WeatherStationSensorsReader/controllers
 COPY WeatherStationSensorsReader/dao /WeatherStationSensorsReader/dao
+COPY WeatherStationSensorsReader/devices /WeatherStationSensorsReader/devices
 COPY WeatherStationSensorsReader/exceptions /WeatherStationSensorsReader/exceptions
 COPY WeatherStationSensorsReader/health_check /WeatherStationSensorsReader/health_check
 COPY WeatherStationSensorsReader/main /WeatherStationSensorsReader/main
@@ -25,13 +26,13 @@ RUN apk add --no-cache postgresql-dev \
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir --upgrade wheel
 RUN pip install --no-cache-dir --upgrade setuptools
-RUN pip install --no-cache-dir psycopg2 bme280pi w1thermsensor
+RUN pip install --no-cache-dir psycopg2 bme280pi w1thermsensor gpiozero RPi.GPIO
 
 # Change working directory to the app binaries
 WORKDIR /WeatherStationSensorsReader
 
 # Configure the health check command
-HEALTHCHECK CMD python -u -m health_check.health_check || exit 1
+HEALTHCHECK --interval=60s --start-period=60s CMD ["python", "-u", "-m", "health_check.health_check"] || exit 1
 
 # Start the application
 ENTRYPOINT ["python", "-u", "-m", "app.app"]

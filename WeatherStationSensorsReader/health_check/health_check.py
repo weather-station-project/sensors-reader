@@ -1,28 +1,20 @@
 import logging
-import os
 import sys
 
-from exceptions.no_controller_exception import NoControllersException
-from main.main_class import Main
+from health_check.health_check_file_manager import get_error_messages
 
 
 def configure_logging_critical_level():
-    logging.basicConfig(level=logging.CRITICAL, format=Main.LOG_FORMAT)
+    logging.basicConfig(level=logging.CRITICAL, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def main():
     try:
         configure_logging_critical_level()
 
-        main_class = Main(variables=os.environ)
-        main_class.validate_environment_variables()
-
-        controllers_enabled = main_class.get_controllers_enabled()
-
-        if not controllers_enabled:
-            raise NoControllersException('There is no controller configured on the init. Please, read the documentation available on Github.')
-
-        main_class.execute_controllers_health_check(controllers=controllers_enabled)
+        error_messages = get_error_messages()
+        if error_messages:
+            raise RuntimeError(f'Error in health check "{error_messages}".')
     except Exception as e:
         logging.critical(e, exc_info=True)
         return 1

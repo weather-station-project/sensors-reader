@@ -4,7 +4,7 @@ from dao.dao import Dao
 
 
 class FakeDao(Dao):
-    """ Represents fake the database access """
+    """ Represents the fake the database access """
 
     QUERY = 'SELECT 1'
 
@@ -13,6 +13,3 @@ class FakeDao(Dao):
 
     def get_parameters(self, values):
         return values, datetime.now()
-
-    def get_health_check_query(self):
-        return self.QUERY
