@@ -46,6 +46,7 @@ class TestVane(unittest.TestCase):
     def test_when_getting_wind_direction_angle_given_wrong_voltage_null_should_be_returned(self, mock_logging):
         # arrange
         test_value = 50
+        test_gpio_value = round(test_value * self.test_vane.VOLTAGE_IN, 1)
 
         mcp_mock = MagicMock()
         mcp_mock.value = test_value
@@ -55,12 +56,14 @@ class TestVane(unittest.TestCase):
         self.assertIsNone(self.test_vane.get_wind_direction_angle())
 
         # assert
-        mock_logging.debug.assert_called_once_with(msg=f'Cannot determine wind direction for MCP reading "{test_value}".')
+        mock_logging.debug.assert_any_call(msg=f'MCP reading "{test_value}", GPIO value "{test_gpio_value}".')
+        mock_logging.debug.assert_any_call(msg=f'Cannot determine wind direction for MCP reading "{test_value}".')
 
     @mock.patch('devices.vane.logging')
     def test_when_getting_wind_direction_angle_given_correct_voltage_expected_angle_should_be_returned(self, mock_logging):
         # arrange
         test_value = 0.87878787878787
+        test_gpio_value = round(test_value * self.test_vane.VOLTAGE_IN, 1)
 
         mcp_mock = MagicMock()
         mcp_mock.value = test_value
@@ -70,7 +73,7 @@ class TestVane(unittest.TestCase):
         self.assertEqual(self.test_vane.get_wind_direction_angle(), 112.5)
 
         # assert
-        mock_logging.debug.assert_not_called()
+        mock_logging.debug.assert_any_call(msg=f'MCP reading "{test_value}", GPIO value "{test_gpio_value}".')
 
     def test_when_getting_direction_average_given_angle_expected_value_should_be_returned(self):
         # arrange
@@ -89,8 +92,8 @@ class TestVane(unittest.TestCase):
         self.test_vane.get_direction_by_direction_angle.assert_called_once_with(direction_angle=test_angle_average)
 
     def test_when_getting_angles_average_given_no_angles_unknown_should_be_returned(self):
-        self.assertEqual(self.test_vane.get_angles_average(angles=[]), self.test_vane.UNKNOWN_WIND_ANGLE)
-        self.assertEqual(self.test_vane.get_angles_average(angles=None), self.test_vane.UNKNOWN_WIND_ANGLE)
+        self.assertIsNone(self.test_vane.get_angles_average(angles=[]))
+        self.assertIsNone(self.test_vane.get_angles_average(angles=None))
 
     def test_when_getting_angles_average_given_angles_expected_values_should_be_returned(self):
         # arrange
@@ -107,12 +110,12 @@ class TestVane(unittest.TestCase):
                                    delta=0.1)
 
     def test_when_getting_directions_by_direction_angle_expected_value_should_be_returned(self):
-        test_direction_angles = {self.test_vane.UNKNOWN_WIND_ANGLE: '-',
+        test_direction_angles = {None: self.test_vane.UNKNOWN_WIND_DIRECTION,
                                  0.0: 'N',
                                  45.0: 'N-E',
                                  170.7: 'S-SE',
                                  320: 'N-W',
-                                 360: None}
+                                 360: self.test_vane.UNKNOWN_WIND_DIRECTION}
 
         # act & assert
         for direction_angle in test_direction_angles:
