@@ -1,5 +1,6 @@
 import logging
 import math
+from threading import Thread
 from time import sleep
 
 from gpiozero import MCP3008
@@ -8,9 +9,13 @@ from devices.samples_during_time_device import SamplesDuringTimeDevice
 
 
 class Vane(SamplesDuringTimeDevice):
+    """Represents the device which measures wind direction"""
+
     CHANNEL = 0
     VOLTAGE_IN = 3.3
-    NUMBER_OF_SAMPLES = 5
+
+    SECONDS_BETWEEN_SAMPLES = 5
+
     UNKNOWN_WIND_DIRECTION = '-'
     VANE_ANGLES_AND_DIRECTIONS_TABLE = {0.4: {'direction': 'N', 'angle': 0.0},
                                         1.4: {'direction': 'N-NE', 'angle': 22.5},
@@ -31,40 +36,50 @@ class Vane(SamplesDuringTimeDevice):
 
     def __init__(self):
         self.mcp_chip = MCP3008(channel=self.CHANNEL)
+        self.samples = []
+        self.getting_sample = False
+        thread = Thread(target=self.add_value_to_samples)
+        thread.start()
 
         logging.debug(msg=f'Started vane on the channel "{self.CHANNEL}".')
 
+    def add_value_to_samples(self):
+        while self.get_true:
+            try:
+                if self.getting_sample:
+                    return
+
+                mcp_value = self.mcp_chip.value
+                gpio_value = round(mcp_value * self.VOLTAGE_IN, 1)
+
+                logging.debug(msg=f'MCP reading "{mcp_value}", GPIO value "{gpio_value}".')
+
+                if gpio_value in self.VANE_ANGLES_AND_DIRECTIONS_TABLE:
+                    sample = self.VANE_ANGLES_AND_DIRECTIONS_TABLE[gpio_value]['angle']
+                    logging.debug(msg=f'Wind sample obtained "{sample}" degrees.')
+                    self.samples.append(sample)
+                else:
+                    logging.debug(msg=f'Cannot determine wind direction for MCP reading "{mcp_value}" and GPIO value "{gpio_value}".')
+            finally:
+                sleep(self.SECONDS_BETWEEN_SAMPLES)
+
+    @staticmethod
+    def get_true():
+        return True
+
     def get_sample(self):
-        time_sleeping = self.SAMPLES_DURATION_IN_SECONDS / self.NUMBER_OF_SAMPLES
-        samples = []
+        try:
+            self.getting_sample = True
 
-        for _ in range(0, self.NUMBER_OF_SAMPLES):
-            sample = self.get_wind_direction_angle()
+            average = self.get_angles_average()
+            del self.samples[:]
+            return average
+        finally:
+            self.getting_sample = False
 
-            if sample is not None:
-                samples.append(sample)
-                logging.debug(msg=f'Wind sample obtained "{sample}" degrees.')
-
-            sleep(time_sleeping)
-
-        average = self.get_angles_average(angles=samples)
-        return average
-
-    def get_wind_direction_angle(self):
-        mcp_value = self.mcp_chip.value
-        gpio_value = round(mcp_value * self.VOLTAGE_IN, 1)
-
-        logging.debug(msg=f'MCP reading "{mcp_value}", GPIO value "{gpio_value}".')
-
-        if gpio_value not in self.VANE_ANGLES_AND_DIRECTIONS_TABLE:
-            logging.debug(msg=f'Cannot determine wind direction for MCP reading "{mcp_value}".')
-            return None
-
-        return self.VANE_ANGLES_AND_DIRECTIONS_TABLE[gpio_value]['angle']
-
-    def get_direction_average(self, direction_angles):
-        direction_angles_average = self.get_angles_average(angles=direction_angles)
-        return self.get_direction_by_direction_angle(direction_angle=direction_angles_average)
+    def get_direction_average(self, angles):
+        angles_average = self.get_angles_average(angles=angles)
+        return self.get_direction_by_angle(angle=angles_average)
 
     def get_angles_average(self, angles):
         if not angles:
@@ -93,13 +108,13 @@ class Vane(SamplesDuringTimeDevice):
 
         return 0.0 if average == 360 else average
 
-    def get_direction_by_direction_angle(self, direction_angle):
-        if direction_angle is None:
+    def get_direction_by_angle(self, angle):
+        if angle is None:
             return self.UNKNOWN_WIND_DIRECTION
 
         current_direction = None
         for _, data in self.VANE_ANGLES_AND_DIRECTIONS_TABLE.items():
-            if data['angle'] > direction_angle:
+            if data['angle'] > angle:
                 return current_direction
 
             current_direction = data['direction']

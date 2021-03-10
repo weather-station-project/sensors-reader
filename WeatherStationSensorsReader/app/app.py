@@ -31,7 +31,8 @@ def main():
         if not controllers_enabled:
             raise Exception('There is no controller configured on the init. Please, read the documentation available on Github.')
 
-        seconds_between_reads = main_class.get_minutes_between_reads() * 60
+        seconds_between_reads = main_class.get_value_as_int(variable_name=main_class.MINUTES_BETWEEN_READS_VARIABLE,
+                                                            default_value=main_class.DEFAULT_MINUTES_BETWEEN_READS) * 60
         while get_true():
             main_class.execute_controllers(controllers=controllers_enabled)
 

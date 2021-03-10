@@ -81,7 +81,7 @@ class TestVane(unittest.TestCase):
         test_angle_average = 1
         test_direction = 2
         self.test_vane.get_angles_average = MagicMock(return_value=test_angle_average)
-        self.test_vane.get_direction_by_direction_angle = MagicMock(return_value=test_direction)
+        self.test_vane.get_direction_by_angle = MagicMock(return_value=test_direction)
 
         # act
         self.assertEqual(self.test_vane.get_direction_average(direction_angles=test_direction_angles),
@@ -89,7 +89,7 @@ class TestVane(unittest.TestCase):
 
         # assert
         self.test_vane.get_angles_average.assert_called_once_with(angles=test_direction_angles)
-        self.test_vane.get_direction_by_direction_angle.assert_called_once_with(direction_angle=test_angle_average)
+        self.test_vane.get_direction_by_angle.assert_called_once_with(angle=test_angle_average)
 
     def test_when_getting_angles_average_given_no_angles_unknown_should_be_returned(self):
         self.assertIsNone(self.test_vane.get_angles_average(angles=[]))
@@ -119,7 +119,7 @@ class TestVane(unittest.TestCase):
 
         # act & assert
         for direction_angle in test_direction_angles:
-            self.assertEqual(self.test_vane.get_direction_by_direction_angle(direction_angle=direction_angle),
+            self.assertEqual(self.test_vane.get_direction_by_angle(angle=direction_angle),
                              test_direction_angles[direction_angle])
 
 
