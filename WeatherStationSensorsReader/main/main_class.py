@@ -16,7 +16,7 @@ class Main(object):
 
     # Environment variables
     LOGGING_LEVEL_VARIABLE = 'LOGGING_LEVEL'
-    MINUTES_BETWEEN_READS_VARIABLE = 'MINUTES_BETWEEN_READS'
+    MINUTES_BETWEEN_READINGS_VARIABLE = 'MINUTES_BETWEEN_READINGS'
 
     FAKE_SENSOR_VARIABLE = 'FAKE_SENSOR_ENABLED'
     BME_280_SENSOR_VARIABLE = 'BME_280_SENSOR_ENABLED'
@@ -41,7 +41,7 @@ class Main(object):
     LOG_FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
 
     # DEFAULT VALUES
-    DEFAULT_MINUTES_BETWEEN_READS = 5
+    DEFAULT_MINUTES_BETWEEN_READINGS = 5
     DEFAULT_ANEMOMETER_PORT_NUMBER = 22
     DEFAULT_RAIN_GAUGE_PORT_NUMBER = 22
 
@@ -57,8 +57,8 @@ class Main(object):
         if self.LOGGING_LEVEL_VARIABLE in self.variables:
             self.check_in_expected_values(variable_name=self.LOGGING_LEVEL_VARIABLE, expected_values=self.LOGGING_LEVELS.keys())
 
-        if self.MINUTES_BETWEEN_READS_VARIABLE in self.variables:
-            self.check_positive_integer_value(variable_name=self.MINUTES_BETWEEN_READS_VARIABLE)
+        if self.MINUTES_BETWEEN_READINGS_VARIABLE in self.variables:
+            self.check_positive_integer_value(variable_name=self.MINUTES_BETWEEN_READINGS_VARIABLE)
 
     def check_bool_value(self, variable_name):
         value = self.variables[variable_name]

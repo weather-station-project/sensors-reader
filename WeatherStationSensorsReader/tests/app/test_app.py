@@ -35,10 +35,11 @@ class TestApp(unittest.TestCase):
         test_time = 1
         app.configure_default_logging = MagicMock()
         mock_main.return_value.get_controllers_enabled.return_value = test_controllers
-        mock_main.return_value.get_minutes_between_reads.return_value = test_time
+        mock_main.return_value.get_value_as_int.return_value = test_time
         mock_main.return_value.execute_controllers.return_value = None
         app.get_true = MagicMock(side_effect=[True, False])
         app.erase_health_check_file = MagicMock()
+        app.register_error_in_health_check_file = MagicMock()
 
         # act
         self.assertEqual(main(), 0)
@@ -48,11 +49,13 @@ class TestApp(unittest.TestCase):
         mock_main.return_value.validate_environment_variables.assert_called_once()
         mock_main.return_value.configure_logging.assert_called_once()
         mock_main.return_value.get_controllers_enabled.assert_called_once()
-        mock_main.return_value.get_minutes_between_reads.assert_called_once()
+        mock_main.return_value.get_value_as_int.assert_called_once_with(variable_name=mock_main().MINUTES_BETWEEN_READINGS_VARIABLE,
+                                                                        default_value=mock_main().DEFAULT_MINUTES_BETWEEN_READINGS)
         app.get_true.assert_any_call()
         app.erase_health_check_file.assert_called_once()
+        app.register_error_in_health_check_file.assert_not_called()
         mock_main.return_value.execute_controllers.assert_called_once_with(controllers=test_controllers)
-        mock_logging.debug.assert_called_once_with(msg=f'Sleeping "{test_time * 60}" seconds.')
+        mock_logging.debug.assert_called_once_with(msg=f'Sleeping "{test_time * 60}" seconds while sensors are doing readings.')
         mock_sleep.assert_any_call(test_time * 60)
         mock_logging.critical.assert_not_called()
 
@@ -65,6 +68,7 @@ class TestApp(unittest.TestCase):
         mock_main.return_value.get_controllers_enabled.return_value = []
         app.get_true = MagicMock(side_effect=[True, False])
         app.erase_health_check_file = MagicMock()
+        app.register_error_in_health_check_file = MagicMock()
 
         # act
         self.assertEqual(main(), 1)
@@ -77,6 +81,7 @@ class TestApp(unittest.TestCase):
         mock_main.return_value.get_minutes_between_reads.assert_not_called()
         app.get_true.assert_not_called()
         app.erase_health_check_file.assert_called_once()
+        app.register_error_in_health_check_file.assert_called_once()
         mock_main.return_value.execute_controllers.assert_not_called()
         mock_logging.debug.assert_not_called()
         mock_sleep.assert_not_called()

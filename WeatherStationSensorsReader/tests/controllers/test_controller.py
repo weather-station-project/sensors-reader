@@ -25,15 +25,16 @@ class TestController(unittest.TestCase):
     def test_when_normal_execution_expected_methods_should_be_called(self, mock_logging):
         # arrange
         test_read_result = 'test_read_result'
-        self.mock_sensor.get_read_averages.return_value = test_read_result
+        self.mock_sensor.get_readings_average.return_value = test_read_result
 
         # act
         controller = Controller(sensor=self.mock_sensor, dao=self.mock_dao)
         self.assertIsNone(controller.execute())
 
         # assert
-        self.mock_sensor.get_read_averages.assert_called_once()
+        self.mock_sensor.get_readings_average.assert_called_once()
         mock_logging.info.assert_any_call(msg=f'Obtained "{test_read_result}" from the sensor "{self.mock_sensor.__class__.__name__}".')
+
         self.mock_dao.insert.assert_called_once_with(values=test_read_result)
         mock_logging.info.assert_called_with(msg=f'{test_read_result} inserted correctly.')
 

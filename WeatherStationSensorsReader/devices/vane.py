@@ -1,14 +1,10 @@
 import logging
 import math
-from threading import Thread
-from time import sleep
 
 from gpiozero import MCP3008
 
-from devices.samples_during_time_device import SamplesDuringTimeDevice
 
-
-class Vane(SamplesDuringTimeDevice):
+class Vane(object):
     """Represents the device which measures wind direction"""
 
     CHANNEL = 0
@@ -36,66 +32,47 @@ class Vane(SamplesDuringTimeDevice):
 
     def __init__(self):
         self.mcp_chip = MCP3008(channel=self.CHANNEL)
-        self.samples = []
-        self.getting_sample = False
-        thread = Thread(target=self.add_value_to_samples)
-        thread.start()
 
         logging.debug(msg=f'Started vane on the channel "{self.CHANNEL}".')
 
-    def add_value_to_samples(self):
-        while self.get_true:
-            try:
-                if self.getting_sample:
-                    return
+    def get_reading(self):
+        mcp_value = self.mcp_chip.value
+        gpio_value = round(mcp_value * self.VOLTAGE_IN, 1)
 
-                mcp_value = self.mcp_chip.value
-                gpio_value = round(mcp_value * self.VOLTAGE_IN, 1)
+        logging.debug(msg=f'MCP reading "{mcp_value}", GPIO value "{gpio_value}".')
 
-                logging.debug(msg=f'MCP reading "{mcp_value}", GPIO value "{gpio_value}".')
+        if gpio_value in self.VANE_ANGLES_AND_DIRECTIONS_TABLE:
+            value = self.VANE_ANGLES_AND_DIRECTIONS_TABLE[gpio_value]['angle']
+            logging.debug(msg=f'Wind direction obtained "{value}" degrees.')
 
-                if gpio_value in self.VANE_ANGLES_AND_DIRECTIONS_TABLE:
-                    sample = self.VANE_ANGLES_AND_DIRECTIONS_TABLE[gpio_value]['angle']
-                    logging.debug(msg=f'Wind sample obtained "{sample}" degrees.')
-                    self.samples.append(sample)
-                else:
-                    logging.debug(msg=f'Cannot determine wind direction for MCP reading "{mcp_value}" and GPIO value "{gpio_value}".')
-            finally:
-                sleep(self.SECONDS_BETWEEN_SAMPLES)
+            return value
 
-    @staticmethod
-    def get_true():
-        return True
-
-    def get_sample(self):
-        try:
-            self.getting_sample = True
-
-            average = self.get_angles_average()
-            del self.samples[:]
-            return average
-        finally:
-            self.getting_sample = False
+        logging.warning(msg=f'Cannot determine wind direction for MCP reading "{mcp_value}" and GPIO value "{gpio_value}".')
+        return None
 
     def get_direction_average(self, angles):
         angles_average = self.get_angles_average(angles=angles)
         return self.get_direction_by_angle(angle=angles_average)
 
-    def get_angles_average(self, angles):
-        if not angles:
-            return None
-
+    @staticmethod
+    def get_angles_average(angles):
         sin_sum = 0.0
         cos_sum = 0.0
+        valid_angles_count = 0.0
 
         for angle in angles:
+            if angle is None:
+                continue
+            valid_angles_count = valid_angles_count + 1.0
             radians = math.radians(angle)
             sin_sum += math.sin(radians)
             cos_sum += math.cos(radians)
 
-        float_length = float(len(angles))
-        s = sin_sum / float_length
-        c = cos_sum / float_length
+        if valid_angles_count == 0:
+            return None
+
+        s = sin_sum / valid_angles_count
+        c = cos_sum / valid_angles_count
         arc = 0 if c == 0 else math.degrees(math.atan(s / c))
 
         average = 0.0

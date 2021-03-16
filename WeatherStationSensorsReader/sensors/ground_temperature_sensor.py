@@ -13,5 +13,7 @@ class GroundTemperatureSensor(Sensor):
         logging.debug(msg=f'Started W1ThermSensor with id "{self.sensor.id}" and '
                           f'type "{self.sensor.type_name}" in the sensor "{self.__class__.__name__}".')
 
-    def read_values(self):
+        super().__init__()
+
+    def get_reading(self):
         return [self.sensor.get_temperature(unit=self.sensor.DEGREES_C)]

@@ -40,7 +40,7 @@ class TestMainClass(unittest.TestCase):
     def test_when_validating_generic_variables_expected_methods_should_be_called(self):
         # arrange
         test_variables = {Main.LOGGING_LEVEL_VARIABLE: 'test',
-                          Main.MINUTES_BETWEEN_READS_VARIABLE: 'test'}
+                          Main.MINUTES_BETWEEN_READINGS_VARIABLE: 'test'}
         main_class = Main(variables=test_variables)
         main_class.check_bool_value = MagicMock()
         main_class.check_in_expected_values = MagicMock()
@@ -52,7 +52,7 @@ class TestMainClass(unittest.TestCase):
         # arrange
         main_class.check_in_expected_values.assert_called_once_with(variable_name=Main.LOGGING_LEVEL_VARIABLE,
                                                                     expected_values=Main.LOGGING_LEVELS.keys())
-        main_class.check_positive_integer_value.assert_called_once_with(variable_name=Main.MINUTES_BETWEEN_READS_VARIABLE)
+        main_class.check_positive_integer_value.assert_called_once_with(variable_name=Main.MINUTES_BETWEEN_READINGS_VARIABLE)
 
     def test_when_validating_generic_variables_given_no_variables_methods_should_not_be_called(self):
         # arrange
@@ -440,12 +440,12 @@ class TestMainClass(unittest.TestCase):
         main_class = Main(variables={})
 
         # act
-        self.assertEqual(main_class.get_minutes_between_reads(), Main.DEFAULT_MINUTES_BETWEEN_READS)
+        self.assertEqual(main_class.get_minutes_between_reads(), Main.DEFAULT_MINUTES_BETWEEN_READINGS)
 
     def test_when_getting_minutes_given_value_expected_value_should_be_returned(self):
         # arrange
         test_value = '5'
-        main_class = Main(variables={Main.MINUTES_BETWEEN_READS_VARIABLE: test_value})
+        main_class = Main(variables={Main.MINUTES_BETWEEN_READINGS_VARIABLE: test_value})
 
         # act
         self.assertEqual(main_class.get_minutes_between_reads(), int(test_value))

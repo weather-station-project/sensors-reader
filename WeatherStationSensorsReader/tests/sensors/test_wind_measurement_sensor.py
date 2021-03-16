@@ -57,7 +57,7 @@ class TestWindMeasurementSensor(unittest.TestCase):
 
         # act
         sensor = WindMeasurementSensor(anemometer_port_number=self.test_port_number)
-        self.assertEqual(sensor.get_averages(reads=test_reads), test_expected_values)
+        self.assertEqual(sensor.get_average(reads=test_reads), test_expected_values)
 
         # arrange
         mock_vane.return_value.get_direction_average.assert_called_once_with(direction_angles=(10, 15, 15, 30, 30))

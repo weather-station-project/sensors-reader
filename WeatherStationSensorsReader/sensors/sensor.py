@@ -1,6 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 from statistics import mean
+from threading import Thread
 from time import sleep
 
 from exceptions.sensor_exception import SensorException
@@ -10,41 +11,55 @@ from health_check.health_check_file_manager import register_success_for_class_in
 class Sensor(ABC):
     """Base class for sensors"""
 
-    NUMBER_OF_READS = 6
-    SECONDS_BETWEEN_READS = 10
+    SECONDS_BETWEEN_READINGS = 10
 
-    def get_read_averages(self):
-        reads = []
-        sensor_name = self.__class__.__name__
-        number_of_reads = self.get_number_of_reads()
+    def __init__(self):
+        self.readings = []
+        self.getting_readings = False
 
-        for n in range(0, number_of_reads):
+        thread = Thread(target=self.add_value_to_readings)
+        thread.start()
+
+    def add_value_to_readings(self):
+        while self.get_true():
             try:
-                values = self.read_values()
-                logging.debug(msg=f'Obtained "{values}" from the sensor "{sensor_name}". Attempt {n + 1}.')
+                sensor_name = self.__class__.__name__
 
-                reads.append(values)
+                if self.getting_readings:
+                    return
+
+                reading = self.get_reading()
+                self.readings.append(reading)
+                logging.debug(msg=f'Obtained "{reading}" from "{sensor_name}".')
             except Exception:
-                logging.exception(f'Error while reading from sensor "{sensor_name}". Attempt {n + 1}.')
+                logging.exception(f'Error while reading from sensor "{sensor_name}".')
+            finally:
+                sleep(self.SECONDS_BETWEEN_READINGS)
 
-            if n < (number_of_reads - 1):
-                sleep(self.SECONDS_BETWEEN_READS)
-
-        if len(reads) == 0 or all(x is None for x in reads):
-            raise SensorException(class_name=sensor_name, message=f'The sensor "{sensor_name}" did not report any read.')
-
-        averages = self.get_averages(reads=reads)
-        logging.debug(msg=f'Average "{averages}" from the sensor "{sensor_name}".')
-        register_success_for_class_into_health_check_file(class_name=sensor_name)
-
-        return averages
-
-    def get_number_of_reads(self):
-        return self.NUMBER_OF_READS
+    @staticmethod
+    def get_true():
+        # Stupid method for unit tests purposes to avoid infinite loop
+        return True
 
     @abstractmethod
-    def read_values(self):
+    def get_reading(self):
         raise NotImplementedError('A sub-class must be implemented.')
 
-    def get_averages(self, reads):
-        return [mean(data=row) for row in list(zip(*reads))]
+    def get_readings_average(self):
+        try:
+            self.getting_readings = True
+            sensor_name = self.__class__.__name__
+
+            if len(self.readings) == 0 or all(x is None for x in self.readings):
+                raise SensorException(class_name=sensor_name, message=f'The sensor "{sensor_name}" did not report any read.')
+
+            average = self.get_average()
+            register_success_for_class_into_health_check_file(class_name=sensor_name)
+
+            return average
+        finally:
+            del self.readings[:]
+            self.getting_readings = False
+
+    def get_average(self):
+        return [mean(data=row) for row in list(zip(*self.readings))]

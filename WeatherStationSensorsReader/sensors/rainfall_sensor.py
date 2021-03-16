@@ -1,17 +1,29 @@
-from devices.rain_gauge import RainGauge
+import logging
+
+from gpiozero import Button
+
 from sensors.sensor import Sensor
 
 
 class RainfallSensor(Sensor):
     """Represents the sensor which measures rainfall"""
 
-    NUMBER_OF_READS = 1
+    BUCKET_SIZE_IN_MM = 0.2794
 
     def __init__(self, rain_gauge_port_number):
-        self.rain_gauge = RainGauge(rain_gauge_port_number=rain_gauge_port_number)
+        self.button = Button(pin=rain_gauge_port_number)
+        self.button.when_pressed = self.get_reading
 
-    def get_number_of_reads(self):
-        return self.NUMBER_OF_READS
+        super().__init__()
 
-    def read_values(self):
-        return [self.rain_gauge.get_sample()]
+        logging.debug(msg=f'Started rain gauge on port "{rain_gauge_port_number}".')
+
+    def add_value_to_readings(self):
+        # This sensor does not need to read async as the method when_pressed is the one which does it
+        pass
+
+    def get_reading(self):
+        return [1]
+
+    def get_average(self):
+        return len(self.readings) * self.BUCKET_SIZE_IN_MM
