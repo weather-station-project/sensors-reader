@@ -4,6 +4,7 @@ import unittest
 from unittest import mock
 from unittest.mock import MagicMock, Mock
 
+from controllers.rainfall_controller import RainfallController
 from exceptions.sensor_exception import SensorException
 
 sys.modules['bme280pi'] = MagicMock()
@@ -156,7 +157,8 @@ class TestMainClass(unittest.TestCase):
                           Main.GROUND_SENSOR_VARIABLE: 'test',
                           Main.RAINFALL_SENSOR_VARIABLE: 'test',
                           Main.WIND_SENSOR_VARIABLE: 'test',
-                          Main.ANEMOMETER_PORT_NUMBER_VARIABLE: 'test'}
+                          Main.ANEMOMETER_PORT_NUMBER_VARIABLE: 'test',
+                          Main.RAIN_GAUGE_PORT_NUMBER_VARIABLE: 'test'}
         main_class = Main(variables=test_variables)
         main_class.check_bool_value = MagicMock()
         main_class.check_positive_integer_value = MagicMock()
@@ -171,6 +173,7 @@ class TestMainClass(unittest.TestCase):
         main_class.check_bool_value.assert_any_call(variable_name=Main.RAINFALL_SENSOR_VARIABLE)
         main_class.check_bool_value.assert_any_call(variable_name=Main.WIND_SENSOR_VARIABLE)
         main_class.check_positive_integer_value.assert_any_call(variable_name=Main.ANEMOMETER_PORT_NUMBER_VARIABLE)
+        main_class.check_positive_integer_value.assert_any_call(variable_name=Main.RAIN_GAUGE_PORT_NUMBER_VARIABLE)
 
     def test_when_validating_sensors_variables_given_no_variables_methods_should_not_be_called(self):
         # arrange
@@ -259,15 +262,19 @@ class TestMainClass(unittest.TestCase):
     @mock.patch('main.main_class.GroundTemperatureController', autospec=True)
     @mock.patch('main.main_class.AmbientTemperatureController', autospec=True)
     @mock.patch('main.main_class.AirMeasurementController', autospec=True)
+    @mock.patch('main.main_class.WindMeasurementController', autospec=True)
+    @mock.patch('main.main_class.RainfallController', autospec=True)
     @mock.patch('main.main_class.FakeController', autospec=True)
     def test_when_getting_controllers_given_no_variables_empty_list_should_be_returned(self,
                                                                                        mock_fake_controller,
+                                                                                       mock_rainfall_controller,
+                                                                                       mock_wind_measurement_controller,
                                                                                        mock_air_measurement_controller,
                                                                                        mock_ambient_controller,
                                                                                        mock_ground_controller):
         # arrange
         main_class = Main(variables={})
-        main_class.get_anemometer_port_number = MagicMock()
+        main_class.get_value_as_int = MagicMock()
 
         # act
         result = main_class.get_controllers_enabled()
@@ -279,15 +286,21 @@ class TestMainClass(unittest.TestCase):
         mock_fake_controller.assert_not_called()
         mock_ambient_controller.assert_not_called()
         mock_air_measurement_controller.assert_not_called()
+        mock_wind_measurement_controller.assert_not_called()
+        mock_rainfall_controller.assert_not_called()
         mock_ground_controller.assert_not_called()
-        main_class.get_anemometer_port_number.assert_not_called()
+        main_class.get_value_as_int.assert_not_called()
 
     @mock.patch('main.main_class.GroundTemperatureController', autospec=True)
     @mock.patch('main.main_class.AmbientTemperatureController', autospec=True)
     @mock.patch('main.main_class.AirMeasurementController', autospec=True)
+    @mock.patch('main.main_class.WindMeasurementController', autospec=True)
+    @mock.patch('main.main_class.RainfallController', autospec=True)
     @mock.patch('main.main_class.FakeController', autospec=True)
     def test_when_getting_controllers_given_fake_sensor_only_fake_controller_should_be_returned(self,
                                                                                                 mock_fake_controller,
+                                                                                                mock_rainfall_controller,
+                                                                                                mock_wind_measurement_controller,
                                                                                                 mock_air_measurement_controller,
                                                                                                 mock_ambient_controller,
                                                                                                 mock_ground_controller):
@@ -318,15 +331,21 @@ class TestMainClass(unittest.TestCase):
                                                      password=test_password)
         mock_ambient_controller.assert_not_called()
         mock_air_measurement_controller.assert_not_called()
+        mock_wind_measurement_controller.assert_not_called()
+        mock_rainfall_controller.assert_not_called()
         mock_ground_controller.assert_not_called()
         main_class.get_anemometer_port_number.assert_not_called()
 
     @mock.patch('main.main_class.GroundTemperatureController', autospec=True)
     @mock.patch('main.main_class.AmbientTemperatureController', autospec=True)
     @mock.patch('main.main_class.AirMeasurementController', autospec=True)
+    @mock.patch('main.main_class.WindMeasurementController', autospec=True)
+    @mock.patch('main.main_class.RainfallController', autospec=True)
     @mock.patch('main.main_class.FakeController', autospec=True)
     def test_when_getting_controllers_given_fake_sensor_without_database_dao_should_be_initialize_with_empty_values(self,
                                                                                                                     mock_fake_controller,
+                                                                                                                    mock_rainfall_controller,
+                                                                                                                    mock_wind_measurement_controller,
                                                                                                                     mock_air_measurement_controller,
                                                                                                                     mock_ambient_controller,
                                                                                                                     mock_ground_controller):
@@ -348,6 +367,8 @@ class TestMainClass(unittest.TestCase):
                                                      password=None)
         mock_ambient_controller.assert_not_called()
         mock_air_measurement_controller.assert_not_called()
+        mock_wind_measurement_controller.assert_not_called()
+        mock_rainfall_controller.assert_not_called()
         mock_ground_controller.assert_not_called()
         main_class.get_anemometer_port_number.assert_not_called()
 
@@ -355,9 +376,11 @@ class TestMainClass(unittest.TestCase):
     @mock.patch('main.main_class.GroundTemperatureController', autospec=True)
     @mock.patch('main.main_class.AmbientTemperatureController', autospec=True)
     @mock.patch('main.main_class.AirMeasurementController', autospec=True)
+    @mock.patch('main.main_class.RainfallController', autospec=True)
     @mock.patch('main.main_class.FakeController', autospec=True)
     def test_when_getting_controllers_given_all_sensors_expected_controllers_should_be_returned(self,
                                                                                                 mock_fake_controller,
+                                                                                                mock_rainfall_controller,
                                                                                                 mock_air_measurement_controller,
                                                                                                 mock_ambient_controller,
                                                                                                 mock_ground_controller,
@@ -375,19 +398,21 @@ class TestMainClass(unittest.TestCase):
                                      Main.DATABASE_VARIABLE: test_database,
                                      Main.USER_VARIABLE: test_user,
                                      Main.PASSWORD_VARIABLE: test_password,
-                                     Main.WIND_SENSOR_VARIABLE: 'true'})
-        main_class.get_anemometer_port_number = MagicMock(return_value=test_port)
+                                     Main.WIND_SENSOR_VARIABLE: 'true',
+                                     Main.RAINFALL_SENSOR_VARIABLE: 'true'})
+        main_class.get_value_as_int = MagicMock(return_value=test_port)
 
         # act
         result = main_class.get_controllers_enabled()
 
         # assert
         self.assertIsInstance(result, list)
-        self.assertEqual(len(result), 4)
+        self.assertEqual(len(result), 5)
         self.assertIsInstance(result[0], AmbientTemperatureController)
         self.assertIsInstance(result[1], AirMeasurementController)
         self.assertIsInstance(result[2], GroundTemperatureController)
         self.assertIsInstance(result[3], WindMeasurementController)
+        self.assertIsInstance(result[4], RainfallController)
 
         mock_ambient_controller.assert_called_once_with(server=test_server,
                                                         database=test_database,
@@ -406,8 +431,16 @@ class TestMainClass(unittest.TestCase):
                                                      database=test_database,
                                                      user=test_user,
                                                      password=test_password)
+        mock_rainfall_controller.assert_called_once_with(rain_gauge_port_number=test_port,
+                                                         server=test_server,
+                                                         database=test_database,
+                                                         user=test_user,
+                                                         password=test_password)
         mock_fake_controller.assert_not_called()
-        main_class.get_anemometer_port_number.assert_called_once()
+        main_class.get_value_as_int.assert_any_call(variable_name=main_class.ANEMOMETER_PORT_NUMBER_VARIABLE,
+                                                    default_value=main_class.DEFAULT_ANEMOMETER_PORT_NUMBER)
+        main_class.get_value_as_int.assert_any_call(variable_name=main_class.RAIN_GAUGE_PORT_NUMBER_VARIABLE,
+                                                    default_value=main_class.DEFAULT_RAIN_GAUGE_PORT_NUMBER)
 
     def test_when_getting_if_controller_is_enabled_expected_return_should_be_returned(self):
         test_true = 'test_true'
@@ -420,35 +453,25 @@ class TestMainClass(unittest.TestCase):
         self.assertFalse(main_class.is_controller_enabled(test_false))
         self.assertFalse(main_class.is_controller_enabled('non-existing'))
 
-    def test_when_getting_anemometer_port_number_given_no_variable_default_should_be_returned(self):
+    def test_when_getting_value_as_int_given_no_variable_default_should_be_returned(self):
         # arrange
+        test_default = 'test_default'
         main_class = Main(variables={})
 
         # act
-        self.assertEqual(main_class.get_anemometer_port_number(), Main.DEFAULT_ANEMOMETER_PORT_NUMBER)
+        self.assertEqual(main_class.get_value_as_int(variable_name='test',
+                                                     default_value=test_default), test_default)
 
-    def test_when_getting_anemometer_port_number_given_value_expected_value_should_be_returned(self):
+    def test_when_getting_value_as_int_given_value_expected_value_should_be_returned(self):
         # arrange
+        test_default = 'test_default'
         test_value = '22'
-        main_class = Main(variables={Main.ANEMOMETER_PORT_NUMBER_VARIABLE: test_value})
+        test_variable = 'test_variable'
+        main_class = Main(variables={test_variable: test_value})
 
         # act
-        self.assertEqual(main_class.get_anemometer_port_number(), int(test_value))
-
-    def test_when_getting_minutes_given_no_variable_default_should_be_returned(self):
-        # arrange
-        main_class = Main(variables={})
-
-        # act
-        self.assertEqual(main_class.get_minutes_between_reads(), Main.DEFAULT_MINUTES_BETWEEN_READINGS)
-
-    def test_when_getting_minutes_given_value_expected_value_should_be_returned(self):
-        # arrange
-        test_value = '5'
-        main_class = Main(variables={Main.MINUTES_BETWEEN_READINGS_VARIABLE: test_value})
-
-        # act
-        self.assertEqual(main_class.get_minutes_between_reads(), int(test_value))
+        self.assertEqual(main_class.get_value_as_int(variable_name=test_variable,
+                                                     default_value=test_default), int(test_value))
 
     @mock.patch('main.main_class.logging')
     @mock.patch('main.main_class.register_error_in_health_check_file')
