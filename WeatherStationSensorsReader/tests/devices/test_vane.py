@@ -53,8 +53,7 @@ class TestVane(unittest.TestCase):
         self.assertEqual(self.test_vane.get_reading(), test_expected_value)
 
         # assert
-        mock_logging.debug.assert_any_call(msg=f'MCP reading "{test_value}", GPIO value "{test_gpio_value}".')
-        mock_logging.debug.assert_any_call(msg=f'Wind direction obtained "{test_expected_value}" degrees.')
+        mock_logging.debug.assert_called_once_with(msg=f'MCP reading "{test_value}", GPIO value "{test_gpio_value}".')
         mock_logging.warning.assert_not_called()
 
     def test_when_getting_direction_average_given_angle_expected_value_should_be_returned(self):

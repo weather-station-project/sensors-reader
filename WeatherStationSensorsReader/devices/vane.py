@@ -42,10 +42,7 @@ class Vane(object):
         logging.debug(msg=f'MCP reading "{mcp_value}", GPIO value "{gpio_value}".')
 
         if gpio_value in self.VANE_ANGLES_AND_DIRECTIONS_TABLE:
-            value = self.VANE_ANGLES_AND_DIRECTIONS_TABLE[gpio_value]['angle']
-            logging.debug(msg=f'Wind direction obtained "{value}" degrees.')
-
-            return value
+            return self.VANE_ANGLES_AND_DIRECTIONS_TABLE[gpio_value]['angle']
 
         logging.warning(msg=f'Cannot determine wind direction for MCP reading "{mcp_value}" and GPIO value "{gpio_value}".')
         return None
