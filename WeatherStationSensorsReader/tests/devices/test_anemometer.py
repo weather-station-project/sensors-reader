@@ -34,10 +34,6 @@ class TestAnemometer(unittest.TestCase):
     @mock.patch('devices.anemometer.time')
     def test_when_getting_speed_expected_calls_should_be_done(self, mock_time):
         # arrange
-        self.test_anemometer.start_time = time.time()
-        test_finish_time = time.time()
-        mock_time.time = MagicMock(return_value=test_finish_time)
-
         test_speed = 50
         self.test_anemometer.calculate_speed = Mock(return_value=test_speed)
 
@@ -46,7 +42,7 @@ class TestAnemometer(unittest.TestCase):
 
         # assert
         mock_time.time.assert_any_call()
-        self.test_anemometer.calculate_speed.assert_called_once_with(current_spin_count=0, elapsed_seconds=test_finish_time - self.test_anemometer.start_time)
+        self.test_anemometer.calculate_speed.assert_called_once()
 
     def test_when_getting_speed_expected_result_should_be_returned(self):
         self.assertAlmostEqual(first=self.test_anemometer.calculate_speed(current_spin_count=2, elapsed_seconds=1),
