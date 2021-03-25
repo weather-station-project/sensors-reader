@@ -14,8 +14,8 @@ class TestAmbientTemperatureSensor(unittest.TestCase):
     def setUp(self, mock_sensor, mock_logging, mock_super):
         test_chip_id = 'test_chip_id'
         test_chip_version = 'test_chip_version'
-        mock_sensor.return_value.chip_id = self.test_chip_id
-        mock_sensor.return_value.chip_version = self.test_chip_version
+        mock_sensor.return_value.chip_id = test_chip_id
+        mock_sensor.return_value.chip_version = test_chip_version
 
         self.test_sensor = AmbientTemperatureSensor()
 
