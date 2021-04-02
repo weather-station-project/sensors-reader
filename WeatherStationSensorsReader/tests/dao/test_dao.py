@@ -33,7 +33,7 @@ class TestDao(unittest.TestCase):
     def test_when_no_server_warning_should_be_raised(self, mock_logging):
         Dao(server='', database=self.test_database, user=self.test_user, password=self.test_password).insert(values=None)
 
-        mock_logging.warning.assert_called_once_with(msg='Database connection not configured, the data will not be stored anywhere.')
+        mock_logging.warning.assert_called_once_with(msg='[Dao] Database connection not configured, the data will not be stored anywhere.')
 
     @mock.patch('dao.dao.psycopg2')
     @mock.patch('dao.dao.logging')
@@ -54,7 +54,6 @@ class TestDao(unittest.TestCase):
                                                       database=self.test_database,
                                                       user=self.test_user,
                                                       password=self.test_password)
-        mock_logging.debug.assert_not_called()
         mock_register.assert_not_called()
 
     @mock.patch('psycopg2.connect')
@@ -74,7 +73,6 @@ class TestDao(unittest.TestCase):
                                              password=self.test_password)
         mock_connect().__enter__().cursor.assert_called_once()
         mock_connect().__enter__().cursor().__enter__().execute.assert_called_once_with(query=self.test_query, vars=self.test_parameter_values)
-        mock_logging.debug.assert_called_once_with(msg=f'Executed query "{self.test_query}" with values "{self.test_parameter_values}".')
         mock_register.assert_called_once_with(class_name='Dao')
 
 

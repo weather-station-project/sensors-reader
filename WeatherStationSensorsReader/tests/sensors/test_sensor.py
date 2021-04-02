@@ -31,7 +31,7 @@ class TestSensor(unittest.TestCase):
         # assert
         self.assertEqual(self.test_sensor.readings, [test_value])
 
-        mock_logging.debug.assert_called_once_with(msg=f'Obtained "{test_value}" from "{self.test_sensor.__class__.__name__}".')
+        mock_logging.debug.assert_called_once_with(msg=f'[{self.test_sensor.__class__.__name__}] Obtained "{test_value}".')
         mock_logging.exception.assert_not_called()
         mock_sleep.assert_called_once_with(self.test_sensor.SECONDS_BETWEEN_READINGS)
 
@@ -67,7 +67,7 @@ class TestSensor(unittest.TestCase):
         self.assertEqual(len(self.test_sensor.readings), 0)
 
         mock_logging.debug.assert_not_called()
-        mock_logging.exception.assert_called_once_with(f'Error while reading from sensor "{self.test_sensor.__class__.__name__}".')
+        mock_logging.exception.assert_called_once_with(f'[{self.test_sensor.__class__.__name__}] Error while reading.')
         mock_sleep.assert_called_once_with(self.test_sensor.SECONDS_BETWEEN_READINGS)
 
     def test_when_getting_true_true_value_should_be_returned(self):

@@ -18,7 +18,7 @@ class TestVane(unittest.TestCase):
 
         # assert
         mock_mcp.assert_called_once_with(channel=self.test_vane.CHANNEL)
-        mock_logging.debug.assert_called_once_with(msg=f'Started vane on the channel "{self.test_vane.CHANNEL}".')
+        mock_logging.debug.assert_called_once_with(msg=f'[Vane] Started on the channel "{self.test_vane.CHANNEL}".')
 
     @mock.patch('devices.vane.logging')
     def test_when_getting_reading_given_wrong_voltage_null_should_be_returned(self, mock_logging):
@@ -34,9 +34,8 @@ class TestVane(unittest.TestCase):
         self.assertIsNone(self.test_vane.get_reading())
 
         # assert
-        mock_logging.debug.assert_any_call(msg=f'MCP reading "{test_value}", GPIO value "{test_gpio_value}".')
-        mock_logging.warning.assert_any_call(
-            msg=f'Cannot determine wind direction for MCP reading "{test_value}" and GPIO value "{test_gpio_value}".')
+        mock_logging.debug.assert_any_call(msg=f'[Vane] MCP reading "{test_value}", GPIO value "{test_gpio_value}".')
+        mock_logging.warning.assert_any_call(msg=f'[Vane] Cannot determine wind direction for MCP reading "{test_value}" and GPIO value "{test_gpio_value}".')
 
     @mock.patch('devices.vane.logging')
     def test_when_getting_reading_given_correct_voltage_expected_angle_should_be_returned(self, mock_logging):
@@ -53,7 +52,7 @@ class TestVane(unittest.TestCase):
         self.assertEqual(self.test_vane.get_reading(), test_expected_value)
 
         # assert
-        mock_logging.debug.assert_called_once_with(msg=f'MCP reading "{test_value}", GPIO value "{test_gpio_value}".')
+        mock_logging.debug.assert_called_once_with(msg=f'[Vane] MCP reading "{test_value}", GPIO value "{test_gpio_value}".')
         mock_logging.warning.assert_not_called()
 
     def test_when_getting_direction_average_given_angle_expected_value_should_be_returned(self):

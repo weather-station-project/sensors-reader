@@ -33,18 +33,18 @@ class Vane(object):
     def __init__(self):
         self.mcp_chip = MCP3008(channel=self.CHANNEL)
 
-        logging.debug(msg=f'Started vane on the channel "{self.CHANNEL}".')
+        logging.debug(msg=f'[{self.__class__.__name__}] Started on the channel "{self.CHANNEL}".')
 
     def get_reading(self):
         mcp_value = self.mcp_chip.value
         gpio_value = round(mcp_value * self.VOLTAGE_IN, 1)
 
-        logging.debug(msg=f'MCP reading "{mcp_value}", GPIO value "{gpio_value}".')
+        logging.debug(msg=f'[{self.__class__.__name__}] MCP reading "{mcp_value}", GPIO value "{gpio_value}".')
 
         if gpio_value in self.VANE_ANGLES_AND_DIRECTIONS_TABLE:
             return self.VANE_ANGLES_AND_DIRECTIONS_TABLE[gpio_value]['angle']
 
-        logging.warning(msg=f'Cannot determine wind direction for MCP reading "{mcp_value}" and GPIO value "{gpio_value}".')
+        logging.warning(msg=f'[{self.__class__.__name__}] Cannot determine wind direction for MCP reading "{mcp_value}" and GPIO value "{gpio_value}".')
         return None
 
     def get_direction_average(self, angles):

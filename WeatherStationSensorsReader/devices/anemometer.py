@@ -18,11 +18,11 @@ class Anemometer(object):
         self.button = Button(pin=anemometer_port_number)
         self.button.when_pressed = self.spin
 
-        logging.debug(msg=f'Started anemometer on the port "{anemometer_port_number}".')
+        logging.debug(msg=f'[{self.__class__.__name__}] Started on the port "{anemometer_port_number}".')
 
     def spin(self):
         self.spin_count = self.spin_count + 1
-        logging.debug(msg=f'Spin count {self.spin_count}.')
+        logging.debug(msg=f'[{self.__class__.__name__}] Spin count {self.spin_count}.')
 
     def get_speed(self):
         try:

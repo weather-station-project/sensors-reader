@@ -21,8 +21,8 @@ class TestGroundTemperatureSensor(unittest.TestCase):
 
         self.assertIsNotNone(self.test_sensor)
         mock_sensor.assert_called_once()
-        mock_logging.debug.assert_called_once_with(msg=f'Started W1ThermSensor with id "{test_id}" and '
-                                                       f'type "{test_type}" in the sensor "{GroundTemperatureSensor.__name__}".')
+        mock_logging.debug.assert_called_once_with(msg=f'[{GroundTemperatureSensor.__name__}] Started W1ThermSensor with id "{test_id}" and '
+                                                       f'type "{test_type}".')
         mock_super.assert_called_once_with()
 
     def test_when_getting_readings_expected_method_should_be_called(self):

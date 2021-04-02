@@ -16,7 +16,7 @@ class RainfallSensor(Sensor):
 
         super().__init__()
 
-        logging.debug(msg=f'Started rain gauge on port "{rain_gauge_port_number}".')
+        logging.debug(msg=f'[{self.__class__.__name__}] Started on the port "{rain_gauge_port_number}".')
 
     def add_value_to_readings(self):
         # This sensor does not need to read async as the method when_pressed is the one which does it

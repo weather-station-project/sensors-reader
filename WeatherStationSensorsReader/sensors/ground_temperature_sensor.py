@@ -10,8 +10,7 @@ class GroundTemperatureSensor(Sensor):
 
     def __init__(self):
         self.sensor = W1ThermSensor()
-        logging.debug(msg=f'Started W1ThermSensor with id "{self.sensor.id}" and '
-                          f'type "{self.sensor.type_name}" in the sensor "{self.__class__.__name__}".')
+        logging.debug(msg=f'[{self.__class__.__name__}] Started W1ThermSensor with id "{self.sensor.id}" and type "{self.sensor.type_name}".')
 
         super().__init__()
 

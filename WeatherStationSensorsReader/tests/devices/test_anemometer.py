@@ -18,7 +18,7 @@ class TestAnemometer(unittest.TestCase):
     def test_when_calling_constructor_new_mock_should_be_initialized(self, mock_logging, mock_button):
         self.assertIsNotNone(Anemometer(anemometer_port_number=self.test_port_number))
 
-        mock_logging.debug.assert_called_once_with(msg=f'Started anemometer on the port "{self.test_port_number}".')
+        mock_logging.debug.assert_called_once_with(msg=f'[Anemometer] Started on the port "{self.test_port_number}".')
 
         mock_button.assert_called_once_with(pin=self.test_port_number)
 
@@ -29,7 +29,7 @@ class TestAnemometer(unittest.TestCase):
         self.assertIsNone(self.test_anemometer.spin())
 
         self.assertEqual(self.test_anemometer.spin_count, current_signals_count + 1)
-        mock_logging.debug.assert_called_once_with(msg=f'Spin count {self.test_anemometer.spin_count}.')
+        mock_logging.debug.assert_called_once_with(msg=f'[Anemometer] Spin count {self.test_anemometer.spin_count}.')
 
     @mock.patch('devices.anemometer.time')
     def test_when_getting_speed_expected_calls_should_be_done(self, mock_time):

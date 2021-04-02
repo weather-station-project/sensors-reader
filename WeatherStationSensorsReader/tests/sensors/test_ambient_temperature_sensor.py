@@ -21,8 +21,8 @@ class TestAmbientTemperatureSensor(unittest.TestCase):
 
         self.assertIsNotNone(self.test_sensor)
         mock_sensor.assert_called_once()
-        mock_logging.debug.assert_called_once_with(msg=f'Started Bme280 with chip_id "{test_chip_id}" and '
-                                                       f'chip_version "{test_chip_version}" in the sensor "{AmbientTemperatureSensor.__name__}".')
+        mock_logging.debug.assert_called_once_with(msg=f'[{AmbientTemperatureSensor.__name__}] Started Bme280 with chip_id "{test_chip_id}" and '
+                                                       f'chip_version "{test_chip_version}".')
         mock_super.assert_called_once()
 
     def test_when_getting_readings_expected_method_should_be_called(self):

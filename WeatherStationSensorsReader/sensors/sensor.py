@@ -30,9 +30,9 @@ class Sensor(ABC):
 
                 reading = self.get_reading()
                 self.readings.append(reading)
-                logging.debug(msg=f'Obtained "{reading}" from "{sensor_name}".')
+                logging.debug(msg=f'[{sensor_name}] Obtained "{reading}".')
             except Exception:
-                logging.exception(f'Error while reading from sensor "{sensor_name}".')
+                logging.exception(f'[{sensor_name}] Error while reading.')
             finally:
                 sleep(self.SECONDS_BETWEEN_READINGS)
 

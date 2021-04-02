@@ -4,6 +4,8 @@ import unittest
 from unittest import mock
 from unittest.mock import MagicMock
 
+from health_check.health_check_file_manager import APP_KEY
+
 sys.modules['bme280pi'] = MagicMock()
 sys.modules['w1thermsensor'] = MagicMock()
 from app import app
@@ -55,7 +57,7 @@ class TestApp(unittest.TestCase):
         app.erase_health_check_file.assert_called_once()
         app.register_error_in_health_check_file.assert_not_called()
         mock_main.return_value.execute_controllers.assert_called_once_with(controllers=test_controllers)
-        mock_logging.debug.assert_called_once_with(msg=f'Sleeping "{test_time * 60}" seconds while sensors are doing readings.')
+        mock_logging.debug.assert_called_once_with(msg=f'[{APP_KEY}] Sleeping "{test_time * 60}" seconds while sensors are doing readings.')
         mock_sleep.assert_any_call(test_time * 60)
         mock_logging.critical.assert_not_called()
 
