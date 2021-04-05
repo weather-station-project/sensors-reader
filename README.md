@@ -1,22 +1,10 @@
 # Weather Station Sensors Reader
 Repository with the Weather Station Sensors Reader solution.
 
-It is a dockerized Python application developed for [Raspberry Pi](https://www.raspberrypi.org/) and based on the open project "[Build your own weather station](https://projects.raspberrypi.org/en/projects/build-your-own-weather-station)". It uses the set of sensors described there to take some environment measurements and stores the information in the database described in the repository [Weather Station Database](https://github.com/davidleonm/weather-station-database).
-
-The solution has been dockerized to ease its deployment and usage, but it can be executed in a Rasperry Pi natively with Python 3 installed.
-
 
 ## Release information
 [![Coverage Status](https://coveralls.io/repos/github/davidleonm/weather-station-sensors-reader/badge.svg?branch=origin/master)](https://coveralls.io/github/davidleonm/weather-station-sensors-reader?branch=origin/master)
 ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/davidleonm/weather-station-sensors-reader)
-
-
-## Weather Station Project overview
-![Overview](https://github.com/davidleonm/weather-station-sensors-reader/raw/master/overview.png)
-
-This picture represents the whole "Weather Station" project. It is a set of dockerized applications to take measurements from the environment, store them in a database and visualize the data in a Web site. This current repository is the code for the "Sensors Reader".
-
-The rest of the solutions can be found in the other repositories in my [Github account](https://github.com/davidleonm).
 
 
 ## Components used and where to find them
@@ -37,6 +25,7 @@ As commented previously, the same components described in the project "[Build yo
 * **RJ11 breakout** - To join RJ11 devices with the proto board. ~ (8.39 * 2)€ [Amazon](https://www.amazon.es/gp/product/B00UJ8DRCG/ref=ppx_yo_dt_b_asin_title_o04_s00?ie=UTF8&psc=1)
 * **Anemometer** - To measure wind speed and gust speed. ~ 32.9€ [Amazon](https://www.amazon.es/gp/product/B07BMVYBW9/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
 * **Vane** - To measure wind direction. ~ 29.9€ [Amazon](https://www.amazon.es/gp/product/B07KYTKLTB/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
+* **Rain gauge** - To measure amount of rain. ~ 33.90€ [Amazon](https://www.amazon.es/gp/product/B07KYSXCBZ/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
 
 
 ## Composition
@@ -93,7 +82,9 @@ services:
       - BME_280_SENSOR_ENABLED=true
       - GROUND_SENSOR_ENABLED=true
       - WIND_SENSOR_ENABLED=true
+      - RAINFALL_SENSOR_ENABLED=true
       - ANEMOMETER_PORT_NUMBER=22
+      - RAIN_GAUGE_PORT_NUMBER=XX
       - SERVER=127.0.0.1
       - DATABASE=my_db
       - USER=my_user
@@ -103,7 +94,7 @@ services:
     - '/etc/localtime:/etc/localtime:ro'
 ```
 ```bash
-docker run --rm -d --name=sensors-reader --privileged -e LOGGING_LEVEL=ERROR -e BME_280_SENSOR_ENABLED=true -e GROUND_SENSOR_ENABLED=true -e WIND_SENSOR_ENABLED=true -e ANEMOMETER_PORT_NUMBER=22 -e SERVER=127.0.0.1 -e DATABASE=my_db -e USER=my_user -e PASSWORD=my_password -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro davidleonm/weather-station-sensors-reader
+docker run --rm -d --name=sensors-reader --privileged -e LOGGING_LEVEL=ERROR -e BME_280_SENSOR_ENABLED=true -e GROUND_SENSOR_ENABLED=true -e WIND_SENSOR_ENABLED=true -e RAINFALL_SENSOR_ENABLED=true -e ANEMOMETER_PORT_NUMBER=22 -e RAIN_GAUGE_PORT_NUMBER=XX -e SERVER=127.0.0.1 -e DATABASE=my_db -e USER=my_user -e PASSWORD=my_password -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro davidleonm/weather-station-sensors-reader
 ```
 
 ### Example of an execution with only the fake sensor and without database
@@ -127,6 +118,7 @@ docker run --rm -d --name=sensors-reader -e LOGGING_LEVEL=ERROR -e FAKE_SENSOR_E
 
 
 ## Changelog
+* **1.3.0** - Added rain gauge device to measure amount of rain. Improved the way to gather measurements.
 * **1.2.0** - Added wind sensors such as the anemometer and the vane. Restructuring of Jenkins files. Improved the health check.
 * **1.1.0** - Added ground temperature sensor, fixed some code smells and documentation.
 * **1.0.0** - First version with ambient temperature, air humidity and atmosphere pressure sensors.
