@@ -48,7 +48,7 @@ As commented previously, the same components described in the project "[Build yo
 * 1-wire interface must be enabled. Follow this [tutorial](https://www.raspberrypi-spy.co.uk/2018/02/enable-1-wire-interface-raspberry-pi/).
 
 
-### Execution parameterss
+### Execution parameters
 The solution is intended to take measurements from the environment and also to store the obtained values in a database passed as parameters. There are some parameters to define the behavior of the solution or just to limit some aspects of its execution, they are described below.
 
 * **LOGGING_LEVEL** - Possible values are CRITICAL, ERROR, WARNING, INFO and DEBUG. It defines the level of loggin traces to register.
