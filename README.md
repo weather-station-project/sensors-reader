@@ -1,6 +1,8 @@
 # Weather Station Sensors Reader
 Repository with the Weather Station Sensors Reader solution.
 
+Based on the open project for Raspberry Pi "[Build your own weather station](https://projects.raspberrypi.org/en/projects/build-your-own-weather-station)"
+
 
 ## Release information
 [![Coverage Status](https://coveralls.io/repos/github/davidleonm/weather-station-sensors-reader/badge.svg?branch=origin/master)](https://coveralls.io/github/davidleonm/weather-station-sensors-reader?branch=origin/master)
