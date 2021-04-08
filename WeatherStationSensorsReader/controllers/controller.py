@@ -17,4 +17,3 @@ class Controller(ABC):
         logging.info(msg=f'[{self.sensor.__class__.__name__}] Obtained "{readings_average}" from the sensor.')
 
         self.dao.insert(values=readings_average)
-        logging.info(msg=f'[{self.sensor.__class__.__name__}] {readings_average} inserted correctly.')

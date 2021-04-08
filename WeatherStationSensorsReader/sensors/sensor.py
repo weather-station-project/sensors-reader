@@ -53,7 +53,7 @@ class Sensor(ABC):
             if len(self.readings) == 0 or all(x is None for x in self.readings):
                 raise SensorException(class_name=sensor_name, message=f'The sensor "{sensor_name}" did not report any read.')
 
-            logging.debug(msg=f'Getting average from the values "{self.readings}"')
+            logging.debug(msg=f'[{self.__class__.__name__}] Getting average from the values "{self.readings}"')
             average = self.get_average()
             register_success_for_class_into_health_check_file(class_name=sensor_name)
 

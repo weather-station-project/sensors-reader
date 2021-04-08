@@ -36,7 +36,6 @@ class TestController(unittest.TestCase):
         mock_logging.info.assert_any_call(msg=f'[{self.mock_sensor.__class__.__name__}] Obtained "{test_read_result}" from the sensor.')
 
         self.mock_dao.insert.assert_called_once_with(values=test_read_result)
-        mock_logging.info.assert_called_with(msg=f'[{self.mock_sensor.__class__.__name__}] {test_read_result} inserted correctly.')
 
 
 if __name__ == '__main__':

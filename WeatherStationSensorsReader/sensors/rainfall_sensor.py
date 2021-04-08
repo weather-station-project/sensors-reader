@@ -24,7 +24,7 @@ class RainfallSensor(Sensor):
 
     def get_reading(self):
         logging.debug(msg=f'[{self.__class__.__name__}] Pressed.')
-        return [1]
+        self.readings.append(1)
 
     def get_average(self):
         return len(self.readings) * self.BUCKET_SIZE_IN_MM

@@ -92,7 +92,7 @@ class TestSensor(unittest.TestCase):
         # assert
         self.assertEqual(len(self.test_sensor.readings), 0)
         self.test_sensor.get_average.assert_called_once()
-        mock_logging.debug.assert_called_once_with(msg=f'Getting average from the values "{test_readings}"')
+        mock_logging.debug.assert_called_once_with(msg=f'[Sensor] Getting average from the values "{test_readings}"')
         mock_register.assert_called_once_with(class_name='Sensor')
 
     @mock.patch('sensors.sensor.register_success_for_class_into_health_check_file')
