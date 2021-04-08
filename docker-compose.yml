@@ -12,7 +12,7 @@ services:
       - WIND_SENSOR_ENABLED=true
       - RAINFALL_SENSOR_ENABLED=true
       - ANEMOMETER_PORT_NUMBER=22
-      - RAIN_GAUGE_PORT_NUMBER=XX
+      - RAIN_GAUGE_PORT_NUMBER=25
       - SERVER=127.0.0.1
       - DATABASE=my_db
       - USER=my_user

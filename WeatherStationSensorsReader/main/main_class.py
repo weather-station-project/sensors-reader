@@ -43,7 +43,7 @@ class Main(object):
     # DEFAULT VALUES
     DEFAULT_MINUTES_BETWEEN_READINGS = 5
     DEFAULT_ANEMOMETER_PORT_NUMBER = 22
-    DEFAULT_RAIN_GAUGE_PORT_NUMBER = 22
+    DEFAULT_RAIN_GAUGE_PORT_NUMBER = 25
 
     def __init__(self, variables):
         self.variables = variables

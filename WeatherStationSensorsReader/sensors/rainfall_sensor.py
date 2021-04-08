@@ -23,6 +23,7 @@ class RainfallSensor(Sensor):
         pass
 
     def get_reading(self):
+        logging.debug(msg=f'[{self.__class__.__name__}] Pressed.')
         return [1]
 
     def get_average(self):

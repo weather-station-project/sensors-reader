@@ -21,8 +21,10 @@ class TestRainfallSensor(unittest.TestCase):
     def test_when_adding_values_nothing_should_be_returned(self):
         self.assertIsNone(self.test_sensor.add_value_to_readings())
 
-    def test_when_getting_readings_1_should_be_returned(self):
+    @mock.patch('sensors.rainfall_sensor.logging')
+    def test_when_getting_readings_1_should_be_returned(self, mock_logging):
         self.assertEqual(self.test_sensor.get_reading(), [1])
+        mock_logging.debug.assert_called_once_with(msg='[RainfallSensor] Pressed.')
 
     def test_when_getting_averages_given_1_reading_expected_result_should_be_returned(self):
         self.test_sensor.readings = [1]

@@ -78,11 +78,13 @@ class TestSensor(unittest.TestCase):
             self.test_sensor.get_reading()
 
     @mock.patch('sensors.sensor.register_success_for_class_into_health_check_file')
-    def test_when_getting_average_given_values_expected_average_should_be_returned(self, mock_register):
+    @mock.patch('sensors.sensor.logging')
+    def test_when_getting_average_given_values_expected_average_should_be_returned(self, mock_logging, mock_register):
         # arrange
+        test_readings = [1, None, None, 2]
         test_expected_averages = [40]
         self.test_sensor.get_average = MagicMock(return_value=test_expected_averages)
-        self.test_sensor.readings = [1, None, None, 2]
+        self.test_sensor.readings = test_readings.copy()
 
         # act
         self.assertEqual(test_expected_averages, self.test_sensor.get_readings_average())
@@ -90,10 +92,12 @@ class TestSensor(unittest.TestCase):
         # assert
         self.assertEqual(len(self.test_sensor.readings), 0)
         self.test_sensor.get_average.assert_called_once()
+        mock_logging.debug.assert_called_once_with(msg=f'Getting average from the values "{test_readings}"')
         mock_register.assert_called_once_with(class_name='Sensor')
 
     @mock.patch('sensors.sensor.register_success_for_class_into_health_check_file')
-    def test_when_getting_average_given_all_readings_null_expected_exception_should_be_thrown(self, mock_register):
+    @mock.patch('sensors.sensor.logging')
+    def test_when_getting_average_given_all_readings_null_expected_exception_should_be_thrown(self, mock_logging, mock_register):
         # arrange
         self.test_sensor.get_average = MagicMock()
         self.test_sensor.readings = [None, None]
@@ -105,10 +109,12 @@ class TestSensor(unittest.TestCase):
         # assert
         self.assertEqual(len(self.test_sensor.readings), 0)
         self.test_sensor.get_average.assert_not_called()
+        mock_logging.assert_not_called()
         mock_register.assert_not_called()
 
     @mock.patch('sensors.sensor.register_success_for_class_into_health_check_file')
-    def test_when_getting_average_given_no_readings_expected_exception_should_be_thrown(self, mock_register):
+    @mock.patch('sensors.sensor.logging')
+    def test_when_getting_average_given_no_readings_expected_exception_should_be_thrown(self, mock_logging, mock_register):
         # arrange
         self.test_sensor.get_average = MagicMock()
         self.test_sensor.readings = []
@@ -120,10 +126,12 @@ class TestSensor(unittest.TestCase):
         # assert
         self.assertEqual(len(self.test_sensor.readings), 0)
         self.test_sensor.get_average.assert_not_called()
+        mock_logging.assert_not_called()
         mock_register.assert_not_called()
 
     @mock.patch('sensors.sensor.register_success_for_class_into_health_check_file')
-    def test_when_getting_average_given_no_readings_null_expected_exception_should_be_thrown(self, mock_register):
+    @mock.patch('sensors.sensor.logging')
+    def test_when_getting_average_given_no_readings_null_expected_exception_should_be_thrown(self, mock_logging, mock_register):
         # arrange
         self.test_sensor.get_average = MagicMock()
 
@@ -134,6 +142,7 @@ class TestSensor(unittest.TestCase):
         # assert
         self.assertEqual(len(self.test_sensor.readings), 0)
         self.test_sensor.get_average.assert_not_called()
+        mock_logging.assert_not_called()
         mock_register.assert_not_called()
 
     def test_when_getting_averages_expected_values_should_be_returned(self):
