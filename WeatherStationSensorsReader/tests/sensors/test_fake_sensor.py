@@ -21,7 +21,7 @@ class TestFakeSensor(unittest.TestCase):
             self.assertGreaterEqual(value, fake_sensor.MIN_LIMIT)
             self.assertLessEqual(value, fake_sensor.MAX_LIMIT)
 
-        mock_super.assert_called_once_with()
+        mock_super.assert_called_once()
 
 
 if __name__ == '__main__':

@@ -15,4 +15,4 @@ class GroundTemperatureSensor(Sensor):
         super().__init__()
 
     def get_reading(self):
-        return [self.sensor.get_temperature(unit=self.sensor.DEGREES_C)]
+        return [self.sensor.get_temperature()]

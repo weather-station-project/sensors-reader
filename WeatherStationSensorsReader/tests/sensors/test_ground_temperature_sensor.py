@@ -25,14 +25,18 @@ class TestGroundTemperatureSensor(unittest.TestCase):
         mock_super.assert_called_once_with()
 
     def test_when_getting_readings_expected_method_should_be_called(self):
+        # arrange
         test_temperature = 45
 
         mock_sensor = Mock()
         mock_sensor.get_temperature.return_value = test_temperature
-        mock_sensor.DEGREES_C = 0x01
         self.test_sensor.sensor = mock_sensor
 
+        # act
         self.assertEqual(self.test_sensor.get_reading(), [test_temperature])
+
+        # assert
+        mock_sensor.get_temperature.assert_called_once()
 
 
 if __name__ == '__main__':
