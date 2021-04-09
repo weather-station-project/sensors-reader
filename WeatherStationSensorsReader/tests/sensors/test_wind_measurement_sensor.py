@@ -27,19 +27,23 @@ class TestWindMeasurementSensor(unittest.TestCase):
         self.test_sensor.vane.get_reading.return_value = test_direction_angle
 
         # act
-        self.assertEqual(self.test_sensor.get_reading(), [test_direction_angle])
+        self.assertEqual(self.test_sensor.get_reading(), test_direction_angle)
 
     def test_when_getting_averages_expected_calls_should_be_done_and_expected_values_returned(self):
         # arrange
         test_speed = 58
         test_direction_average = 'N-NW'
 
-        self.test_sensor.anemometer.get_speed = MagicMock(return_value=test_speed)
         self.test_sensor.vane.get_direction_average = MagicMock(return_value=test_direction_average)
+        self.test_sensor.anemometer.get_speed = MagicMock(return_value=test_speed)
 
         # act
-        self.test_sensor.readings = [[10], [15], [15], [30], [30]]
+        self.test_sensor.readings = [10, 15, 15, 30, 30]
         self.assertEqual(self.test_sensor.get_average(), [test_direction_average, test_speed])
+
+        # assert
+        self.test_sensor.vane.get_direction_average.assert_called_once_with(angles=self.test_sensor.readings)
+        self.test_sensor.anemometer.get_speed.assert_called_once()
 
 
 if __name__ == '__main__':

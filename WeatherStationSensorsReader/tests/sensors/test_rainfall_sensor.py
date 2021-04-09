@@ -52,7 +52,7 @@ class TestRainfallSensor(unittest.TestCase):
         self.test_sensor.readings.append(1)
 
         self.assertEqual(len(self.test_sensor.readings), 1)
-        self.assertEqual(self.test_sensor.get_average(), self.test_sensor.BUCKET_SIZE_IN_MM)
+        self.assertEqual(self.test_sensor.get_average(), [self.test_sensor.BUCKET_SIZE_IN_MM])
 
 
 if __name__ == '__main__':

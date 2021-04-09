@@ -42,4 +42,4 @@ class RainfallSensor(Sensor):
             self.getting_readings = False
 
     def get_average(self):
-        return len(self.readings) * self.BUCKET_SIZE_IN_MM
+        return [len(self.readings) * self.BUCKET_SIZE_IN_MM]
