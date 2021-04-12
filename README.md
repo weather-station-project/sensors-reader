@@ -5,7 +5,7 @@ Based on the open project for Raspberry Pi "[Build your own weather station](htt
 
 
 ## Release information
-[![Coverage Status](https://coveralls.io/repos/github/davidleonm/weather-station-sensors-reader/badge.svg?branch=origin/master)](https://coveralls.io/github/davidleonm/weather-station-sensors-reader?branch=origin/master)
+[![Coverage Status](https://coveralls.io/repos/github/weather-station-project/sensors-reader/badge.svg?branch=origin/master)](https://coveralls.io/github/weather-station-project/sensors-reader?branch=origin/master)
 ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/davidleonm/weather-station-sensors-reader)
 
 
