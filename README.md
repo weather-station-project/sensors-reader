@@ -76,7 +76,7 @@ version: '3.5'
 services:
   sensors-reader:
     container_name: sensors-reader
-    image: davidleonm/weather-station-sensors-reader
+    image: weatherstationproject/sensors-reader
     privileged: true
     restart: unless-stopped
     environment:
