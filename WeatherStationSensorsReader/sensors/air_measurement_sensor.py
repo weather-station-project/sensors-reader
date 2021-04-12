@@ -10,9 +10,11 @@ class AirMeasurementSensor(Sensor):
 
     def __init__(self):
         self.sensor = Bme280Sensor()
-        logging.debug(msg=f'Started Bme280 with chip_id "{self.sensor.chip_id}" and '
-                          f'chip_version "{self.sensor.chip_version}" in the sensor "{self.__class__.__name__}".')
+        logging.debug(msg=f'[{self.__class__.__name__}] Started Bme280 with chip_id "{self.sensor.chip_id}" and '
+                          f'chip_version "{self.sensor.chip_version}".')
 
-    def read_values(self):
+        super().__init__()
+
+    def get_reading(self):
         result = self.sensor.get_data()
         return [result['pressure'], result['humidity']]

@@ -4,6 +4,7 @@ from controllers.air_measurement_controller import AirMeasurementController
 from controllers.ambient_temperature_controller import AmbientTemperatureController
 from controllers.fake_controller import FakeController
 from controllers.ground_temperature_controller import GroundTemperatureController
+from controllers.rainfall_controller import RainfallController
 from controllers.wind_measurement_controller import WindMeasurementController
 from exceptions.dao_exception import DaoException
 from exceptions.sensor_exception import SensorException
@@ -15,7 +16,7 @@ class Main(object):
 
     # Environment variables
     LOGGING_LEVEL_VARIABLE = 'LOGGING_LEVEL'
-    MINUTES_BETWEEN_READS_VARIABLE = 'MINUTES_BETWEEN_READS'
+    MINUTES_BETWEEN_READINGS_VARIABLE = 'MINUTES_BETWEEN_READINGS'
 
     FAKE_SENSOR_VARIABLE = 'FAKE_SENSOR_ENABLED'
     BME_280_SENSOR_VARIABLE = 'BME_280_SENSOR_ENABLED'
@@ -24,6 +25,7 @@ class Main(object):
     WIND_SENSOR_VARIABLE = 'WIND_SENSOR_ENABLED'
 
     ANEMOMETER_PORT_NUMBER_VARIABLE = 'ANEMOMETER_PORT_NUMBER'
+    RAIN_GAUGE_PORT_NUMBER_VARIABLE = 'RAIN_GAUGE_PORT_NUMBER'
 
     SERVER_VARIABLE = 'SERVER'
     DATABASE_VARIABLE = 'DATABASE'
@@ -39,8 +41,9 @@ class Main(object):
     LOG_FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
 
     # DEFAULT VALUES
-    DEFAULT_MINUTES_BETWEEN_READS = 5
+    DEFAULT_MINUTES_BETWEEN_READINGS = 5
     DEFAULT_ANEMOMETER_PORT_NUMBER = 22
+    DEFAULT_RAIN_GAUGE_PORT_NUMBER = 25
 
     def __init__(self, variables):
         self.variables = variables
@@ -54,8 +57,8 @@ class Main(object):
         if self.LOGGING_LEVEL_VARIABLE in self.variables:
             self.check_in_expected_values(variable_name=self.LOGGING_LEVEL_VARIABLE, expected_values=self.LOGGING_LEVELS.keys())
 
-        if self.MINUTES_BETWEEN_READS_VARIABLE in self.variables:
-            self.check_positive_integer_value(variable_name=self.MINUTES_BETWEEN_READS_VARIABLE)
+        if self.MINUTES_BETWEEN_READINGS_VARIABLE in self.variables:
+            self.check_positive_integer_value(variable_name=self.MINUTES_BETWEEN_READINGS_VARIABLE)
 
     def check_bool_value(self, variable_name):
         value = self.variables[variable_name]
@@ -97,6 +100,9 @@ class Main(object):
 
         if self.ANEMOMETER_PORT_NUMBER_VARIABLE in self.variables:
             self.check_positive_integer_value(variable_name=self.ANEMOMETER_PORT_NUMBER_VARIABLE)
+
+        if self.RAIN_GAUGE_PORT_NUMBER_VARIABLE in self.variables:
+            self.check_positive_integer_value(variable_name=self.RAIN_GAUGE_PORT_NUMBER_VARIABLE)
 
     def validate_database_variables(self):
         if self.SERVER_VARIABLE in self.variables:
@@ -147,28 +153,31 @@ class Main(object):
             controllers.append(GroundTemperatureController(server=server, database=database, user=user, password=password))
 
         if self.is_controller_enabled(self.WIND_SENSOR_VARIABLE):
-            controllers.append(WindMeasurementController(anemometer_port_number=self.get_anemometer_port_number(),
-                                                         server=server,
-                                                         database=database,
-                                                         user=user,
-                                                         password=password))
+            controllers.append(
+                WindMeasurementController(anemometer_port_number=self.get_value_as_int(variable_name=self.ANEMOMETER_PORT_NUMBER_VARIABLE,
+                                                                                       default_value=self.DEFAULT_ANEMOMETER_PORT_NUMBER),
+                                          server=server,
+                                          database=database,
+                                          user=user,
+                                          password=password))
+        if self.is_controller_enabled(self.RAINFALL_SENSOR_VARIABLE):
+            controllers.append(RainfallController(rain_gauge_port_number=self.get_value_as_int(variable_name=self.RAIN_GAUGE_PORT_NUMBER_VARIABLE,
+                                                                                               default_value=self.DEFAULT_RAIN_GAUGE_PORT_NUMBER),
+                                                  server=server,
+                                                  database=database,
+                                                  user=user,
+                                                  password=password))
 
         return controllers
 
     def is_controller_enabled(self, variable_name):
         return variable_name in self.variables and self.variables[variable_name] == 'true'
 
-    def get_anemometer_port_number(self):
-        if self.ANEMOMETER_PORT_NUMBER_VARIABLE in self.variables:
-            return int(self.variables[self.ANEMOMETER_PORT_NUMBER_VARIABLE])
+    def get_value_as_int(self, variable_name, default_value):
+        if variable_name in self.variables:
+            return int(self.variables[variable_name])
 
-        return self.DEFAULT_ANEMOMETER_PORT_NUMBER
-
-    def get_minutes_between_reads(self):
-        if self.MINUTES_BETWEEN_READS_VARIABLE in self.variables:
-            return int(self.variables[self.MINUTES_BETWEEN_READS_VARIABLE])
-
-        return self.DEFAULT_MINUTES_BETWEEN_READS
+        return default_value
 
     @staticmethod
     def execute_controllers(controllers):

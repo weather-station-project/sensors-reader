@@ -5,7 +5,7 @@ from collections import OrderedDict
 from unittest import mock
 
 from health_check.health_check_file_manager import FILE_NAME, register_error_in_health_check_file, register_success_for_class_into_health_check_file, \
-    erase_health_check_file, get_error_messages
+    erase_health_check_file, get_error_messages, HEALTH_CHECK_CLASS
 
 
 class TestHealthCheckFileManager(unittest.TestCase):
@@ -35,8 +35,8 @@ class TestHealthCheckFileManager(unittest.TestCase):
             self.assertEqual(file_content, {test_key1: test_message1,
                                             test_key2: test_message2})
 
-        mock_logging.debug.assert_any_call(msg=f'Health check registered with key "{test_key1}" and message "{test_message1}".')
-        mock_logging.debug.assert_any_call(msg=f'Health check registered with key "{test_key2}" and message "{test_message2}".')
+        mock_logging.debug.assert_any_call(msg=f'[{HEALTH_CHECK_CLASS}] Health check registered with key "{test_key1}" and message "{test_message1}".')
+        mock_logging.debug.assert_any_call(msg=f'[{HEALTH_CHECK_CLASS}] Health check registered with key "{test_key2}" and message "{test_message2}".')
 
     @mock.patch('health_check.health_check_file_manager.logging')
     def test_when_registering_success_expected_content_should_be_stored(self, mock_logging):
@@ -55,7 +55,7 @@ class TestHealthCheckFileManager(unittest.TestCase):
             file_content = json.loads(s=fs.read(), object_pairs_hook=OrderedDict)
             self.assertEqual(file_content, {test_key2: 'test_message2'})
 
-        mock_logging.debug.assert_any_call(msg=f'Health check successful registered for class name "{test_key1}".')
+        mock_logging.debug.assert_any_call(msg=f'[{HEALTH_CHECK_CLASS}] Health check successful registered for class name "{test_key1}".')
 
     @mock.patch('health_check.health_check_file_manager.logging')
     def test_when_registering_success_expected_given_non_existing_file_should_not_exist(self, mock_logging):
