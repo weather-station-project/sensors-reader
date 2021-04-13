@@ -64,8 +64,8 @@ The solution is intended to take measurements from the environment and also to s
 * **RAIN_GAUGE_PORT_NUMBER** - The GPIO port number where the rain gauge device is connected to.
 * **SERVER** - Database server. In case of it is empty, measurements retrieved will not be stored anywhere, just showed in the log traces with INFO level.
 * **DATABASE** - Database name
-* **USER** - Database name
-* **PASSWORD** - Database name
+* **USER** - User name
+* **PASSWORD** - User password
 
 A docker-compose example is provided with the solution code, but it can be launched via command-line. Either way, the container must be created with privileged permissions to be able to access to Raspberry Pi hardware.
 
