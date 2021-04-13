@@ -8,6 +8,10 @@ Based on the open project for Raspberry Pi "[Build your own weather station](htt
 [![Coverage Status](https://coveralls.io/repos/github/weather-station-project/sensors-reader/badge.svg?branch=origin/master)](https://coveralls.io/github/weather-station-project/sensors-reader?branch=origin/master)
 ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/weatherstationproject/sensors-reader)
 
+## Circuit connection diagram
+[Here](https://github.com/weather-station-project/sensors-reader/blob/1f83550cc11d9a0288b5a1f1cc90477956f331cf/circuit-diagram.png), you can find a diagram about how to make the connections between each component easily. Useful for people who do not know much about circuits... like me :-).
+Be aware that the Raspberry Pi used is the old version 1, the GPIO pins may differ from one revision to another one.
+
 
 ## Components used and where to find them
 As commented previously, the same components described in the project "[Build your own weather station](https://projects.raspberrypi.org/en/projects/build-your-own-weather-station)" have been used. Here is a list and where to find them (At least from Spain).
