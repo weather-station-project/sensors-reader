@@ -100,7 +100,7 @@ services:
     - '/etc/localtime:/etc/localtime:ro'
 ```
 ```bash
-docker run --rm -d --name=sensors-reader --privileged -e LOGGING_LEVEL=ERROR -e BME_280_SENSOR_ENABLED=true -e GROUND_SENSOR_ENABLED=true -e WIND_SENSOR_ENABLED=true -e RAINFALL_SENSOR_ENABLED=true -e ANEMOMETER_PORT_NUMBER=22 -e RAIN_GAUGE_PORT_NUMBER=25 -e SERVER=127.0.0.1 -e DATABASE=my_db -e USER=my_user -e PASSWORD=my_password -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro davidleonm/weather-station-sensors-reader
+docker run --rm -d --name=sensors-reader --privileged -e LOGGING_LEVEL=ERROR -e BME_280_SENSOR_ENABLED=true -e GROUND_SENSOR_ENABLED=true -e WIND_SENSOR_ENABLED=true -e RAINFALL_SENSOR_ENABLED=true -e ANEMOMETER_PORT_NUMBER=22 -e RAIN_GAUGE_PORT_NUMBER=25 -e SERVER=127.0.0.1 -e DATABASE=my_db -e USER=my_user -e PASSWORD=my_password -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro weatherstationproject/sensors-reader
 ```
 
 ### Example of an execution with only the fake sensor and without database
@@ -109,7 +109,7 @@ version: '3.5'
 services:
   sensors-reader:
     container_name: sensors-reader
-    image: davidleonm/weather-station-sensors-reader
+    image: weatherstationproject/sensors-reader
     restart: unless-stopped
     environment:
       - LOGGING_LEVEL=ERROR
@@ -119,7 +119,7 @@ services:
     - '/etc/localtime:/etc/localtime:ro'
 ```
 ```bash
-docker run --rm -d --name=sensors-reader -e LOGGING_LEVEL=ERROR -e FAKE_SENSOR_ENABLED=true -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro davidleonm/weather-station-sensors-reader
+docker run --rm -d --name=sensors-reader -e LOGGING_LEVEL=ERROR -e FAKE_SENSOR_ENABLED=true -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro weatherstationproject/sensors-reader
 ```
 
 
