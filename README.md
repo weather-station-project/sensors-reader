@@ -6,7 +6,9 @@ Based on the open project for Raspberry Pi "[Build your own weather station](htt
 
 ## Release information
 [![Coverage Status](https://coveralls.io/repos/github/weather-station-project/sensors-reader/badge.svg?branch=origin/master)](https://coveralls.io/github/weather-station-project/sensors-reader?branch=origin/master)
-![Docker Image Version (latest by date)](https://img.shields.io/docker/v/weatherstationproject/sensors-reader)
+[![Dockerhub](https://img.shields.io/badge/dockerhub-v1.3.0-blue)](https://hub.docker.com/repository/docker/weatherstationproject/sensors-reader)
+
+
 
 ## Circuit connection diagram
 [Here](https://github.com/weather-station-project/sensors-reader/blob/1f83550cc11d9a0288b5a1f1cc90477956f331cf/circuit-diagram.png), you can find a diagram about how to make the connections between each component easily. Useful for people who do not know much about circuits... like me :-).
