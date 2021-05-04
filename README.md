@@ -31,9 +31,7 @@ As commented previously, the same components described in the project "[Build yo
 * **Rigid cables** - To make bridges between different lines on the proto board. ~ 1€ [Ebay](https://www.ebay.es/itm/6-Metros-de-Cable-Rigido-a-COLOR-protoboard-arduino-electronica-puentes-proto/283452899154?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2060353.m2749.l2649)
 * **Digital-analogical converter** - To be able to analyze vane analogical signals. ~ 3.5€ [Ebay](https://www.ebay.es/itm/1x-MCP3008-DIP16-MCP3008-I-P-DIP-16-Convertidor-De-Analogico-A-Digital-Espa%C3%B1a/223996555390?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2060353.m2749.l2649)
 * **RJ11 breakout** - To join RJ11 devices with the proto board. ~ (8.39 * 2)€ [Amazon](https://www.amazon.es/gp/product/B00UJ8DRCG/ref=ppx_yo_dt_b_asin_title_o04_s00?ie=UTF8&psc=1)
-* **Anemometer** - To measure wind speed and gust speed. ~ 32.9€ [Amazon](https://www.amazon.es/gp/product/B07BMVYBW9/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
-* **Vane** - To measure wind direction. ~ 29.9€ [Amazon](https://www.amazon.es/gp/product/B07KYTKLTB/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
-* **Rain gauge** - To measure amount of rain. ~ 33.90€ [Amazon](https://www.amazon.es/gp/product/B07KYSXCBZ/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
+* **Weather Meter Kit** - All the needed devices, pole and arms to mount them. ~ 42.31€ [Aliexpress](https://es.aliexpress.com/item/32845225821.html?spm=a2g0o.detail.0.0.45d8692ak1LDfx&gps-id=pcDetailBottomMoreThisSeller&scm=1007.13339.169870.0&scm_id=1007.13339.169870.0&scm-url=1007.13339.169870.0&pvid=5a2f0d9d-255c-4824-b1bb-3270179d6ad1&_t=gps-id:pcDetailBottomMoreThisSeller,scm-url:1007.13339.169870.0,pvid:5a2f0d9d-255c-4824-b1bb-3270179d6ad1,tpp_buckets:668%230%23131923%2339_668%230%23131923%2339_668%23888%233325%2311_668%23888%233325%2311_668%232846%238111%231996_668%235811%2327174%2320_668%232717%237559%2337_668%231000022185%231000066058%230_668%233468%2315608%23130_668%232846%238111%231996_668%235811%2327174%2320_668%232717%237559%2337_668%233164%239976%23241_668%233468%2315608%23130)
 
 
 ## Composition
